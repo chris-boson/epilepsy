@@ -1,7 +1,17 @@
 {
-  "files.watcherExclude": {
-    "**/.venv": true
+  "python.sortImports.args": ["-sp .isort.cfg"],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "sorce.format": true
   },
-  "python.pythonPath": ".venv/bin/python",
-  "python.terminal.activateEnvironment": true
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length=100"],
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": ["--max-line-length=120"]
 }
