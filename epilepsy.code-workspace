@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "terminal.integrated.env.osx": {
+      "SYSTEM_VERSION_COMPAT": "1",
+      "POETRY_VIRTUALENVS_IN_PROJECT": "1"
+    },
+    "[python]": {
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "sorce.format": true
+      },
+      "editor.tabSize": 4,
+      "editor.formatOnSave": true
+    },
+    "python.formatting.provider": "black",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.testing.unittestEnabled": true,
+    "python.formatting.blackArgs": ["--line-length=100"],
+    "python.testing.unittestArgs": [
+      "-v",
+      "-s",
+      "${workspaceFolder}",
+      "-p",
+      "test_*.py"
+    ]
+  }
+}
