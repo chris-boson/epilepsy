@@ -1,0 +1,3 @@
+In this chapter we review basic source control with GitHub.
+GitHub is a platform for hosting, version control and collaboration on plain text files.
+While its primary use is in the context of software development, it is equally applicable for other applications, such as LaTeX source files.
