@@ -1,3 +1,14 @@
-In this chapter we review basic source control with GitHub.
-GitHub is a platform for hosting, version control and collaboration on plain text files.
-While its primary use is in the context of software development, it is equally applicable for other applications, such as LaTeX source files.
+Programming in Python / R / Matlab Chapter
+------------------------
+
+    (working draft...)
+
+    In this chapter, we aim to first emphasize a proper engineering boilerplate with which to standardize collaboriation. 
+    To this end, we will first review version control and environment setup, and subsequently present a working example that covers some fundamental concepts as applied to epilepsy data. 
+    Specifically, readers will be introduced to basic Github and python environment usage, data extraction, transformation and loading (ETL)...(finish this sentence). 
+    This step-by-step approach will provide all the tools necessary between initial experiment setup, through data manipulation, to visualizing and analyzing outcomes of time-series analyses in our domain. 
+    While we provide primarily examples in Python, with some examples in R and Matlab, comprehensive instructions with code are provided in all three languages in the accompanying repository.
+
+NLP Chapter
+------------------------
+
