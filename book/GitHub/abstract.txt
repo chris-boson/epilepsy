@@ -1,18 +1,18 @@
 Programming in Python / R / Matlab Chapter
 ------------------------
 
-    (working draft...)
+(working draft...)
 
-    The purpose of this chapter is to introduce the readers to the programming tools necessary to carry out analysis and collaborative research in the field of epilepsy.
-    To enable better collaboration, we begin by first reviewing version control and environment setup. We introduce readers to basic Github commands and python environment usage.
-    Once the environment is set up, we present a working example that covers some fundamental concepts as applied to EEG data (any time series data available).
-    Specifically, readers will be introduced to data structures, data extraction and loading. Various transformations, which include array indexing and data manipulations across different dimensions of the arrays will be presented. These will include various feature summarizations, data joining, and reshaping to handle spatio-temporal datasets. To achieve this, we will make use of well known packages such as pandas (plyr in R).
+The purpose of this chapter is to introduce the readers to the programming tools necessary to carry out analysis and collaborative research in the field of epilepsy.
+To enable better collaboration, we begin by first reviewing version control and environment setup. We introduce readers to basic Github commands and python environment usage.
+Once the environment is set up, we present a working example that covers some fundamental concepts as applied to EEG data (any time series data available).
+Specifically, readers will be introduced to data structures, data extraction and loading. Various transformations, which include array indexing and data manipulations across different dimensions of the arrays will be presented. These will include various feature summarizations, data joining, and reshaping to handle spatio-temporal datasets. To achieve this, we will make use of well known packages such as pandas (plyr in R).
 
-	Once the data is loaded and processed, readers will be guided through fundamental data analysis concepts and their implementation. We will discuss best practices for handling missing data, correlation analysis across space and time and data feature visualization.
+Once the data is loaded and processed, readers will be guided through fundamental data analysis concepts and their implementation. We will discuss best practices for handling missing data, correlation analysis across space and time and data feature visualization.
 
-	This step-by-step approach will provide all the tools necessary from initial experiment setup, through data manipulation, to visualizing and analyzing outcomes of time-series analyses in our domain.
+This step-by-step approach will provide all the tools necessary from initial experiment setup, through data manipulation, to visualizing and analyzing outcomes of time-series analyses in our domain.
 
-	While we provide implementations in Python within the chapter, the corresponding code in R and MatLab is available in the appendix. The datasets and code, along with comprehensive instructions are provided in all three languages in the accompanying repository.
+While we provide implementations in Python within the chapter, the corresponding code in R and MatLab is available in the appendix. The datasets and code, along with comprehensive instructions are provided in all three languages in the accompanying repository.
 
 
 
@@ -20,21 +20,25 @@ NLP Chapter
 ------------------------
 
 In this chapter we introduce modern NLP libraries, techniques and their applications.
-In particular we will showcase a reference implementation leveraging PyTorch, PyTorch Lightning and the Hugginface Transformers library.
-We will walk through a complete example that highlights best practices that encourage reproducibility and allow for systematic iterative improvements.
-This includes
-- Bootstrapping techniques to iterate on a dataset in the low resource setting
-- Storing of a reference dataset in a publicly accessible location
+This chapter will focus on deep learning methods and less on computational linguistics that require nuanced knowledge of linguistics.
+We explore what it means to represent words and sequences of words with rich numeric representations that are better-suited toward modern computational tasks.
+We aim to capture some of these modern fine-tuned representations that are specially catered toward a semantic lexicon for medical language.
+We use these representations and aforementioned tools to showcase a modern reference implementation leveraging PyTorch, PyTorch Lightning and the Hugginface Transformers library.
+To wrap it all together, we walk through a complete example that highlights best practices that encourage reproducibility and allow for systematic iterative improvements.
+
+This includes:
+- Bootstrapping techniques to iterate on a dataset in the low-resource setting
+- Storing of a reference dataset in a publicly-accessible location
 - Downloading, caching, loading, splitting, and preprocessing of the data
-- Setting up of a cloud based GPU workstation (?)
+- Setting up of a cloud-based GPU workstation (?) (--this might be overkill for now, but keep if we can)
   - VSCode (?)
-- Monitoring the training run
+- Monitoring the training run:
   - Logging and experiment tracking
   - Learning curves
   - Metrics
-- Hyperparameter tuning
+- Hyperparameter tuning:
   - Some tricks of the trade
 - Offline evaluation and sanity checking
 
 We will keep the discussion focused on SUDEP prediction from electronic medical record (EMR) notes.
-Many of the concepts introduced here are very general and translate straight forward to domains outside of SUDEP prediction, epilepsy, and even NLP.
+Many of the concepts introduced here are very general and are straightforward translations to domains outside of SUDEP prediction, epilepsy, and even NLP.
