@@ -7,7 +7,7 @@
     "[python]": {
       "editor.codeActionsOnSave": {
         "source.organizeImports": true,
-        "sorce.format": true
+        "source.format": true
       },
       "editor.tabSize": 4,
       "editor.formatOnSave": true
