@@ -3,17 +3,17 @@ Programming in Python / R / Matlab Chapter
 
 1. A Transparent Layered Approach [or some better title] ~4-5 pages
 
-Abstract: Running code to solve problems in the domain of epilepsy is very much like running code anywhere within the medical domain. Taken a level higher, code in the medical field should follows the practices of proper engineering work. 
+Abstract: Running code to solve problems in the domain of epilepsy is very much like running code anywhere within the medical domain. Taken a level higher, code in the medical field should follows the practices of proper engineering work.
 As practitioners of medicine and as engineers it is critical that we focus our energy on what makes our experiments code unique, and rely on standards and libraries for the rest.
 
-All too often in medicine and academia we write scripts that may or may not run on other's computers. 
+All too often in medicine and academia we write scripts that may or may not run on other's computers.
 We have results that can be difficult to replicate or visualize, and we often spend too much time writing code for something that some expert has already spent much more time on. Before we ever write code unique to epilepsy, we should do the following:
 
 	1. Use version control (Github as a working example: explain why. permissions)
 	2. Use virtual environments (explain why) - standard libraries (w/ versions) for medical data / PII (explain why, ex - PII)
 
 The end result of all of this is that you know, for a fact, that somebody else can download your code, click one button, and replicate or verify your results.
-This is true if they are running Linux, Windows, or MacOS, on many types of systems. 
+This is true if they are running Linux, Windows, or MacOS, on many types of systems.
 In addition to this, you save yourself the time and potential major headache of things like anonymizing/obfuscating medical data, or the file permissions surrounding it, by calling upon standard libraries at precise versions.
 
 ------------------------

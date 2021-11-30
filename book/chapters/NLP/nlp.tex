@@ -1,0 +1,49 @@
+\chapterauthor{Author Name}{}
+\chapter{Natural Language Processing}
+In this chapter we introduce modern NLP libraries, techniques and their applications.
+This chapter will focus on deep learning methods and less on computational linguistics that require nuanced knowledge of linguistics.
+We explore what it means to represent words and sequences of words with rich numeric representations that are better-suited toward modern computational tasks.
+We aim to capture some of these modern fine-tuned representations that are specially catered toward a semantic lexicon for medical language.
+We use these representations and aforementioned tools to showcase a modern reference implementation leveraging PyTorch, PyTorch Lightning and the Hugginface Transformers library.
+To wrap it all together, we walk through a complete example that highlights best practices that encourage reproducibility and allow for systematic iterative improvements.
+\\
+
+\noindent This includes:
+\begin{itemize}
+\item Bootstrapping techniques to iterate on a dataset in the low-resource setting
+\item Storing of a reference dataset in a publicly-accessible location
+\item Downloading, caching, loading, splitting, and preprocessing of the data
+\item Setting up of a cloud-based GPU workstation (?) (--this might be overkill for now, but keep if we can)
+\item VSCode (?)
+\item Monitoring the training run:
+  \subitem Logging and experiment tracking
+  \subitem Learning curves
+  \subitem Metrics
+\item Hyperparameter tuning, some tricks of the trade
+\item Offline evaluation and sanity checking
+\end{itemize}
+We will keep the discussion focused on SUDEP prediction from electronic medical record (EMR) notes.
+Many of the concepts introduced here are very general and are straightforward translations to domains outside of SUDEP prediction, epilepsy, and even NLP.
+
+\subsection{Introduction to Natural Language Processing}
+
+Natural language processing (NLP) is a field of computer science that deals with the extraction, processing, and understanding of human language.
+It is known as the field of computer linguistics, and is a subfield of artificial intelligence.
+Common NLP tasks include sentence segmentation, tokenization, part-of-speech tagging, named-entity recognition, parsing, question answering, summarization and classification.
+How can we teach a computer to perform these tasks?
+The first challenge is that computers at their core only understand numbers, so we need to represent words with numbers.
+To do this we can define a vocabulary $V$ of words and numbers, where each word is assigned a unique integer $i$.
+The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$.
+We could now simply represent a sentence as the sum of the word vectors $S = \sum_j w_j$.
+This is a simple representation and it comes with some drawbacks:
+\begin{itemize}
+    \item We implicitly assume that each word is equally important.
+    \item Each word is equally similar to every other word (e.g. by taking the euclidian distance).
+    \item The representation is invariant to reordering of the words.
+\end{itemize}
+To address the first point we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word is weighted by its importance $\lambda_j$.
+One way of defining importance is to compare how often a word occurs in a document compared to the entire corpus.
+
+
+% Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data.
+% The resulting systems were often still brittle.

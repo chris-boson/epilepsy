@@ -127,3 +127,9 @@ dmypy.json
 **/*.synctex.gz
 **/*.fls
 **/__latexindent_temp.tex
+**/*.idx
+**/*.ilg
+**/*.ind
+**/*.toc
+**/*.blg
+**/*.bbl
