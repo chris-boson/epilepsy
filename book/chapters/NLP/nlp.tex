@@ -10,6 +10,7 @@ To wrap it all together, we walk through a complete example that highlights best
 
 \noindent This includes:
 \begin{itemize}
+\item An introduction into fundamental NLP concepts
 \item Bootstrapping techniques to iterate on a dataset in the low-resource setting
 \item Storing of a reference dataset in a publicly-accessible location
 \item Downloading, caching, loading, splitting, and preprocessing of the data
@@ -30,19 +31,44 @@ Many of the concepts introduced here are very general and are straightforward tr
 Natural language processing (NLP) is a field of computer science that deals with the extraction, processing, and understanding of human language.
 It is known as the field of computer linguistics, and is a subfield of artificial intelligence.
 Common NLP tasks include sentence segmentation, tokenization, part-of-speech tagging, named-entity recognition, parsing, question answering, summarization and classification.
+
 How can we teach a computer to perform these tasks?
-The first challenge is that computers at their core only understand numbers, so we need to represent words with numbers.
-To do this we can define a vocabulary $V$ of words and numbers, where each word is assigned a unique integer $i$.
-The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$.
-We could now simply represent a sentence as the sum of the word vectors $S = \sum_j w_j$.
-This is a simple representation and it comes with some drawbacks:
+The first challenge is that computers, at their core, only understand numbers. So first we need to think about how words can be represented with numbers such that we can perform computation on it.
+The numbers should allow the computer to assign meaning to words and their context with other words around it.
+
+A simple way to achieve this is to define a vocabulary $V$ of words, and assign each word a unique integer $i$.
+The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$\footnote{This is also known as a one-hot encoding}.
+\begin{verbatim}
+  have = [1, 0, 0, 0, 0, 0, ... 0]
+  a    = [0, 1, 0, 0, 0, 0, ... 0]
+  good = [0, 0, 1, 0, 0, 0, ... 0]
+  day  = [0, 0, 0, 1, 0, 0, ... 0]
+  ...
+\end{verbatim}
+
+We could now simply represent a sentence as the sum of the word vectors $S = \sum_j w_j$. This representation is suitable as input for any classification algorithm (such as logistic regression or a decision tree), to make a prediction about our target variable, e.g. whether the sentence is relevant to our epilepsy task.
+This simple representation fulfills our requirments but comes with some drawbacks:
 \begin{itemize}
-    \item We implicitly assume that each word is equally important.
-    \item Each word is equally similar to every other word (e.g. by taking the euclidian distance).
+    \item We implicitly assume that each word in the sentence is equally important.
+    \item Each word is equally similar to every other word (e.g. by taking the euclidian distance between word vectors).
     \item The representation is invariant to reordering of the words.
 \end{itemize}
-To address the first point we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word is weighted by its importance $\lambda_j$.
-One way of defining importance is to compare how often a word occurs in a document compared to the entire corpus.
+The first point is a problem, because as we add more word vectors together, the sentence reperesentation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
+To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$, and there are statistical methods we can use to compute an importance value\footnote{TF-IDF}.
+For example a word like \textit{the} is very common and appears in many different contexts.
+It is unlikely that there is a lot of signal we can extract from it.
+On the other hand, a word like \textit{epilepsy} will be much more rare and specific to a given task, and we would like to raise its importance.
+This has the net effect of allowing us to find good representation for larger word sequences.
+% One way of defining importance is to compare how often a word occurs in a document compared to the entire corpus.
+
+To address the second point, we will be touching on a very important concept, not just relevant in NLP, but also in the world of ML in general: Embeddings.
+An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
+Scientific progress in the field of ML is often directly about finding algorithms that can learn high quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
+
+To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec}. The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. For example the word \textit{bank} can have very different meanings, depending on whether there are surrounding words like \textit{teller}, \textit{withdrawal}, \textit{deposit}, compared to words like \textit{sunset}, \textit{hike} or \textit{nature}. We then translate this idea into a training task:
+
+
+
 
 
 % Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data.
