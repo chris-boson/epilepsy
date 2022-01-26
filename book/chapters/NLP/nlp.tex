@@ -33,7 +33,8 @@ It is known as the field of computer linguistics, and is a subfield of artificia
 Common NLP tasks include sentence segmentation, tokenization, part-of-speech tagging, named-entity recognition, parsing, question answering, summarization and classification.
 
 How can we teach a computer to perform these tasks?
-The first challenge is that computers, at their core, only understand numbers. So first we need to think about how words can be represented with numbers such that we can perform computation on it.
+The first challenge is that computers, at their core, only understand numbers.
+So first we need to think about how words can be represented with numbers such that we can perform calculations on it.
 The numbers should allow the computer to assign meaning to words and their context with other words around it.
 
 A simple way to achieve this is to define a vocabulary $V$ of words, and assign each word a unique integer $i$.
@@ -65,11 +66,52 @@ To address the second point, we will be touching on a very important concept, no
 An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
 Scientific progress in the field of ML is often directly about finding algorithms that can learn high quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
 
-To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec}. The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. For example the word \textit{bank} can have very different meanings, depending on whether there are surrounding words like \textit{teller}, \textit{withdrawal}, \textit{deposit}, compared to words like \textit{sunset}, \textit{hike} or \textit{nature}. We then translate this idea into a training task:
+To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec}. The idea behind \textit{word2vec} is to set a word into context with the words surrounding it.
+For example the word \textit{bank} may appear in the context of words like \textit{account}, \textit{withdrawal}, or \textit{deposit} and vice versa.
+We then translate this idea into a training task:
+Given the sum of the one-hot encoded word vectors of the words surrounding the target word, map it to the one-hot encoded vector of the target word.
 
+This is a task that can be solved by a neural network with the following setup:
+Add a layer $l_1$ that maps from the input dimension (of size $|V|$) to an intermediate dimension of size $h$ and then another layer $l_2$ that maps from the intermediate dimension to the output dimension (of size $|V|$).
+Here $h$ is what is called embedding dimension and $h << |V|$.
+\begin{figure}
+  \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
+  \caption{Word2vec}
+  \label{fig:word2vec}
+\end{figure}
+While $h$ is generally a hyperparameter that can be optimized at a later stage, a reasonable choice is to use a value according to the rule of thumb:
+\begin{equation}
+  h \approx 4\sqrt[\leftroot{3} \uproot{3} 4]{|V|}
+\end{equation}
+For a vocabulary size $|V| = 30000$ this comes to a value of about $50$.
+During training, the network will learn to encode the original sparse indicator vectors in a way that preserves the maximum amount of information necessary to predict the target word, while being forced to squeeze the information through the low dimensional bottleneck.
+An interesting side effect of this approach is that we can use part of the network to encode a given word in $V$ by using for example the inverse of $l_2$ as a lookup table.
+The vectors that we obtain from this lookup table are called word embeddings and they have some very useful properties:
+\begin{itemize}
+    \item Similar words tend to be close together (e.g. in terms of euclidian distance).
+    \item Averaging word embeddings of a sentence will give us a more robust representation than our naive approach.
+    \item We can perform some arithmetic, such as adding and subtracting the embedding vectors to traverse the space.
+\end{itemize}
+\begin{figure}
+  \includegraphics[width=\linewidth]{chapters/NLP/figures/king-man+woman.png}
+  \caption{Word2vec}
+  \label{fig:kingmanwoman}
+\end{figure}
+These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straight forward - it only has to slice the embedding space.
+The hard part of understanding the meaning of the sentence is already done.
+Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task specific models.
 
+\subsubsection{Transformers}
+Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data, even when relying on pre-trained word embeddings.
+The resulting systems were often still brittle.
 
+In recent years some surprisingly powerful architectures and pre-training regimes have emerged that build on the concepts we discussed here, most notably under the name of \textit{Transformers\footnote{BERT, GPT}}, that address the last bullet point of our representaion's shortcomings.
 
+The details of the inner workings are beyond the scope of this tutorial, for now it suffices to know that they are able to learn robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
+In fact, they can be considered near the level of a human that just knows the English language (or other languages), along with a broad array of factual knowledge about the world (think Wikipedia).
+Just like a human, they can be taught specialty knowledge that is relevant to a given task, in ML we would say we \textit{finetune} them.
+This paradigm shift has led to a step function improvement in terms of performance and sample efficiency in a wide variety of NLP tasks where Transformers are the defacto state of the art.
 
-% Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data.
-% The resulting systems were often still brittle.
+In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
+
+% Where these models to date generally fall short is in terms of logical inference.
