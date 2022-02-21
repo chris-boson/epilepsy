@@ -1,0 +1,4 @@
+1. While the techniques and chapter are often general NLP stuff, I feel like we should still keep the examples within the epilepsy/medical domain.
+2. I think a bit of a background in some of the traditional NLP techniques in medicine could be good. I don't think we should really write it, just throw out some papers about it at the end as suggestions?
+3. definitely need to rearrange a bit.
+4. feel free to delete anything i wrote. i didn't really sanity check a ton of it. just some dumping.
