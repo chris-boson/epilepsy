@@ -4,7 +4,7 @@ In this chapter we introduce modern NLP libraries, techniques and their applicat
 This chapter will focus on deep learning methods and less on computational linguistics that require nuanced knowledge of linguistics.
 We explore what it means to represent words and sequences of words with rich numeric representations that are better-suited toward modern computational tasks.
 We aim to capture some of these modern fine-tuned representations that are specially catered toward a semantic lexicon for medical language.
-We use these representations and aforementioned tools to showcase a modern reference implementation leveraging PyTorch, PyTorch Lightning and the Hugginface Transformers library.
+We use these representations and aforementioned tools to showcase a modern reference implementation leveraging PyTorch, PyTorch Lightning and the Huggingface Transformers library.
 To wrap it all together, we walk through a complete example that highlights best practices that encourage reproducibility and allow for systematic iterative improvements.
 \\
 
@@ -23,7 +23,7 @@ To wrap it all together, we walk through a complete example that highlights best
 \item Hyperparameter tuning, some tricks of the trade
 \item Offline evaluation and sanity checking
 \end{itemize}
-We will keep the discussion focused on SUDEP prediction from electronic medical record (EMR) notes.
+We will keep the discussion focused on tasks in epilepsy, using a running example of SUDEP prediction from electronic medical record (EMR) notes.
 Many of the concepts introduced here are very general and are straightforward translations to domains outside of SUDEP prediction, epilepsy, and even NLP.
 
 \subsection{Introduction to Natural Language Processing}
@@ -34,7 +34,7 @@ Common NLP tasks include sentence segmentation, tokenization, part-of-speech tag
 
 How can we teach a computer to perform these tasks?
 The first challenge is that computers, at their core, only understand numbers.
-So first we need to think about how words can be represented with numbers such that we can perform calculations on it.
+So first we need to think about how words can be represented with numbers such that we can perform calculations on them.
 The numbers should allow the computer to assign meaning to words and their context with other words around it.
 
 A simple way to achieve this is to define a vocabulary $V$ of words, and assign each word a unique integer $i$.
@@ -47,8 +47,8 @@ The word is then represented as a vector $w$ of length $|V|$ with all zeros and 
   ...
 \end{verbatim}
 
-We could now simply represent a sentence as the sum of the word vectors $S = \sum_j w_j$. This representation is suitable as input for any classification algorithm (such as logistic regression or a decision tree), to make a prediction about our target variable, e.g. whether the sentence is relevant to our epilepsy task.
-This simple representation fulfills our requirments but comes with some drawbacks:
+We could now represent a sentence as the sum of the word vectors $S = \sum_j w_j$. This representation is suitable as input for any classification algorithm (such as logistic regression or a decision tree), to make a prediction about our target variable, e.g. whether the sentence is relevant to our epilepsy task.
+This simple representation fulfills our requirements but comes with some drawbacks:
 \begin{itemize}
     \item We implicitly assume that each word in the sentence is equally important.
     \item Each word is equally similar to every other word (e.g. by taking the euclidian distance between word vectors).
@@ -59,15 +59,21 @@ To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, 
 For example a word like \textit{the} is very common and appears in many different contexts.
 It is unlikely that there is a lot of signal we can extract from it.
 On the other hand, a word like \textit{epilepsy} will be much more rare and specific to a given task, and we would like to raise its importance.
-This has the net effect of allowing us to find good representation for larger word sequences.
+This has the net effect of allowing us to find a good representation for larger word sequences.
 % One way of defining importance is to compare how often a word occurs in a document compared to the entire corpus.
 
 To address the second point, we will be touching on a very important concept, not just relevant in NLP, but also in the world of ML in general: Embeddings.
-An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
-Scientific progress in the field of ML is often directly about finding algorithms that can learn high quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
 
-To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec}. The idea behind \textit{word2vec} is to set a word into context with the words surrounding it.
-For example the word \textit{bank} may appear in the context of words like \textit{account}, \textit{withdrawal}, or \textit{deposit} and vice versa.
+\subsection{Embeddings}
+An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
+Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
+
+To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec} \cite{mikolov13}, a technique pioneered by a team led by Thomas Mikolov.
+The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. In NLP, the study of techniques that determine the probability of a given sequence of words is known as language modeling.
+
+For example the word \textit{epilepsy} may appear in the context of words like \textit{symptom}, \textit{medication}, or \textit{episode} and vice versa.
+However, we would not expect that \textit{epilepsy} would appear in the context of words like \textit{volleyball}.
+
 We then translate this idea into a training task:
 Given the sum of the one-hot encoded word vectors of the words surrounding the target word, map it to the one-hot encoded vector of the target word.
 
@@ -97,15 +103,62 @@ The vectors that we obtain from this lookup table are called word embeddings and
   \caption{Word2vec}
   \label{fig:kingmanwoman}
 \end{figure}
-These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straight forward - it only has to slice the embedding space.
+These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straightforward - it only has to slice the embedding space.
 The hard part of understanding the meaning of the sentence is already done.
-Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task specific models.
+Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
+Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
 
-\subsubsection{Transformers}
+This underlying assumption that similar neighboring words share a semantic similarity to center words is a powerful assumption, and what at the heart of many modern training objects for embeddings that are used in many downstream ML systems.
+We do not inherently inject a great deal of model bias, but rather rely on having a large enough training set that the word vectors will become meaningful representations with respect to one another. A corpus such as Common Crawl, which
+contains roughly 840 billion tokens of over two million unique words, provide such scale. There are other corpora used in these unsupervised processes, one such common candidate being a collection of all Wikipedia articles.
+
+In practice, one training objective can be to use the distributed representation of a set of context words to guess a center word. This is known as the continuous bag of words (CBOW) model.
+
+Consider a training document describing patients with epilepsy, where we are attempting to train a model with a predefined vocabulary $V$ of the top For a vocabulary $V$, where we have chosen the top $|V|$ most common words in English to learn.
+The document being chosen in this training iteration may contain the following excerpt:
+
+\begin{verbatim}
+  ... recommended administering Lamictal to treat their
+  focal seizures, the patient continued experiencing
+  symptoms though reported a 50% reduction in ...
+  \end{verbatim}
+
+In training our word embeddings, we will randomly mask one of the words, in this case \textit{patient}. Our model makes use of an additional parameter, a context window size $c$, that helps to provide necessary context. If we choose $c = 8$, our training sample would become
+
+\begin{verbatim}
+  ... lamictal to treat their focal seizures , the [TARGET]
+  continued experiencing symptoms though reported a 50 % ...
+  \end{verbatim}
+
+For a given center word at index $i$, we consider previous words at indexes $i-1$, $i-2$ ... $i-c$, and all subsequent words at indexes $i+1$, $i+2$ ... $i+c$.
+In our word sequence $S$, we may then choose to sum the word vectors of each of these context words. Our context input then becomes:
+\begin{equation}
+  \sum_{ \substack {j=-c \\ j \neq 0}}^c w_{i+j}
+\end{equation}
+
+Our task then becomes to predict a probability distribution over the size of our vocabulary $|V|$, where the target is a vector of all 0's with a 1 at the index in the vocabulary for the word \textit{patient}
+
+There are a few additional takeaways from this example. Note that we will address many of these in the sections to follow.
+\begin{itemize}
+  \item The training process will consider this text probably many times, and mask out different words in future iterations.
+  \item Our processed sentence is slightly modified from our original input. Notice that the number and percent symbol are split, and that Lamictal is lowercased.
+  \item The word \textit{patient} can also be an adjective. Our \textit{patient} embedding will also capture this meaning in our model, dependent upon how often that meaning is used.
+  \item If our context window is too small, we lose information. If it is too large, our signal becomes fuzzy as we converge to the global mean vector.
+\end{itemize}
+
+What if we choose to use only a center word, and have our model predict all of the surrounding context words? This is a common training technique for embeddings as well, and is known as the Skip-Gram model.
+
+\subsubsection{Character and Subword Embeddings}
+This is placeholder text
+
+\subsubsection{Vocabularies and Medical Embeddings}
+This is placeholder text
+
+\subsection{Transformers}
 Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data, even when relying on pre-trained word embeddings.
 The resulting systems were often still brittle.
 
-In recent years some surprisingly powerful architectures and pre-training regimes have emerged that build on the concepts we discussed here, most notably under the name of \textit{Transformers\footnote{BERT, GPT}}, that address the last bullet point of our representaion's shortcomings.
+In recent years some surprisingly powerful architectures and pre-training regimes have emerged that build on the concepts we have discussed here, most notably under the name of \textit{Transformers\footnote{BERT, GPT}}, that address the last bullet point of our representation's shortcomings.
 
 The details of the inner workings are beyond the scope of this tutorial, for now it suffices to know that they are able to learn robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
 In fact, they can be considered near the level of a human that just knows the English language (or other languages), along with a broad array of factual knowledge about the world (think Wikipedia).
@@ -115,3 +168,39 @@ This paradigm shift has led to a step function improvement in terms of performan
 In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
 
 % Where these models to date generally fall short is in terms of logical inference.
+
+\subsection{NLP Tasks in Epilepsy}
+This is a placeholder title. A couple pages here might do nicely as example studies for some important techniques for epileptologists.
+Now that we have an understanding of some of the basics of computational representations of language data, let us take a look at some of the modern use cases for NLP in industry,
+catered toward epileptologists and other medical practitioners.
+
+\subsubsection{Text Preprocessing and Tokenization}
+
+\subsubsection{Named Entity Recognition and PHI}
+
+This is a working title. NER is an important problem in medicine, for PII if nothing else, and I figure we could go through some basics of using it with Spacy, NLTK, or Stanford NLP here.
+Stopwords would be worth mentioning.
+
+\subsection{Mining Unstructured Text and Clinical Documentation}
+
+This is placeholder text. Talk about clinical documentation and EHR notes, and other forms of unstructred text, being used for downstream classification tasks.
+Then, give some examples of them, and what these people did, and possibly how transformers could probably improve this work greatly.
+
+\subsubsection{Clinical Trial Matching and Eligibility Prescreening}
+
+This is a placeholder text. https://www.nature.com/articles/d41586-019-02871-3
+
+\subsubsection{Surgical Candidacy}
+
+This is placeholder text
+
+\subsubsection{Avoiding Epilepsy Misdiagnosis}
+
+This is placeholder text. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4419916/
+
+\subsection{Full Walkthrough - SUDEP Detection}
+
+This is placeholder text
+
+
+
