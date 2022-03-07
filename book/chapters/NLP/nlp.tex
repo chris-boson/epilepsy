@@ -37,8 +37,55 @@ The first challenge is that computers, at their core, only understand numbers.
 So first we need to think about how words can be represented with numbers such that we can perform calculations on them.
 The numbers should allow the computer to assign meaning to words and their context with other words around it.
 
-A simple way to achieve this is to define a vocabulary $V$ of words, and assign each word a unique integer $i$.
+There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
+Syntactic information refers to grammatical constructs and the way that words are put together in a language. Semantic information refers to the meaning of this body of text. Such distinctions are fundamental concepts in computer science
+and date back to the very foundations of information theory. \cite{shannon48}. Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
+
+How do we begin to choose these representations? Do we choose to represent words, or perhaps individual letters? Do we choose all the words? What do we do with punctuation and numbers?
+
+\subsection{Vocabularies and Words}
+
+In NLP, the set of unique words in a corpus is called a \textit{vocabulary}. While \textit{the} is the most common word in the English language, it is only one entry in a very large vocabulary table. A rare word like \textit{hemispherectomy} is also one
+entry in this table. Both \textit{apple} and \textit{apples} might be separate entries in our vocabulary table. Generally the first step in many NLP systems is defining this vocabulary and the rules behind which words are in this table and which words are not.
+
+The process of splitting text into separate smaller units, in this case words, is known as \textit{tokenization}. When we run many NLP tasks, we almost always preprocess our text by putting it into one of these tokenizers. The output tokens,
+in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine. There are a number of great tokenization libraries that are open source, and you should always use them rather than
+try to implement this yourself.
+
+Consider the following example:
+
+%TODO - add some epilepsy-themed tokenization example here with spacy or stanford NLP or BERT tokenization, etc. Make sure it adds EOS, isolates period, maybe has a number
+
+The discrete entities created here are the indexes for our representations. The tokenizer system did much of the magic under the hood, standardizing text and creating special tokens for punctuation and numbers. Also notice
+some special tokens have been created, namely [EOS], which stands for end-of-sentence. This is our way of letting a machine know that this was the end of the input.
+
+When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$. If you choose a number that is too small, then
+your system will only recognize a few words and lose a lot of important task-specific vocaublary. However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
+Commonly this number is set around 20,000 - 40,000 words in English, and includes a few special tokens. Common special tokens include:
+\begin{itemize}
+  \item [EOS] - An end of sentence/input marker.
+  \item [PAD] - Special inputs to ignore, usually following an EOS marker.
+  \item [SEP] - A separator, which can be used in inputs that contain multiple sentences or samples.
+  \item [OOV] - Out of vocabulary, or unknown [UNK], which is used when we come across a word that does not exist in our vocabulary.
+\end{itemize}
+
+The out-of-vocabulary token is of particular importance in medicine. If we load a vocabulary with 30,000 words, often these are roughly the most common 30,000 words in the English language. We will still have a few [OOV] tokens
+for rare words. However, just because a general system chooses its vocabulary based on word frequency does not mean that this is the best choice of vocabulary for the task at hand. Medical corpora have a very different word frequency
+distribution than non-medical corpora, particulary because of nuanced vocabulary that is absolutely crucial. Consider the following example:
+
+%TODO - add some epilepsy-themed example that throws away all the epilepsy words%
+
+In the example above, notice the importance of the words that have been thrown away. Not good!
+
+We will address this issue in the ensuing sections. For now, suffice it to say that we should make sure our vocabularies are catered toward our task at hand or are built in such a way that they can still extract signal from these tokens.
+
+\subsection{Word Representations}
+
+Given that we have defined a vocabulary $V$ of words, these are the keys to our lookup table of numeric representations. But what do we store in that table as the value?
+
+A simple way to achieve this representation for $V$ is to assign each word a unique integer $i$.
 The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$\footnote{This is also known as a one-hot encoding}.
+
 \begin{verbatim}
   have = [1, 0, 0, 0, 0, 0, ... 0]
   a    = [0, 1, 0, 0, 0, 0, ... 0]
@@ -60,7 +107,6 @@ For example a word like \textit{the} is very common and appears in many differen
 It is unlikely that there is a lot of signal we can extract from it.
 On the other hand, a word like \textit{epilepsy} will be much more rare and specific to a given task, and we would like to raise its importance.
 This has the net effect of allowing us to find a good representation for larger word sequences.
-% One way of defining importance is to compare how often a word occurs in a document compared to the entire corpus.
 
 To address the second point, we will be touching on a very important concept, not just relevant in NLP, but also in the world of ML in general: Embeddings.
 
@@ -147,6 +193,9 @@ There are a few additional takeaways from this example. Note that we will addres
 \end{itemize}
 
 What if we choose to use only a center word, and have our model predict all of the surrounding context words? This is a common training technique for embeddings as well, and is known as the Skip-Gram model.
+
+\subsubsection{Spacy Example}
+This is placeholder text
 
 \subsubsection{Character and Subword Embeddings}
 This is placeholder text
