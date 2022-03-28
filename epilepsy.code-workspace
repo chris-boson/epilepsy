@@ -1,4 +1,18 @@
 {
+  "folders": [
+    {
+      "name": "🧠 epilepsy",
+      "path": "."
+    },
+    {
+      "name": "📖 book",
+      "path": "book"
+    },
+    {
+      "name": "🧑‍💻 code",
+      "path": "code"
+    }
+  ],
   "settings": {
     "terminal.integrated.env.osx": {
       "SYSTEM_VERSION_COMPAT": "1",
