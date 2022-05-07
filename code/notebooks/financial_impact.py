@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import torch
 import umap
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -17,7 +18,7 @@ pd.set_option("max_colwidth", 400)
 pd.set_option("display.max_rows", None)
 
 # %% [markdown]
-# # Load Data
+#  # Load Data
 
 # %%
 df = pd.read_csv(
@@ -30,10 +31,10 @@ df = df.rename(
         "Do you have any comments about brain surgery in general?": "general",
     }
 )
-df
+df.shape
 
 # %% [markdown]
-# # Clustering
+#  # Clustering
 
 # %%
 model = SentenceTransformer("distilbert-base-nli-mean-tokens")
@@ -50,7 +51,6 @@ cluster = hdbscan.HDBSCAN(
 umap_embeddings.shape, np.unique(cluster.labels_)
 
 # %%
-
 # Prepare data
 umap_data = umap.UMAP(n_neighbors=5, n_components=2, min_dist=0.0, metric="cosine").fit_transform(
     embeddings
@@ -90,13 +90,12 @@ fig = px.scatter(
 fig.show()
 
 # %% [markdown]
-# # Cluster Names
+#  # Cluster Names
 
 # %%
 docs_df = pd.DataFrame(df, columns=["finance", "cluster"])
 docs_df["id"] = range(len(docs_df))
 docs_per_topic = docs_df.groupby(["cluster"], as_index=False).agg({"finance": " ".join})
-
 
 # %%
 def c_tf_idf(documents, m, ngram_range=(1, 1)):
@@ -114,8 +113,6 @@ def c_tf_idf(documents, m, ngram_range=(1, 1)):
 tf_idf, count = c_tf_idf(docs_per_topic["finance"].values, m=len(df))
 
 # %%
-
-
 def extract_top_n_words_per_topic(tf_idf, count, docs_per_topic, n=20):
     words = count.get_feature_names()
     labels = list(docs_per_topic.cluster)
@@ -151,22 +148,22 @@ for cluster in top_n_words.keys():
     print(f"Cluster: {cluster}")
     print(top_n_words[cluster][:5])
 
-# %%
-
-
 # %% [markdown]
-# # Paraphrase
+#  # Paraphrase
 
-
+# %%
+device = "cuda" if torch.cuda.is_available() else "cpu"
 tokenizer = AutoTokenizer.from_pretrained("Vamsi/T5_Paraphrase_Paws")
-model = AutoModelForSeq2SeqLM.from_pretrained("Vamsi/T5_Paraphrase_Paws")
+model = AutoModelForSeq2SeqLM.from_pretrained("Vamsi/T5_Paraphrase_Paws").to(device)
 
 # %%
 paraphrases = []
 for _, row in tqdm(df.iterrows(), total=df.shape[0]):
     text = "paraphrase: " + row["finance"] + " </s>"
     encoding = tokenizer.encode_plus(text, pad_to_max_length=True, return_tensors="pt")
-    input_ids, attention_masks = encoding["input_ids"], encoding["attention_mask"]
+    input_ids, attention_masks = encoding["input_ids"].to(device), encoding["attention_mask"].to(
+        device
+    )
 
     outputs = model.generate(
         input_ids=input_ids,
@@ -177,13 +174,12 @@ for _, row in tqdm(df.iterrows(), total=df.shape[0]):
         top_p=0.95,
         early_stopping=True,
         num_return_sequences=1,
+        temperature=1.0,
     )
     paraphrases.append(
         tokenizer.decode(outputs[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
     )
 df["finance_paraphrased"] = paraphrases
-
-# %%
 df[["finance", "finance_paraphrased"]]
 
 # %%
