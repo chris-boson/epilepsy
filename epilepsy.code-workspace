@@ -22,6 +22,9 @@
       "SYSTEM_VERSION_COMPAT": "1",
       "POETRY_VIRTUALENVS_IN_PROJECT": "1"
     },
+    "terminal.integrated.env.linux": {
+      "POETRY_VIRTUALENVS_IN_PROJECT": "1"
+    },
     "[python]": {
       "editor.codeActionsOnSave": {
         "source.organizeImports": true,

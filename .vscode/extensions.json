@@ -1,3 +1,12 @@
 {
-  "recommendations": ["ms-python.vscode-pylance", "pkief.material-icon-theme"]
+  "recommendations": [
+    "ms-python.vscode-pylance",
+    "formulahendry.terminal",
+    "pkief.material-icon-theme",
+    "coenraads.bracket-pair-colorizer-2",
+    "ms-python.vscode-pylance",
+    "LittleFoxTeam.vscode-python-test-adapter",
+    "mhutchie.git-graph",
+    "eamodio.gitlens"
+  ]
 }
