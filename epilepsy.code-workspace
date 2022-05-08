@@ -1,7 +1,28 @@
 {
+  "folders": [
+    {
+      "name": "🧠  epilepsy",
+      "path": "."
+    },
+    {
+      "name": "📖  book",
+      "path": "book"
+    },
+    {
+      "name": "🧑‍💻  code",
+      "path": "code"
+    },
+    {
+      "name": "🤖  transformer_classification",
+      "path": "transformer_classification_framework"
+    }
+  ],
   "settings": {
     "terminal.integrated.env.osx": {
       "SYSTEM_VERSION_COMPAT": "1",
+      "POETRY_VIRTUALENVS_IN_PROJECT": "1"
+    },
+    "terminal.integrated.env.linux": {
       "POETRY_VIRTUALENVS_IN_PROJECT": "1"
     },
     "[python]": {
@@ -15,7 +36,9 @@
     "python.formatting.provider": "black",
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "python.testing.unittestEnabled": true,
-    "python.formatting.blackArgs": ["--line-length=100"],
+    "python.formatting.blackArgs": [
+      "--line-length=100"
+    ],
     "python.testing.unittestArgs": [
       "-v",
       "-s",
