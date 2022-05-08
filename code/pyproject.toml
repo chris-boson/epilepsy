@@ -6,7 +6,7 @@ authors = []
 
 [tool.poetry.dependencies]
 python = "3.8.*"
-transformer_classification_framework = { git = "https://github.com/robmsylvester/transformer_classification_framework.git", tag = "0.1.2" }
+sheepy = { git = "https://github.com/robmsylvester/sheepy.git", rev = "f0d53e8a" }
 pytorch-lightning = "1.5.8"
 torch = "1.10.2"
 boto3 = "^1.21.0"
