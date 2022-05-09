@@ -2,8 +2,9 @@ import argparse
 import os
 
 import pandas as pd
-from lib.src.common.df_ops import split_dataframes
-from lib.src.data_modules.multi_label_csv_data_module import MultiLabelCSVDataModule
+
+from sheepy.src.common.df_ops import split_dataframes
+from sheepy.src.data_modules.multi_label_csv_data_module import MultiLabelCSVDataModule
 
 
 class EpilepsyDataModule(MultiLabelCSVDataModule):

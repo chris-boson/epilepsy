@@ -1,14 +1,18 @@
 import argparse
 import json
+import logging
+import os
+from typing import Tuple
 
 import torch
-from lib.src.experiment.base_experiment import Experiment
-from lib.src.experiment.sweep_experiment import SweepExperiment
+from pytorch_lightning import LightningDataModule, LightningModule
 
-from transformer_classification_framework.src.config.module_mappings import (
-    data_module_mapping,
-    model_mapping,
-)
+from sheepy.src.common.timestamp import get_timestamp_now
+from sheepy.src.config.module_mappings import data_module_mapping, model_mapping
+from sheepy.src.experiment.base_experiment import Experiment
+from sheepy.src.experiment.sweep_experiment import SweepExperiment
+
+logger = logging.getLogger("epilepsy")
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -18,12 +22,6 @@ def get_parser() -> argparse.ArgumentParser:
     # TODO - some these can be moved to a config, such as fp16
     parser.add_argument(
         "--config", required=True, type=str, help="Location of experiment config profile JSON."
-    )
-    parser.add_argument(
-        "--time",
-        type=str,
-        required=True,
-        help="current time str, populated by shell most likely, in format YYYY_MM_dd__hh_mm_ss_UTC",
     )
     parser.add_argument(
         "--fp16",
@@ -75,11 +73,10 @@ def get_parser() -> argparse.ArgumentParser:
         default=None,
         help="Name of the directory with pretrained model. Used only in evaluation mode",
     )
-
     return parser
 
 
-def main():
+def load_config() -> Tuple[argparse.Namespace, LightningDataModule, LightningModule]:
     parser = get_parser()
     args, _ = parser.parse_known_args()
 
@@ -92,12 +89,14 @@ def main():
             model = model_mapping[model_key]
         except KeyError:
             raise KeyError(
-                "You must pass both a 'data_module' and 'model' argument to the config file under the 'experiment' key object, and these must be mapped in the module_mappings.py file"
+                "You must pass both a 'data_module' and 'model' argument to the config file under "
+                "the 'experiment' key object, and these must be mapped in the module_mappings.py file"
             )
 
     if args.tune and args.evaluate:
         raise ValueError(
-            "You cannot run the model with both tune and evaluate mode turned on. Pick one or the other, or neither if you want to just train."
+            "You cannot run the model with both tune and evaluate mode turned on. Pick one or the "
+            "other, or neither if you want to just train."
         )
 
     parser = data_module.add_model_specific_args(parser)
@@ -106,6 +105,15 @@ def main():
 
     # Use the environment to verify a few additional arguments
     args = parser.parse_args()
+    args.time = get_timestamp_now()
+    args.output_dir = args.output_dir.replace("~", os.environ["HOME"])
+    args.data_dir = args.data_dir.replace("~", os.environ["HOME"])
+    logger.info(json.dumps(vars(args), indent=4))
+    return args, data_module, model
+
+
+def main():
+    args, data_module, model = load_config()
 
     args = Experiment.validate_experiment_args(args)
 
