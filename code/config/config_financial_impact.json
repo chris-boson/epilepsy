@@ -72,7 +72,7 @@
         "nr_frozen_epochs": 1,
         "loader_workers": 8,
         "context_labels": "remove",
-        "batch_size": 32,
+        "batch_size": 2,
         "hidden_layer_sizes": [
             128,
             128,
