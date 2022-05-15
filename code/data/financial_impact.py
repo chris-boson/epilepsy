@@ -7,7 +7,7 @@ from sheepy.src.common.df_ops import split_dataframes
 from sheepy.src.data_modules.multi_label_csv_data_module import MultiLabelCSVDataModule
 
 
-class EpilepsyDataModule(MultiLabelCSVDataModule):
+class FinancialImpactDataModule(MultiLabelCSVDataModule):
     """
     DataLoader based on the multilabel csv data module provoiding an example of multi label ETL
     """

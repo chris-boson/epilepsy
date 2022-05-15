@@ -5,14 +5,17 @@ import os
 from typing import Tuple
 
 import torch
+from data.financial_impact import FinancialImpactDataModule
 from pytorch_lightning import LightningDataModule, LightningModule
 
 from sheepy.src.common.timestamp import get_timestamp_now
-from sheepy.src.config.module_mappings import data_module_mapping, model_mapping
+from sheepy.src.config.module_mappings import model_mapping
 from sheepy.src.experiment.base_experiment import Experiment
 from sheepy.src.experiment.sweep_experiment import SweepExperiment
 
 logger = logging.getLogger("epilepsy")
+
+DATAMODULE_MAP = {"financial_impact": FinancialImpactDataModule}
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -85,7 +88,7 @@ def load_config() -> Tuple[argparse.Namespace, LightningDataModule, LightningMod
         try:
             data_module_key = config["experiment"]["data_module"]
             model_key = config["experiment"]["model"]
-            data_module = data_module_mapping[data_module_key]
+            data_module = DATAMODULE_MAP[data_module_key]
             model = model_mapping[model_key]
         except KeyError:
             raise KeyError(
@@ -136,7 +139,7 @@ def main():
         else:
             experiment.prepare_trainer(data_module, model)
             experiment.train()
-            experiment.test()
+            # experiment.test()
 
 
 if __name__ == "__main__":

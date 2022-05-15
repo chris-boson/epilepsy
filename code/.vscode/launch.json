@@ -8,7 +8,8 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}"
+                "PYTHONPATH": "${workspaceFolder}",
+                "CUDA_VISIBLE_DEVICES": "0"
             },
             "args": [
                 "--experiment_name=debug",
@@ -29,7 +30,7 @@
             },
             "args": [
                 "--output_dir=~/projects/epilepsy/models",
-                "--config=./config/config_financial_impact_small.json",
+                "--config=./config/config_financial_impact.json",
                 "--data_dir=~/projects/epilepsy/datasets/financial_impact"
             ]
         }

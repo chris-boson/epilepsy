@@ -1,10 +1,10 @@
 {
     "experiment": {
-        "project_name": "Epilepsy_General",
+        "project_name": "epilepsy",
         "description": "Example on Multilabel Classification using Epilepsy General Dataset",
-        "dataset": "epilepsy",
+        "dataset": "financial_impact",
         "version": 0,
-        "data_module": "epilepsy_data_module",
+        "data_module": "financial_impact",
         "model": "multilabel_transformer_classifier",
         "restore_from_checkpoint": false
     },
@@ -13,7 +13,7 @@
         "tracked_metrics": [
             {
                 "name": "accuracy",
-                "average": "weighted"
+                "average": null
             },
             {
                 "name": "auroc",
@@ -21,15 +21,15 @@
             },
             {
                 "name": "f1",
-                "average": "weighted"
+                "average": null
             },
             {
                 "name": "precision",
-                "average": "weighted"
+                "average": null
             },
             {
                 "name": "recall",
-                "average": "weighted"
+                "average": null
             }
         ]
     },
@@ -47,23 +47,27 @@
         ],
         "text": "Text",
         "encoder_model": "google/bert_uncased_L-2_H-128_A-2",
-        "positive_resample_rate" : {
-            "Not eligible" : 2,
-            "Last resort" : 5,
-            "Considering it" : 5,
-            "Was Unsuccessful" : 5,
-            "Was partially successful" : 5,
-            "Was successful" : 5,
-            "Side effects" : 5,
-            "Risk" : 2,
-            "Unknown outcome" : 5
+        "positive_resample_rate": {
+            "Not eligible": 2,
+            "Last resort": 6,
+            "Considering it": 5,
+            "Was Unsuccessful": 5,
+            "Was partially successful": 5,
+            "Was successful": 5,
+            "Side effects": 5,
+            "Risk": 2,
+            "Unknown outcome": 6
         },
         "disable_weight_scale": false,
         "nr_frozen_epochs": 1,
         "loader_workers": 8,
         "context_labels": "remove",
         "batch_size": 8,
-        "hidden_layer_sizes": [128, 128, 32],
+        "hidden_layer_sizes": [
+            128,
+            128,
+            32
+        ],
         "save_epoch_count": 4,
         "num_epochs": 4,
         "num_epochs_decay": 100,
@@ -73,7 +77,7 @@
         "early_stop_enabled": false,
         "learning_rate": 3e-5,
         "encoder_learning_rate": 1e-5,
-        "train_ratio": 0.60,
+        "train_ratio": 0.6,
         "validation_ratio": 0.4,
         "test_ratio": 0.0,
         "num_labels": 9,
@@ -83,7 +87,7 @@
         "metric": "val/AUROC",
         "metric_goal": "max",
         "check_val_every_n_epoch": 1,
-        "val_check_interval": 0.5,
+        "val_check_interval": 1.0,
         "gradient_log_steps": 100,
         "param_log_steps": null
     },
@@ -101,9 +105,21 @@
             },
             "num_dense_layers": {
                 "values": [
-                    [512, 256, 64],
-                    [256, 64],
-                    [512, 256, 128, 64]
+                    [
+                        512,
+                        256,
+                        64
+                    ],
+                    [
+                        256,
+                        64
+                    ],
+                    [
+                        512,
+                        256,
+                        128,
+                        64
+                    ]
                 ]
             }
         }
