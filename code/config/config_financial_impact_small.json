@@ -13,7 +13,7 @@
         "tracked_metrics": [
             {
                 "name": "accuracy",
-                "average": null
+                "average": "weighted"
             },
             {
                 "name": "auroc",
@@ -21,15 +21,15 @@
             },
             {
                 "name": "f1",
-                "average": null
+                "average": "weighted"
             },
             {
                 "name": "precision",
-                "average": null
+                "average": "weighted"
             },
             {
                 "name": "recall",
-                "average": null
+                "average": "weighted"
             }
         ]
     },

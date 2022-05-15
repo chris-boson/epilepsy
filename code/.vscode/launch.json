@@ -23,7 +23,7 @@
             "type": "python",
             "request": "launch",
             "module": "train",
-            "justMyCode": true,
+            "justMyCode": false,
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
@@ -31,7 +31,7 @@
             "args": [
                 "--output_dir=~/projects/epilepsy/models",
                 "--config=./config/config_financial_impact.json",
-                "--data_dir=~/projects/epilepsy/datasets/financial_impact"
+                "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
             ]
         }
     ]
