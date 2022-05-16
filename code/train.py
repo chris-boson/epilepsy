@@ -8,14 +8,16 @@ import torch
 from data.financial_impact import FinancialImpactDataModule
 from pytorch_lightning import LightningDataModule, LightningModule
 
-from sheepy.src.common.timestamp import get_timestamp_now
-from sheepy.src.config.module_mappings import model_mapping
-from sheepy.src.experiment.base_experiment import Experiment
-from sheepy.src.experiment.sweep_experiment import SweepExperiment
+from sheepy.common.timestamp import get_timestamp_now
+from sheepy.experiment.base_experiment import Experiment
+from sheepy.experiment.sweep_experiment import SweepExperiment
+from sheepy.models import MODEL_MAPPING
 
 logger = logging.getLogger("epilepsy")
 
-DATAMODULE_MAP = {"financial_impact": FinancialImpactDataModule}
+DATA_MODULE_MAPPING = {
+    "financial_impact": FinancialImpactDataModule,
+}
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -88,8 +90,8 @@ def load_config() -> Tuple[argparse.Namespace, LightningDataModule, LightningMod
         try:
             data_module_key = config["experiment"]["data_module"]
             model_key = config["experiment"]["model"]
-            data_module = DATAMODULE_MAP[data_module_key]
-            model = model_mapping[model_key]
+            data_module = DATA_MODULE_MAPPING[data_module_key]
+            model = MODEL_MAPPING[model_key]
         except KeyError:
             raise KeyError(
                 "You must pass both a 'data_module' and 'model' argument to the config file under "
