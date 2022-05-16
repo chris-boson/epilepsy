@@ -6,7 +6,7 @@ authors = []
 
 [tool.poetry.dependencies]
 python = "3.8.*"
-sheepy = { git = "https://github.com/robmsylvester/sheepy.git", rev = "ffc8d70" }
+sheepy = { git = "https://github.com/robmsylvester/sheepy.git", rev = "7b03d12" }
 pytorch-lightning = "1.5.8"
 torch = "1.11"
 boto3 = "^1.21.0"

@@ -1485,8 +1485,8 @@ toml = ["setuptools (>=42)"]
 
 [[package]]
 name = "sheepy"
-version = "0.1.4"
-description = ""
+version = "0.1.5"
+description = "Experiment-tracking wrapper around PyTorch Lightning, Weights & Biases, Pandas, and Huggingface Trasformers that aims at rapid experimentation for common text classification tasks using transformers"
 category = "main"
 optional = false
 python-versions = ">=3.8,<3.10"
@@ -1498,7 +1498,7 @@ pandas = ">=1.1.1"
 Pillow = ">=8.1.0,<8.2.0"
 plotly = "4.10.0"
 pytest = ">=6.2.2,<6.3.0"
-pytorch_lightning = "1.5.8"
+pytorch-lightning = "1.5.8"
 pytorch-nlp = "0.5.0"
 scikit-learn = "0.22.1"
 torch = ">=1.6.0"
@@ -1510,8 +1510,8 @@ wandb = "0.12.6"
 [package.source]
 type = "git"
 url = "https://github.com/robmsylvester/sheepy.git"
-reference = "ffc8d70"
-resolved_reference = "ffc8d7040db0b3d4706d1fa7ed8ca060529f4cc2"
+reference = "7b03d12"
+resolved_reference = "7b03d127794428481dd148d2a9edbe8b2fe56436"
 
 [[package]]
 name = "shortuuid"
@@ -1916,7 +1916,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.*"
-content-hash = "bf143c396d30db36a017fb21fffc007bdac57073f236d6dc903441d9719a3c7d"
+content-hash = "75135c746fb2b3bba31f4bd94359cfd1691f7574164add89b96bf33c159997de"
 
 [metadata.files]
 absl-py = [
