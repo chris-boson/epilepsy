@@ -52,30 +52,44 @@ The process of splitting text into separate smaller units, in this case words, i
 in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine. There are a number of great tokenization libraries that are open source, and you should always use them rather than
 try to implement this yourself.
 
-Consider the following example:
 
-%TODO - add some epilepsy-themed tokenization example here with spacy or stanford NLP or BERT tokenization, etc. Make sure it adds EOS, isolates period, maybe has a number
+\begin{verbatim}
+  # Example 1: Spacy Tokenization Using Medical Words
 
-The discrete entities created here are the indexes for our representations. The tokenizer system did much of the magic under the hood, standardizing text and creating special tokens for punctuation and numbers. Also notice
-some special tokens have been created, namely [EOS], which stands for end-of-sentence. This is our way of letting a machine know that this was the end of the input.
+  import spacy
+  sample = "After a temporal lobe resection, the atonic and clonic seizure frequency fell by 50%."
+
+  nlp = spacy.load("en_core_web_sm")
+  english_vocab = set(nlp.vocab.strings)
+  spacy_document = nlp(sample)
+
+  for token in spacy_document:
+      found = "found" if token.text in english_vocab else "NOT FOUND"
+      print("{}: {}".format(token.text, found))
+
+\end{verbatim}
+
+The discrete numeric entities created in Example 1 are the indexes for our representations. The tokenizer system did much of the magic under the hood, lowercasing and standardizing text and creating special tokens for punctuation and numbers.
 
 When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$. If you choose a number that is too small, then
 your system will only recognize a few words and lose a lot of important task-specific vocaublary. However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
-Commonly this number is set around 20,000 - 40,000 words in English, and includes a few special tokens. Common special tokens include:
+Commonly this number is set around 20,000 - 40,000 words in English, though it can be much larger.
+
+Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks. Common special tokens include:
 \begin{itemize}
   \item [EOS] - An end of sentence/input marker.
   \item [PAD] - Special inputs to ignore, usually following an EOS marker.
   \item [SEP] - A separator, which can be used in inputs that contain multiple sentences or samples.
-  \item [OOV] - Out of vocabulary, or unknown [UNK], which is used when we come across a word that does not exist in our vocabulary.
+  \item [OOV] - Out of vocabulary, also commonly represented as [UNK] (unknown), which is used when we come across a word that does not exist in our vocabulary.
 \end{itemize}
 
 The out-of-vocabulary token is of particular importance in medicine. If we load a vocabulary with 30,000 words, often these are roughly the most common 30,000 words in the English language. We will still have a few [OOV] tokens
 for rare words. However, just because a general system chooses its vocabulary based on word frequency does not mean that this is the best choice of vocabulary for the task at hand. Medical corpora have a very different word frequency
-distribution than non-medical corpora, particulary because of nuanced vocabulary that is absolutely crucial. Consider the following example:
+distribution than non-medical corpora, particulary because of nuanced vocabulary that is absolutely crucial.
 
 %TODO - add some epilepsy-themed example that throws away all the epilepsy words%
 
-In the example above, notice the importance of the words that have been thrown away. Not good!
+In Example 1 above, notice the importance of the words that have been thrown away. If this sentence were to be loaded into a machine as-is, we might be losing far too much information because we have to nearly all of the relevant terminology with OOV tokens.
 
 We will address this issue in the ensuing sections. For now, suffice it to say that we should make sure our vocabularies are catered toward our task at hand or are built in such a way that they can still extract signal from these tokens.
 
@@ -198,7 +212,36 @@ What if we choose to use only a center word, and have our model predict all of t
 This is placeholder text
 
 \subsubsection{Character and Subword Embeddings}
-This is placeholder text
+
+In Example 1, we covered the issue of missing vocabulary that is frequently encountered when using word-level tokenization. However, there are other strategies that are commonly used that help to avoid this issue.
+One such simple way around out-of-vocabulary tokens is to use character-level tokenization. Instead of having a vocabulary that is tens of thousands of words long, you only have a vocabulary that contains the characters in
+your language, with the addition of punctuation, digits, and a few special tokens for sentence and word marking. As long as tokenizer is able to mark which characters start a word and which characters are continuations
+of a word, then the original sequence of words can always be recovered.
+
+Unfortunately, the tradeoff for a small vocabulary size with no unknown word entries is that the length of tokens to represent a sentence is clearly much larger. Empirically, these models do not perform as well,
+partially because of this sequence but also because of the loss of information that is represented in word vectors.
+
+In practice, the best models are often somewhere in the middle, in what is known as word-piece, or subword, vocabularies. These tokenizers and vocabularies contain a rich set of common words, but also have subword units
+that can be used to piece together out-of-vocabulary words. These subword units behave like normal word vectors and can store semantic and syntactic information.
+
+
+\begin{verbatim}
+  # Example 2 - Wordpiece Tokenizers
+
+  from transformers import BertTokenizer
+
+  sample = "After a temporal lobe resection, the atonic and clonic seizure frequency fell by 50%."
+
+  bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+  encoded_ids= bert_tokenizer.encode(sample)
+  encoded_tokens = bert_tokenizer.convert_ids_to_tokens(encoded_ids)
+
+  for token, id  in zip(encoded_tokens, encoded_ids):
+    print("{}: {}".format(token,id))
+\end{verbatim}
+
+In example two,
 
 \subsubsection{Vocabularies and Medical Embeddings}
 This is placeholder text.
