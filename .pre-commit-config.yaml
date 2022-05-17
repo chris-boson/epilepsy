@@ -6,6 +6,7 @@ repos:
         exclude: ^.vscode
       - id: check-yaml
       - id: trailing-whitespace
+        exclude: ^book
   - repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
@@ -16,7 +17,7 @@ repos:
     rev: 3.8.3
     hooks:
       - id: flake8
-        args: ["--ignore=E203,E501,W503"]
+        args: ["--ignore=E203,E501,W503,E302,W391"]
   - repo: https://github.com/pycqa/isort
     rev: 5.8.0
     hooks:
