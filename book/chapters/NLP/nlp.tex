@@ -28,7 +28,7 @@ To wrap it all together, we walk through a complete example that highlights best
 We will keep the discussion focused on tasks in epilepsy, using a running example of SUDEP prediction from electronic medical record (EMR) notes.
 Many of the concepts introduced here are very general and are straightforward translations to domains outside of SUDEP prediction, epilepsy, and even NLP.
 
-\subsection{Introduction to Natural Language Processing}
+\section{Introduction to Natural Language Processing}
 
 Natural language processing (NLP) is a field of computer science that deals with the extraction, processing, and understanding of human language.
 It is known as the field of computer linguistics, and is a subfield of artificial intelligence.
@@ -256,47 +256,62 @@ These subword units behave like normal word vectors and can store semantic and s
 
 In example two,
 
-\subsubsection{Vocabularies and Medical Embeddings}
-This is placeholder text.
-Would \texttt{BioBERT} and \texttt{Bio\textunderscore ClinicalBERT} here be worth mentioning?
-If not, should maybe follow the transformers section
+% \subsubsection{Vocabularies and Medical Embeddings}
+% This is placeholder text.
+% Would \texttt{BioBERT} and \texttt{Bio\textunderscore ClinicalBERT} here be worth mentioning?
+% If not, should maybe follow the transformers section
 
 \subsection{Transformers}
-Until recently building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data, even when relying on pre-trained word embeddings.
-The resulting systems were often still brittle.
+There have been significant advancements in ML due to a variety of factors, such as the availability of larger and larger datasets, as well as ever increasing computational power at lower and lower prices, better software tools, libraries and model architectures.
+Especially the advent of deep learning (DL), fueled by the emergence of GPUs from about 2012, enabled scaling to many orders of magnitude larger datasets and models.
+The common wisdom before DL was that as the number of parameters in a model increases beyond a certain threshold, it tends to overfit the training data, leading to poor generalization when deployed in the real world.
+Deep Learning based models empirically do not seem to exhibit this behavior, and instead tend gain performance as they get bigger, albeit more slowly.
+
+Until recently, building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data, even when relying on pre-trained word embeddings - the resulting systems were often still brittle.
 
 In recent years some surprisingly powerful architectures and pre-training regimes have emerged that build on the concepts we have discussed here, most notably under the name of \textit{Transformers\footnote{BERT, GPT}}, that address the last bullet point of our representation's shortcomings.
 
 The details of the inner workings are beyond the scope of this tutorial, for now it suffices to know that they are able to learn robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
 In fact, they can be considered near the level of a human that just knows the English language (or other languages), along with a broad array of factual knowledge about the world (think Wikipedia).
 Just like a human, they can be taught specialty knowledge that is relevant to a given task, in ML we would say we \textit{finetune} them.
+% Where these models to date generally fall short is in terms of logical inference.
 This paradigm shift has led to a step function improvement in terms of performance and sample efficiency in a wide variety of NLP tasks where Transformers are the defacto state of the art.
 
 In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
 
-% Where these models to date generally fall short is in terms of logical inference.
+\subsubsection{Pre-training}
+Modern DL based systems, such as the aforementioned Transformer architectures, are pre-trained on gigantic datasets\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} and can be downloaded for free\footnote{Huggingface}.
+Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve a given performance.
+Furthermore, it may be helpful to start with a model that is pre-trained on more domain specific datasets such as \texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}} or \texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}, or pre-train your model from scratch.
 
-\subsection{NLP Tasks in Epilepsy}
-This is a placeholder title.
-A couple pages here might do nicely as example studies for some important techniques for epileptologists.
+\section{NLP Tasks in Epilepsy}
+
+% This is a placeholder title.
+% A couple pages here might do nicely as example studies for some important techniques for epileptologists.
 Now that we have an understanding of some of the basics of computational representations of language data, let us take a look at some of the modern use cases for NLP in industry, catered toward epileptologists and other medical practitioners.
 
-\subsubsection{Unstructured Text - Retrospective Research}
+
+\subsection{Unstructured Text - Retrospective Research}
 Within the medical field, there are many sources of unstructured text that are primarily aimed as a either a communication channel between specialists, or a way for patients to pass information that isn't captured in a structured format.
-Clinical Notes, Progress Notes, Operative Notes, Discharge Summaries, Pathology Reports; Surgery Reports; all of these sources carry information, but traditionally require experts in the field to extract it.
+Clinical Notes, Progress Notes, Operative Notes, Discharge Summaries, Pathology Reports, Surgery Reports; all of these sources carry information, but traditionally require experts in the field to extract it.
 If we can teach systems to read through this unstructured text and perform respectably close to these experts, we can perform large-scale clinical retrospective research much faster and at a much lower cost.
 
 Example:
 https://academic.oup.com/jamia/advance-article/doi/10.1093/jamia/ocac018/6534112
 
-\subsubsection{Unstructured Text - Quality of Life}
+\subsection{Unstructured Text - Quality of Life}
 This is a placeholder for some of the work that is done on the Quality of Life surveys for the INJS Seizure Tracker datasets.
 
-\subsubsection{Text Preprocessing and Tokenization}
+\subsection{Text Preprocessing and Tokenization}
 
-\subsubsection{Named Entity Recognition and PHI}
+Placeholder.
+
+\subsection{Named Entity Recognition and PII}
 
 This is a working title. NER is an important problem in medicine, for PII if nothing else, and I figure we could go through some basics of using it with Spacy, NLTK, or Stanford NLP here.
+
+The reluctance towards data sharing and common formats in the medical domain has hampered progress significantly.
+
 Stopwords would be worth mentioning?
 
 \subsection{Mining Unstructured Text and Clinical Documentation}
@@ -306,18 +321,23 @@ Stopwords would be worth mentioning?
 This is placeholder text. Talk about clinical documentation and EHR notes, and other forms of unstructred text, being used for downstream classification tasks.
 Then, give some examples of them, and what these people did, and possibly how transformers could probably improve this work greatly.
 
-\subsubsection{Clinical Trial Matching and Eligibility Prescreening}
+\subsection{Clinical Trial Matching and Eligibility Prescreening}
 
 This is a placeholder text. https://www.nature.com/articles/d41586-019-02871-3
 
-\subsubsection{Surgical Candidacy}
+\subsection{Surgical Candidacy}
 
 This is placeholder text
 
-\subsubsection{Avoiding Epilepsy Misdiagnosis}
+\subsection{Avoiding Epilepsy Misdiagnosis}
 
 This is placeholder text. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4419916/
 
-\subsection{Full Walkthrough - SUDEP Detection}
+
+\section{Full Walkthrough - SUDEP Detection}
+
+This is placeholder text
+
+\section{Full Walkthrough - Financial Impact of Epilepsy}
 
 This is placeholder text
