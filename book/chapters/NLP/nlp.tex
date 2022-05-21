@@ -1,5 +1,7 @@
 \chapterauthor{Author Name}{}
+
 \chapter{Natural Language Processing}
+
 In this chapter we introduce modern NLP libraries, techniques and their applications.
 This chapter will focus on deep learning methods and less on computational linguistics that require nuanced knowledge of linguistics.
 We explore what it means to represent words and sequences of words with rich numeric representations that are better-suited toward modern computational tasks.
@@ -167,7 +169,7 @@ The hard part of understanding the meaning of the sentence is already done.
 Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
 Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
 
-This underlying assumption that similar neighboring words share a semantic similarity to center words is a powerful assumption, and what at the heart of many modern training objects for embeddings that are used in many downstream ML systems.
+This underlying assumption that similar neighboring words share a semantic similarity to center words is powerful, and at the heart of many modern training objectives for embeddings that are used in many downstream ML systems.
 We do not inherently inject a great deal of model bias, but rather rely on having a large enough training set that the word vectors will become meaningful representations with respect to one another.
 A corpus such as Common Crawl\footnote{Common Crawl Link}, which contains roughly 840 billion tokens of over two million unique words, provide such scale.
 There are other corpora used in these unsupervised processes, one such common candidate being a collection of all Wikipedia articles.
@@ -188,27 +190,27 @@ Our model makes use of an additional parameter, a context window size $c$, that 
 If we choose $c = 8$, our training sample would become
 
 \begin{verbatim}
-  ... lamictal to treat their focal seizures , the [TARGET]
+  ... lamictal to treat their focal seizures, the [MASK]
   continued experiencing symptoms though reported a 50 % ...
   \end{verbatim}
 
-For a given center word at index $i$, we consider previous words at indexes $i-1$, $i-2$ ... $i-c$, and all subsequent words at indexes $i+1$, $i+2$ ... $i+c$.
+For a given center word at index $i$, we consider previous words at indexes $i-1$, $i-2$, ..., $i-c$, and all subsequent words at indexes $i+1$, $i+2$, ..., $i+c$.
 In our word sequence $S$, we may then choose to sum the word vectors of each of these context words.
-Our context input then becomes:
+Our context input can be written as:
 \begin{equation}
   \sum_{ \substack {j=-c \\ j \neq 0}}^c w_{i+j}
 \end{equation}
 
-Our task then becomes to predict a probability distribution over the size of our vocabulary $|V|$, where the target is a vector of all 0's with a 1 at the index in the vocabulary for the word \textit{patient}
+Our task is then to predict a probability distribution over the size of our vocabulary $|V|$, where the target is a vector of all 0's with a 1 at the index in the vocabulary for the word \textit{patient}.
 
 There are a few additional takeaways from this example.
 Note that we will address many of these in the sections to follow.
 \begin{itemize}
-  \item The training process will consider this text probably many times, and mask out different words in future iterations.
+  \item The training process will likely consider this text many times, and mask out different words in each iteration.
   \item Our processed sentence is slightly modified from our original input.
   Notice that the number and percent symbol are split, and that Lamictal is lowercased.
   \item The word \textit{patient} can also be an adjective.
-  Our \textit{patient} embedding will also capture this meaning in our model, dependent upon how often that meaning is used.
+  Our \textit{patient} embedding will also capture this meaning in our model, dependent upon how often it is used with that meaning.
   \item If our context window is too small, we lose information.
   If it is too large, our signal becomes fuzzy as we converge to the global mean vector.
 \end{itemize}
@@ -256,7 +258,7 @@ In example two,
 
 \subsubsection{Vocabularies and Medical Embeddings}
 This is placeholder text.
-Would BioBERT and \textit{Bio\textunderscore ClinicalBERT} here be worth mentioning?
+Would \texttt{BioBERT} and \texttt{Bio\textunderscore ClinicalBERT} here be worth mentioning?
 If not, should maybe follow the transformers section
 
 \subsection{Transformers}
@@ -298,6 +300,8 @@ This is a working title. NER is an important problem in medicine, for PII if not
 Stopwords would be worth mentioning?
 
 \subsection{Mining Unstructured Text and Clinical Documentation}
+
+
 
 This is placeholder text. Talk about clinical documentation and EHR notes, and other forms of unstructred text, being used for downstream classification tasks.
 Then, give some examples of them, and what these people did, and possibly how transformers could probably improve this work greatly.
