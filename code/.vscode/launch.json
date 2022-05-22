@@ -1,6 +1,14 @@
 {
     "configurations": [
         {
+            "name": "Inference",
+            "type": "python",
+            "request": "launch",
+            "module": "inference.handler",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Train Debug",
             "type": "python",
             "request": "launch",

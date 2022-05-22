@@ -133,3 +133,5 @@ dmypy.json
 **/*.toc
 **/*.blg
 **/*.bbl
+
+code/model
