@@ -63,11 +63,6 @@
         "loader_workers": 8,
         "context_labels": "remove",
         "batch_size": 8,
-        "hidden_layer_sizes": [
-            128,
-            128,
-            32
-        ],
         "save_epoch_count": 4,
         "num_epochs": 4,
         "num_epochs_decay": 100,
@@ -87,7 +82,6 @@
         "metric": "val/AUROC",
         "metric_goal": "max",
         "check_val_every_n_epoch": 1,
-        "val_check_interval": 1.0,
         "gradient_log_steps": 100,
         "param_log_steps": null
     },
@@ -102,25 +96,6 @@
             "learning_rate": {
                 "min": 1e-5,
                 "max": 5e-4
-            },
-            "num_dense_layers": {
-                "values": [
-                    [
-                        512,
-                        256,
-                        64
-                    ],
-                    [
-                        256,
-                        64
-                    ],
-                    [
-                        512,
-                        256,
-                        128,
-                        64
-                    ]
-                ]
             }
         }
     }

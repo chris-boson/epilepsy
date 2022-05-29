@@ -16,7 +16,7 @@ class Handler:
         return dict(zip(df["label_name"], df["prob"]))
 
     def handle_request(self, event, context=None):
-        text = event["args"]["text"]
+        text = event["text"]
         probs = self.get_probs(text)
         result = {
             "predictions": probs,

@@ -17,7 +17,8 @@
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
-                "CUDA_VISIBLE_DEVICES": "0"
+                "CUDA_VISIBLE_DEVICES": "0",
+                "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
                 "--project=epilepsy",
@@ -35,7 +36,8 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}"
+                "PYTHONPATH": "${workspaceFolder}",
+                "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
                 "--project=epilepsy",
