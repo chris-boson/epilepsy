@@ -1,0 +1,38 @@
+{
+    "configurations": [
+        {
+            "name": "Train Debug",
+            "type": "python",
+            "request": "launch",
+            "module": "train",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "args": [
+                "--experiment_name=debug",
+                "--output_dir=~/projects/epilepsy/models",
+                "--config=./config/config_financial_impact_small.json",
+                "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
+            ]
+        },
+        {
+            "name": "Train",
+            "type": "python",
+            "request": "launch",
+            "module": "train",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "args": [
+                "--output_dir=~/projects/epilepsy/models",
+                "--config=./config/config_financial_impact.json",
+                "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
+            ]
+        }
+    ]
+}
