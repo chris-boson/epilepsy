@@ -20,36 +20,42 @@ This dataset is small enough to manually inspect, but we the techniques discusse
 \subsubsection{Cluster Labeling}
 \subsubsection{Annotation}
 We can use the cluster labels as a starting point to decide on a coding scheme. For the general comments we decided on the following labels:
-\begin{itemize}
-    \item Not eligible
-    \item Last resort
-    \item Would never do it
-    \item Considering it
-    \item Was Unsuccessful
-    \item Was partially successful
-    \item Was successful
-    \item Side effects
-    \item Risk
-    \item Too expensive
-    \item Complications
-    \item Unknown outcome
-    \item Unnecessary
-    \item Cannot find origin
-\end{itemize}
+\begin{displayquote}
+    \texttt{"Not eligible"},
+    \texttt{"Last resort"},
+    \texttt{"Would never do it"},
 
-% - Large scale data analysis
-%   - Embeddings
-%   - Dimensionality reduction and clustering
-%   - Cluster labeling
-%   - Annotation
-% - Research process
-%   - Sheepy
+    \texttt{"Considering it"},
+    \texttt{"Was Unsuccessful"},
+    \texttt{"Was partially successful"},
+
+    \texttt{"Was successful"},
+    \texttt{"Side effects"},
+    \texttt{"Risk"},
+
+    \texttt{"Too expensive"},
+    \texttt{"Complications"},
+    \texttt{"Unknown outcome"},
+
+    \texttt{"Unnecessary"},
+    \texttt{"Cannot find origin"}
+\end{displayquote}
+We treat this as a so called multilabel classification problem, where a given sample can have multiple true labels simultaneously (i.e. a surgery can be successful and have side effects).
+
+The labeling scheme should cover all the aspects of the data of interest.
+It also needs to be unambiguous, meaning that two experts independently generating the annotations should largely agree on what the correct labels are for each sample.
+If human experts cannot agree, the model will most likely perform poorly as well, as it gets inconsistent signals during training.
+Revise the coding scheme if you find that to be the case.
+We will discuss in Section \ref{metrics_and_sanity_checking} how to go about analyzing model performance and uncover issues in data and annotations.
+
+\subsection{Research Process}
+\subsubsection{Sheepy}
+\subsubsection{Reproducible Experiments}
 %   - Reproducible results
 %     - Experiment tracking
 %     - Parameter tuning
-%   - Metrics and sanity checking
+\subsubsection{Metrics and Sanity Checking}
+\label{metrics_and_sanity_checking}
 %     - SHAP
 %     - Analyze mistakes
 %     - Inference
-
-  % walk through the full process of developing a model to predict the financial impact of epilepsy, and how to do this in a way that is both accurate and scalable.
