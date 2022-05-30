@@ -1,0 +1,55 @@
+\section{Full Walkthrough - Brain Surgery and Financial Impact of Epilepsy}
+
+In this section we will demonstrate how the techniques discussed above can be applied to a practical example within the field of Epilepsy.
+Modern NLP techniques are a powerful tool to analyze large amounts of unstructred or semi structured text data, and we can employ them to develop a coding scheme and significantly reduce the time required to apply it to new data.
+
+We are providing self contained code examples in the acompanying GitHub repository\footnote{https://github.com/chris-boson/epilepsy} that makes use of a general purpose NLP library\footnote{https://github.com/robmsylvester/sheepy} we have developed to make current industry standard tools and libraries more accessible to researchers and practitioners.
+
+
+\subsection{Data Analysis}
+For this section we started out with fairly small dataset ($\sim150$ rows) derived from survey responses regarding  impact and treatment of epilepsy\footnote{Seizure Tracker}:
+\begin{displayquote}
+    Do you have any comments on the financial impact of epilepsy?
+
+    Do you have any comments about brain surgery in general?
+\end{displayquote}
+This dataset is small enough to manually inspect, but we the techniques discussed here scale well beyond.
+\subsubsection{Embeddings}
+
+\subsubsection{Dimensionality Reduction and Clustering}
+\subsubsection{Cluster Labeling}
+\subsubsection{Annotation}
+We can use the cluster labels as a starting point to decide on a coding scheme. For the general comments we decided on the following labels:
+\begin{itemize}
+    \item Not eligible
+    \item Last resort
+    \item Would never do it
+    \item Considering it
+    \item Was Unsuccessful
+    \item Was partially successful
+    \item Was successful
+    \item Side effects
+    \item Risk
+    \item Too expensive
+    \item Complications
+    \item Unknown outcome
+    \item Unnecessary
+    \item Cannot find origin
+\end{itemize}
+
+% - Large scale data analysis
+%   - Embeddings
+%   - Dimensionality reduction and clustering
+%   - Cluster labeling
+%   - Annotation
+% - Research process
+%   - Sheepy
+%   - Reproducible results
+%     - Experiment tracking
+%     - Parameter tuning
+%   - Metrics and sanity checking
+%     - SHAP
+%     - Analyze mistakes
+%     - Inference
+
+  % walk through the full process of developing a model to predict the financial impact of epilepsy, and how to do this in a way that is both accurate and scalable.
