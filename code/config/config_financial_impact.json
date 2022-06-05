@@ -74,7 +74,7 @@
         "context_labels": "remove",
         "batch_size": 2,
         "save_epoch_count": 4,
-        "num_epochs": 100,
+        "max_epochs": 100,
         "num_epochs_decay": 100,
         "accumulate_grad_batches": 1,
         "gradient_clip_val": 1,
