@@ -1,6 +1,6 @@
 {
     "experiment": {
-        "project_name": "epilepsy",
+        "project_name": "financial_impact",
         "description": "Example on Multilabel Classification using Epilepsy General Dataset",
         "dataset": "financial_impact",
         "version": 0,

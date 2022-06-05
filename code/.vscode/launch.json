@@ -21,8 +21,10 @@
                 "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
-                "--project=epilepsy",
+                "--entity=shappy",
+                "--project=financial_impact",
                 "--experiment_name=debug",
+                "--disable_logging",
                 "--output_dir=~/projects/",
                 "--config=./config/config_financial_impact_small.json",
                 "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
@@ -40,7 +42,8 @@
                 "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
-                "--project=epilepsy",
+                "--entity=shappy",
+                "--project=financial_impact",
                 "--output_dir=~/projects/",
                 "--config=./config/config_financial_impact.json",
                 "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
