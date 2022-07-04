@@ -44,9 +44,10 @@ To this end, we provide utilities to handle
 \end{itemize}
 
 We'll go over each of these steps in more detail in the next sections.
-The goal is to rerun an experiment from scratch with a single command and we build on top of PyTorch Lightning's DataModule class to handle these steps.
+The goal is to rerun an experiment from scratch with a single command and we build on top of PyTorch Lightning's \pythoninline{DataModule} class to handle these steps.
 \subsubsection{Data Download}
 Downloading the dataset from cloud storage and caching it locally should be part of the training script.
+These steps are handled in the \pythoninline{prepare_data} method and only executed once per run.
 
 \subsubsection{Data Preprocessing}
 In general, pre-processing refers to transformation steps we want to apply to the raw data to make it suitable to input into the model.
@@ -70,9 +71,11 @@ It should be ensured the randomness is deterministic to reproduce results exactl
 The validation set is used during training to monitor progress and tune hyperparameters.
 In addition, it is good practice to hold out another portion of the data, the test set, which is never used during training, but only to report final results.
 We otherwise run the risk of tuning hyperparameters to the validation data, thereby overestimating real performance.
-% Cross validation?
+Cross validation?
 \subsubsection{Feeding Data to the Model}
 
 \subsection{Metrics and Sanity Checking}
 \label{metrics_and_sanity_checking}
+Here we discuss metrics used to evaluate the performance of classification models.
+While
 We automatically generate metrics and plots relevant for text classification projects.
