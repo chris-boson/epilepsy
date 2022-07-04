@@ -78,10 +78,10 @@ Commonly this number is set around 20,000 - 40,000 words in English, though it c
 
 Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks. Common special tokens include:
 \begin{itemize}
-  \item [EOS] - An end of sentence/input marker.
-  \item [PAD] - Special inputs to ignore, usually following an EOS marker.
-  \item [SEP] - A separator, which can be used in inputs that contain multiple sentences or samples.
-  \item [OOV] - Out of vocabulary, also commonly represented as [UNK] (unknown), which is used when we come across a word that does not exist in our vocabulary.
+  \item \pythoninline{[EOS]} - An end of sentence/input marker.
+  \item \pythoninline{[PAD]} - Special inputs to ignore, usually following an EOS marker.
+  \item \pythoninline{[SEP]} - A separator, which can be used in inputs that contain multiple sentences or samples.
+  \item \pythoninline{[OOV]} - Out of vocabulary, also commonly represented as [UNK] (unknown), which is used when we come across a word that does not exist in our vocabulary.
 \end{itemize}
 
 The out-of-vocabulary token is of particular importance in medicine. If we load a vocabulary with 30,000 words, often these are roughly the most common 30,000 words in the English language. We will still have a few [OOV] tokens
