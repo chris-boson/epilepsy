@@ -48,50 +48,6 @@ If human experts cannot agree, the model will most likely perform poorly as well
 If this is the case, the coding scheme or annotation instructions should be revised.
 We will discuss in Section \ref{metrics_and_sanity_checking} how to go about analyzing model performance and uncover issues in data and annotations.
 
-\subsection{Research Process}
-\subsubsection{Reproducible Experiments}
-Part of any research process is the rigorous application of the scientific method.
-Most importantly it has to be ensured that all information necessary to reproduce experiments independently and reliably is retained.
-While researchers keep meticulous journals, in the world of software this bookkeeping can be largely automated.
-Regular software engineering primarily relies on version control systems, such as GitHub, to keep track of code changes.
-When ML and Data Science are involved, data becomes an integral ingredient necessary to reproduce results.
-
-As such, the data generating process has to be documented and an artifact or snapshot of the data stored.
-In software engineering there is a saying that code doesn't exist until it is "checked into" version control.
-Similarly in ML, data doesn't exist until it is stored in the cloud.
-
-Version control system are specialized to keep track of plain text files, they are not well suited for tracking changes in larger objects.
-To keep track of data (and model) versions the ML community has developed specialized tools\footnote{Weights\&Biases, Neptune}, which we have integrated into Sheepy.
-It allows visualization of metrics, plots, comparison to previous experiments, as well as enables collaboration and sharing of results by linking to the tracked experiments directly.
-While being able to repeat previous experiments is important, it is even better if we don't have to -- ML experiments can be expensive, especially in terms of time.
-By tracking the training code, the data, and a configuration file, they can be reproduced exactly.
-
-\subsubsection{Data Preparation}
-One should ensure that all steps necessary to obtain and pre-process the data are documented, ideally in code.
-To this end, we provide utilities to handle
-\begin{itemize}
-    \item Data download
-    \item Pre-processing
-    \item Splitting into training, validation, and test sets
-    \item Feeding data to the model during training
-\end{itemize}
-
-In general pre-processing refers to transformation steps we want to apply to the raw data to make it suitable to input into the model.
-In particular in NLP, raw text needs to be translated into arrays of integers that the model can map to embedding vectors (see Section \ref{embeddings}) -- we call this process tokenization.
-These steps can be slow and in principle we need to do them only once and cache the results.
-In this way we can trade compute for space (on disk or in memory).
-
-In order to evaluate the generalization performance of a model it must be tested on data it hasn't seen during training.
-The dataset is therefore split into training and validation sets, typically at random.
-It should be ensured the randomness is deterministic to reproduce results exactly, which can be achieved by setting a "seed" for the random number generator.
-The validation set is used during training to monitor progress and tune hyperparameters.
-In addition, it is good practice to hold out another portion of the data, the test set, which is never used during training, but only to report final results.
-We otherwise run the risk of tuning hyperparameters to the validation data, thereby overestimating real performance.
-% Cross validation?
-
-\subsubsection{Metrics and Sanity Checking}
-\label{metrics_and_sanity_checking}
-We automatically generate metrics and plots relevant for text classification projects.
 
 
 %     - SHAP
