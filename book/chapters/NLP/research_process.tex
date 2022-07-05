@@ -79,8 +79,12 @@ Cross validation?
     \label{fig:ram_cpu_vram}
 \end{figure}
 Model parameters are stored in GPU memory (known as VRAM); in order to update them, the GPU needs to process data from the training set.
-After downloading the data from cloud storage it resides on local disk, from there it needs to be moved to RAM and finally VRAM.
-Loading data into the model needs to be fast, otherwise we run the risk of starving the GPU, meaning the GPU processes each batch of data faster than the CPU can deliver the next one, leading to low resource utilization and slow training.
+After downloading the data from cloud storage it resides on local disk, from where it needs to be moved to RAM and finally VRAM.
+Loading data into the model needs to be fast, or we run the risk of starving the GPU, meaning the GPU processes each batch of data faster than the CPU can deliver the next one, leading to low resource utilization and slow training.
+We use PyTorch's \pythoninline{DataLoader} class to parallelize this process across multiple CPU workers.
+A \pythoninline{DataLoader} is a wrapper around a \pythoninline{Dataset} which provides a stream of batches of data.
+The \textit{batch size} is an important parameter that needs to be tuned on a case by case basis, as we will explain in the next section.
+
 \subsection{Training}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/model_architecture.png}
@@ -118,7 +122,7 @@ Parameters in the last layer are then optimized according to the rule
 \end{equation}
 where $\alpha$ is called the \textit{learning rate} and determines the step size, the partial derivative of the loss function with respect to the parameters is called the \textit{gradient}.
 For other parameters the rule is similar, but involves the application of the chain rule from calculus.
-In modern architectures there are millions to hundreds of billions of parameters, and updating them efficiently is paramount.
+In modern architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
 
 \subsection{Metrics and Sanity Checking}
 \label{metrics_and_sanity_checking}
