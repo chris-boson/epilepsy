@@ -46,18 +46,18 @@ To this end, we provide utilities to handle
 We'll go over each of these steps in more detail in the next sections.
 The goal is to rerun an experiment from scratch with a single command and we build on top of PyTorch Lightning's \pythoninline{DataModule} class to handle these steps.
 \subsubsection{Data Download}
-Downloading the dataset from cloud storage and caching it locally should be part of the training script.
-These steps are handled in the \pythoninline{prepare_data} method and only executed once per run.
+Downloading the dataset from cloud storage and caching are handled in the \pythoninline{prepare_data} method and only executed once per run.
+We will first check if the data is already cached, and if not, download it.
 
 \subsubsection{Data Preprocessing}
 In general, pre-processing refers to transformation steps we want to apply to the raw data to make it suitable to input into the model.
-In NLP, raw text needs to be translated into arrays of integers that the model can map to embedding vectors (see Section \ref{embeddings}) -- we call this process tokenization (Fig. \ref{fig:tokenization}).
+In NLP, raw text needs to be translated into arrays of integers that the model can map to embedding vectors (see Section \ref{vocabularies_and_words}) (Fig. \ref{fig:tokenization}).
 \begin{figure}
     \includegraphics[width=\linewidth]{chapters/NLP/figures/tokenization.png}
     \caption{Tokenization}
     \label{fig:tokenization}
 \end{figure}
-These steps can be slow and in principle we need to do them only once and cache the results.
+These steps can be slow and in principle we need to do them only once per sample and cache the results.
 
 \subsubsection{Data Splitting}
 \begin{figure}[h]
@@ -73,6 +73,52 @@ In addition, it is good practice to hold out another portion of the data, the te
 We otherwise run the risk of tuning hyperparameters to the validation data, thereby overestimating real performance.
 Cross validation?
 \subsubsection{Feeding Data to the Model}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/ram_cpu_vram.png}
+    \caption{Data needs to be moved from disk to RAM to VRAM so that it can be used to update the model parameters.}
+    \label{fig:ram_cpu_vram}
+\end{figure}
+Model parameters are stored in GPU memory (known as VRAM); in order to update them, the GPU needs to process data from the training set.
+After downloading the data from cloud storage it resides on local disk, from there it needs to be moved to RAM and finally VRAM.
+Loading data into the model needs to be fast, otherwise we run the risk of starving the GPU, meaning the GPU processes each batch of data faster than the CPU can deliver the next one, leading to low resource utilization and slow training.
+\subsection{Training}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/model_architecture.png}
+    \caption{Deep neural network architecture}
+    \label{fig:model_architecture}
+\end{figure}
+
+While glossing over some details, model training can summarized in the following steps:
+\begin{itemize}
+    \item Given data pairs $(x_i, y_i)$, where $x_i$ is an input sample, and $y_i$ is the desired output
+    \item Determine a function $f$, such that $f(\theta, x_i) \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
+    \item Define a loss function $L(\theta) = \sum_i L(\theta, x_i, y_i)$ that measures how close the model's output is to the desired output
+    \item Optimize $\theta$ to minimize $L(\theta)$
+\end{itemize}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
+    \caption{Minimizing the loss function}
+    \label{fig:loss}
+\end{figure}
+Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in table \ref{table:losses}.
+\begin{table}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|c| c| c|}
+    name & function & use \\[0.5ex] \hline
+    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  & regression \\ [0.5ex]
+    Binary Cross Entropy& $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & classification \\ [0.5ex]
+    \end{tabular}
+    \caption{Loss functions}
+    \label{table:losses}
+\end{table}
+Parameters in the last layer are then optimized according to the rule
+\begin{equation}
+    \theta \rightarrow \theta - \alpha \frac{\partial L}{\partial \theta}
+\end{equation}
+where $\alpha$ is called the \textit{learning rate} and determines the step size, the partial derivative of the loss function with respect to the parameters is called the \textit{gradient}.
+For other parameters the rule is similar, but involves the application of the chain rule from calculus.
+In modern architectures there are millions to hundreds of billions of parameters, and updating them efficiently is paramount.
 
 \subsection{Metrics and Sanity Checking}
 \label{metrics_and_sanity_checking}
