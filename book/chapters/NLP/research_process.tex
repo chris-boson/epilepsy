@@ -82,7 +82,7 @@ Model parameters are stored in GPU memory (known as VRAM); in order to update th
 After downloading the data from cloud storage it resides on local disk, from where it needs to be moved to RAM and finally VRAM.
 Loading data into the model needs to be fast, or we run the risk of starving the GPU, meaning the GPU processes each batch of data faster than the CPU can deliver the next one, leading to low resource utilization and slow training.
 We use PyTorch's \pythoninline{DataLoader} class to parallelize this process across multiple CPU workers.
-A \pythoninline{DataLoader} is a wrapper around a \pythoninline{Dataset} which provides a stream of batches of data.
+A \pythoninline{DataLoader} takes as argument a \pythoninline{Dataset} and provides a stream of batches of data.
 The \textit{batch size} is an important parameter that needs to be tuned on a case by case basis, as we will explain in the next section.
 
 \subsection{Training}
@@ -95,8 +95,8 @@ The \textit{batch size} is an important parameter that needs to be tuned on a ca
 While glossing over some details, model training can summarized in the following steps:
 \begin{itemize}
     \item Given data pairs $(x_i, y_i)$, where $x_i$ is an input sample, and $y_i$ is the desired output
-    \item Determine a function $f$, such that $f(\theta, x_i) \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
-    \item Define a loss function $L(\theta) = \sum_i L(\theta, x_i, y_i)$ that measures how close the model's output is to the desired output
+    \item Determine a function $f$, such that $f(\theta, x_i) = \hat{y}_i \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
+    \item Define a loss function $L(\theta) = \sum_i L(\hat{y}_i, y_i)$ that measures how close the model's output is to the desired output
     \item Optimize $\theta$ to minimize $L(\theta)$
 \end{itemize}
 \begin{figure}[h]
@@ -111,18 +111,42 @@ Here the loss function can take on many forms, depending on the training task, w
     \begin{tabular}{|c| c| c|}
     name & function & use \\[0.5ex] \hline
     Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  & regression \\ [0.5ex]
-    Binary Cross Entropy& $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & classification \\ [0.5ex]
+    Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & binary classification \\ [0.5ex]
+    Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ & multiclass classification \\ [0.5ex]
     \end{tabular}
     \caption{Loss functions}
     \label{table:losses}
 \end{table}
 Parameters in the last layer are then optimized according to the rule
 \begin{equation}
+    \label{eq:optimization}
     \theta \rightarrow \theta - \alpha \frac{\partial L}{\partial \theta}
 \end{equation}
 where $\alpha$ is called the \textit{learning rate} and determines the step size, the partial derivative of the loss function with respect to the parameters is called the \textit{gradient}.
 For other parameters the rule is similar, but involves the application of the chain rule from calculus.
+The algorithm is called \textit{gradient descent} and is the workhorse of all modern deep learning.
 In modern architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
+
+To update the parameters as outlined in Eq. \ref{eq:optimization} we need to evaluate the gradient of the loss function, given the data points $x_i$ and $y_i$.
+To compute the optimial update step we need to sum over all samples in the dataset, compute and store all the gradients, and then update the parameters once.
+This however is not practical, given the size of typical datasets and the number of model parameters -- each step would be very computationally expensive.
+
+On the other end of the spectrum we could use only a single sample to compute approximations of the optimal gradients, and they will take us close to the global minimum.
+This method is called \textit{stochastic gradient descent} and generally works well, but it comes with some tradeoffs:
+\begin{itemize}
+    \item Loading single samples from the dataset is slow, due to CPU, RAM and bus overhead when copying data to VRAM
+    \item There is overhead in the GPU related to scheduling of compute operations
+    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly
+\end{itemize}
+There is a happy middle ground called \textit{mini-batch gradient descent} which is a combination of stochastic gradient descent with mini-batches.
+Using mini-batches allows for a more accurate estimate of the gradient, and reduces the overhead per sample, as we can take advantage of hardware accelerated vectorized compute architectures in CPUs and GPUs.
+In practice, we will choose a batch size that is much smaller than the number of samples in the dataset, and as big as possible without running out of VRAM, where the latter condition is typically the more relevant constraint.
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/mini-batch.png}
+    \caption{Batch vs mini-batch vs stochastic gradient descent}
+    \label{fig:mini-batch}
+\end{figure}
 
 \subsection{Metrics and Sanity Checking}
 \label{metrics_and_sanity_checking}
