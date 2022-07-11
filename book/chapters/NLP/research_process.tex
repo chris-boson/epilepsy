@@ -104,7 +104,7 @@ While glossing over some details, model training can summarized in the following
     \caption{Minimizing the loss function}
     \label{fig:loss}
 \end{figure}
-Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in table \ref{table:losses}.
+Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in Table \ref{table:losses}.
 \begin{table}
     \centering
     \renewcommand{\arraystretch}{1.3}
@@ -125,21 +125,21 @@ Parameters in the last layer are then optimized according to the rule
 where $\alpha$ is called the \textit{learning rate} and determines the step size, the partial derivative of the loss function with respect to the parameters is called the \textit{gradient}.
 For other parameters the rule is similar, but involves the application of the chain rule from calculus.
 The algorithm is called \textit{gradient descent} and is the workhorse of all modern deep learning.
-In modern architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
+In contemporary architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
 
-To update the parameters as outlined in Eq. \ref{eq:optimization} we need to evaluate the gradient of the loss function, given the data points $x_i$ and $y_i$.
-To compute the optimial update step we need to sum over all samples in the dataset, compute and store all the gradients, and then update the parameters once.
-This however is not practical, given the size of typical datasets and the number of model parameters -- each step would be very computationally expensive.
+To optimize the parameters as outlined in Eq. \ref{eq:optimization} we need to evaluate the gradient of the loss function given the data $(x_i, y_i)$.
+To compute the optimial update step we need to sum over all samples in the dataset, compute and store all the gradients, update the parameters once, and repeat the process until convergence.
+This however is not practical, given the size of typical datasets and the number of model parameters -- each step would be very computationally expensive and the training slow.
 
 On the other end of the spectrum we could use only a single sample to compute approximations of the optimal gradients, and they will take us close to the global minimum.
 This method is called \textit{stochastic gradient descent} and generally works well, but it comes with some tradeoffs:
 \begin{itemize}
     \item Loading single samples from the dataset is slow, due to CPU, RAM and bus overhead when copying data to VRAM
     \item There is overhead in the GPU related to scheduling of compute operations
-    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly
+    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly (see Fig. \ref{fig:mini-batch})
 \end{itemize}
 There is a happy middle ground called \textit{mini-batch gradient descent} which is a combination of stochastic gradient descent with mini-batches.
-Using mini-batches allows for a more accurate estimate of the gradient, and reduces the overhead per sample, as we can take advantage of hardware accelerated vectorized compute architectures in CPUs and GPUs.
+Using mini-batches allows for a more accurate estimate of the gradient, and reduces the overhead per sample, as we can take advantage of hardware accelerated vectorized compute operations in CPUs and GPUs.
 In practice, we will choose a batch size that is much smaller than the number of samples in the dataset, and as big as possible without running out of VRAM, where the latter condition is typically the more relevant constraint.
 
 \begin{figure}[h]
