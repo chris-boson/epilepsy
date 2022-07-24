@@ -41,18 +41,23 @@ The numbers should allow the computer to assign meaning to words and their conte
 
 There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
 Syntactic information refers to grammatical constructs and the way that words are put together in a language. Semantic information refers to the meaning of this body of text. Such distinctions are fundamental concepts in computer science
-and date back to the very foundations of information theory. \cite{shannon48}. Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
+and date back to the very foundations of information theory. \cite{shannon48}.
+Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
 
-How do we begin to choose these representations? Do we choose to represent words, or perhaps individual letters? Do we choose all the words? What do we do with punctuation and numbers?
+How do we begin to choose these representations?
+Do we choose to represent words, or perhaps individual letters?
+Do we choose all the words?
+What do we do with punctuation and numbers?
 
 \subsection{Vocabularies and Words}
 \label{vocabularies_and_words}
 In NLP, the set of unique words in a corpus is called a \textit{vocabulary}. While \textit{the} is the most common word in the English language, it is only one entry in a very large vocabulary table. A rare word like \textit{hemispherectomy} is also one
 entry in this table. Both \textit{apple} and \textit{apples} might be separate entries in our vocabulary table. Generally the first step in many NLP systems is defining this vocabulary and the rules behind which words are in this table and which words are not.
 
-The process of splitting text into separate smaller units, in this case words, is known as \textit{tokenization}. When we run many NLP tasks, we almost always preprocess our text by putting it into one of these tokenizers. The output tokens,
-in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine. There are a number of great tokenization libraries that are open source, and you should always use them rather than
-try to implement this yourself.
+The process of splitting text into separate smaller units, in this case words, is known as \textit{tokenization}.
+When we run many NLP tasks, we almost always preprocess our text by putting it into one of these tokenizers.
+The output tokens, in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine.
+There are a number of great tokenization libraries that are open source, and you should always use them rather than try to implement this yourself.
 
 \begin{python}
   # Example 1: Spacy Tokenization Using Medical Words
@@ -70,13 +75,16 @@ try to implement this yourself.
       print("{}: {}".format(token.text, found))
 \end{python}
 
-The discrete numeric entities created in Example 1 are the indexes for our representations. The tokenizer system did much of the magic under the hood, lowercasing and standardizing text and creating special tokens for punctuation and numbers.
+The discrete numeric entities created in Example 1 are the indexes for our representations.
+The tokenizer system did much of the magic under the hood, lowercasing and standardizing text and creating special tokens for punctuation and numbers.
 
-When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$. If you choose a number that is too small, then
-your system will only recognize a few words and lose a lot of important task-specific vocaublary. However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
+When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$.
+If you choose a number that is too small, then your system will only recognize a few words and lose a lot of important task-specific vocaublary.
+However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
 Commonly this number is set around 20,000 - 40,000 words in English, though it can be much larger.
 
-Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks. Common special tokens include:
+Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks.
+Common special tokens include:
 \begin{itemize}
   \item \pythoninline{[EOS]} - An end of sentence/input marker.
   \item \pythoninline{[PAD]} - Special inputs to ignore, usually following an EOS marker.
