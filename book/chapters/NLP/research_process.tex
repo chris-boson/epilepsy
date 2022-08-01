@@ -183,8 +183,8 @@ When the target is a real number (regression) we can simply compare the model ou
 
 When the target is a categorical variable (classification) we will still get a distribution of real numbers as output, i.e. the confidence of the model that a sample belongs to a certain class or set of classes.
 The model output will be close to one if the sample belongs to the class, and close to zero if it does not.
-To compute classification metrics, we critically need to define a \textit{threshold}.
-By default we would choose $0.5$, as that corresponds to how the loss function determines whether to push a sample in on direction or the other.
+To compute classification metrics, we critically need to define a \textit{threshold} $t$.
+By default we could choose $t=0.5$, as that corresponds to how the loss function determines whether to push a sample in one direction or the other.
 Later we will discuss reasons and tips for how and why you might want to change this value.
 
 Assuming we have only have two classes, i.e. $True$ or $False$, once a threshold has been chosen, every sample will be in one of four categories:
@@ -216,18 +216,58 @@ For example, it may be acceptable to lower the threshold if the goal is finding 
 The $F_1$ score is balanced measure of $Precision$ and $Recall$ and will be low if any of them is low, and there is a threshold for which it will be maximal.
 As a rule of thumb, you should aim to achieve $F_1 \gtrsim 0.7$.
 
-There is another metric that is often used in classifcation tasks that is independent of class imbalance and threshold called the area under the $Receiver\; Operating\; Charateristic$ curve, or $ROC\; AUC$.
-For this we determine the $False\; Positive\; Rate$ ($FPR$) and $True\; Positive\; Rate$ ($TPR$) for each threshold.
+There is another metric that is often used in classifcation tasks that is independent of class imbalance and threshold called the area under the $Receiver\; Operating\; Charateristic$ curve, or $ROC\; AUC$ (Figure \ref{fig:roc_curve}).
+For this we determine the $False\; Positive\; Rate$ ($FPR$) and $True\; Positive\; Rate$ ($TPR$) for each threshold $t$
 \begin{equation}
-    FPR = \frac{FP}{FP + TN}; \;\;
-    TPR = \frac{TP}{TP + FN}.
+    FPR(t) = \frac{FP(t)}{FP(t) + TN(t)}; \;\;
+    TPR(t) = \frac{TP(t)}{TP(t) + FN(t)}
 \end{equation}
-You can think of the integral of the resulting curve as taking a weighted mean over all possible thresholds, see also Figure \ref{fig:roc_curve}.
+and take the integral
+\begin{equation}
+    ROC\; AUC = \int_0^1 TPR\bigl(FPR(t)\bigr)\; dt,
+\end{equation}
+corresponding to the weighted mean over all possible thresholds.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{chapters/NLP/figures/Roc_curve.svg.png}
     \caption{ROC curve, a random classifier would achieve $AUC = 0.5$, a perfect one $1.0$.}
     \label{fig:roc_curve}
 \end{figure}
-
 We automatically generate metrics and plots relevant for text classification tasks in the code accompanying this chapter.
+\subsection{Over- and Underfitting}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.2\textwidth]{chapters/NLP/figures/over_and_underfitting.png}
+    \caption{Left: Underfitting, a straight line doesn't fit  the data well.
+    Right: Overfitting, a complex curve fits the (training) data perfectly, but will likely not generalize well.
+    Center: The model and true underlying function match closely.}
+    \label{fig:over_and_underfitting}
+\end{figure}
+A common problem in ML is the balance between over- and underfitting (Figure \ref{fig:over_and_underfitting}).
+Underfitting can happen when the model is too simple, i.e. it is not able to capture the underlying function (rarely a problem in deep learning).
+Overfitting happens when the model is too complex or has too many degrees of freedom, such that it can fit the training data well, but does not capture the essence of the true data generating process, leading to poor generalization performance when applied to new data.
+
+An easy way to detect these issues is by observing training and validation metrics as a function training steps or epochs, called learning curves.
+We want to see that both, training and validation metrics continue to improve as training progresses until they both taper off at a certain point.
+Note that it is normal to see a difference in the absolute value and rate of change between the training and validation metrics.
+This is called the generalization error, and is nothing to be too concerned about, ultimately only the validation and test metrics are relevant.
+What \textit{is} problematic is if we observe that the validation metrics start to get worse, while the training metrics continue to improve -- this is a clear sign of overfitting and we should stop the training early (Figure \ref{fig:learning_curves}).
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{chapters/NLP/figures/learning_curves.png}
+    \caption{Learning curves, the training and validation loss are plotted as a function of the number of training steps / epochs.}
+    \label{fig:learning_curves}
+\end{figure}
+To address underfitting, the easiest remedy is to increase the complexity of the model (e.g. add more layers) or to increase the number of training steps.
+We can also try to add more features to the dataset, such as adding more words to the vocabulary.
+When dealing with overfitting in deep learning, we usually don't want to reduce the model complexity, but instead add \textit{regularization} and more data.
+Regularization is a technique that restricts the freedom of the model, for example by introducing a penalty on the magnitude of the model parameters.
+For this, the loss functions in Table \ref{table:losses} are modified as
+\begin{equation}
+    \tilde{L}(\theta) = L(\theta) + \frac{1}{2} \sum_{i} |\theta_i|^2.
+\end{equation}
+
+Another common technique is to add \textit{dropout}, where a fraction of neurons is randomly turned off for each training step.
+This ensures that each neuron has a unique purpose and learns to detect a specific set of features in the data, without co-adapting to the output of other neurons.
+Another interpretation of dropout is that it can be seen as an approximation to a bagging technique, where the outputs of different models at each iteration are averaged, leading to an overall reduction in errors if they are uncorrelated.
+This tends to reduce generalization error, prevent the model from fitting to irrelevant details, and make it more robust to noise.
