@@ -41,24 +41,30 @@ The numbers should allow the computer to assign meaning to words and their conte
 
 There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
 Syntactic information refers to grammatical constructs and the way that words are put together in a language. Semantic information refers to the meaning of this body of text. Such distinctions are fundamental concepts in computer science
-and date back to the very foundations of information theory. \cite{shannon48}. Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
+and date back to the very foundations of information theory. \cite{shannon48}.
+Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
 
-How do we begin to choose these representations? Do we choose to represent words, or perhaps individual letters? Do we choose all the words? What do we do with punctuation and numbers?
+How do we begin to choose these representations?
+Do we choose to represent words, or perhaps individual letters?
+Do we choose all the words?
+What do we do with punctuation and numbers?
 
 \subsection{Vocabularies and Words}
-
+\label{vocabularies_and_words}
 In NLP, the set of unique words in a corpus is called a \textit{vocabulary}. While \textit{the} is the most common word in the English language, it is only one entry in a very large vocabulary table. A rare word like \textit{hemispherectomy} is also one
 entry in this table. Both \textit{apple} and \textit{apples} might be separate entries in our vocabulary table. Generally the first step in many NLP systems is defining this vocabulary and the rules behind which words are in this table and which words are not.
 
-The process of splitting text into separate smaller units, in this case words, is known as \textit{tokenization}. When we run many NLP tasks, we almost always preprocess our text by putting it into one of these tokenizers. The output tokens,
-in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine. There are a number of great tokenization libraries that are open source, and you should always use them rather than
-try to implement this yourself.
+The process of splitting text into separate smaller units, in this case words, is known as \textit{tokenization}.
+When we run many NLP tasks, we almost always preprocess our text by putting it into one of these tokenizers.
+The output tokens, in this case words, are the indexes in our lookup table to different numeric representations that can be understood by a machine.
+There are a number of great tokenization libraries that are open source, and you should always use them rather than try to implement this yourself.
 
-\begin{verbatim}
+\begin{python}
   # Example 1: Spacy Tokenization Using Medical Words
 
   import spacy
-  sample = "After a temporal lobe resection, the atonic and clonic seizure frequency fell by 50%."
+  sample = "After a temporal lobe resection, the atonic " \
+           "and clonic seizure frequency fell by 50%."
 
   nlp = spacy.load("en_core_web_sm")
   english_vocab = set(nlp.vocab.strings)
@@ -67,21 +73,23 @@ try to implement this yourself.
   for token in spacy_document:
       found = "found" if token.text in english_vocab else "NOT FOUND"
       print("{}: {}".format(token.text, found))
+\end{python}
 
-\end{verbatim}
+The discrete numeric entities created in Example 1 are the indexes for our representations.
+The tokenizer system did much of the magic under the hood, lowercasing and standardizing text and creating special tokens for punctuation and numbers.
 
-The discrete numeric entities created in Example 1 are the indexes for our representations. The tokenizer system did much of the magic under the hood, lowercasing and standardizing text and creating special tokens for punctuation and numbers.
-
-When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$. If you choose a number that is too small, then
-your system will only recognize a few words and lose a lot of important task-specific vocaublary. However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
+When we build a vocabulary $V$, we define a preset vocabulary size $|V|$. There is a tradeoff in your choice of $|V|$.
+If you choose a number that is too small, then your system will only recognize a few words and lose a lot of important task-specific vocaublary.
+However, if you include the entire english language, your system will be slow, expensive, and not perform as well.
 Commonly this number is set around 20,000 - 40,000 words in English, though it can be much larger.
 
-Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks. Common special tokens include:
+Often a vocabulary will include special tokens that make our lives easier when working with NLP tasks.
+Common special tokens include:
 \begin{itemize}
-  \item [EOS] - An end of sentence/input marker.
-  \item [PAD] - Special inputs to ignore, usually following an EOS marker.
-  \item [SEP] - A separator, which can be used in inputs that contain multiple sentences or samples.
-  \item [OOV] - Out of vocabulary, also commonly represented as [UNK] (unknown), which is used when we come across a word that does not exist in our vocabulary.
+  \item \pythoninline{[EOS]} - An end of sentence/input marker.
+  \item \pythoninline{[PAD]} - Special inputs to ignore, usually following an EOS marker.
+  \item \pythoninline{[SEP]} - A separator, which can be used in inputs that contain multiple sentences or samples.
+  \item \pythoninline{[OOV]} - Out of vocabulary, also commonly represented as [UNK] (unknown), which is used when we come across a word that does not exist in our vocabulary.
 \end{itemize}
 
 The out-of-vocabulary token is of particular importance in medicine. If we load a vocabulary with 30,000 words, often these are roughly the most common 30,000 words in the English language. We will still have a few [OOV] tokens
@@ -101,13 +109,13 @@ Given that we have defined a vocabulary $V$ of words, these are the keys to our 
 A simple way to achieve this representation for $V$ is to assign each word a unique integer $i$.
 The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$\footnote{This is also known as a one-hot encoding}.
 
-\begin{verbatim}
+\begin{python}
   have = [1, 0, 0, 0, 0, 0, ... 0]
   a    = [0, 1, 0, 0, 0, 0, ... 0]
   good = [0, 0, 1, 0, 0, 0, ... 0]
   day  = [0, 0, 0, 1, 0, 0, ... 0]
   ...
-\end{verbatim}
+\end{python}
 
 We could now represent a sentence as the sum of the word vectors $S = \sum_j w_j$. This representation is suitable as input for any classification algorithm (such as logistic regression or a decision tree), to make a prediction about our target variable, e.g. whether the sentence is relevant to our epilepsy task.
 This simple representation fulfills our requirements but comes with some drawbacks:
@@ -126,6 +134,7 @@ This has the net effect of allowing us to find a good representation for larger 
 To address the second point, we will be touching on a very important concept, not just relevant in NLP, but also in the world of ML in general: Embeddings.
 
 \subsection{Embeddings}
+\label{embeddings}
 An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
 Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
 
@@ -238,12 +247,13 @@ These tokenizers and vocabularies contain a rich set of common words, but also h
 These subword units behave like normal word vectors and can store semantic and syntactic information.
 
 
-\begin{verbatim}
+\begin{python}
   # Example 2 - Wordpiece Tokenizers
 
   from transformers import BertTokenizer
 
-  sample = "After a temporal lobe resection, the atonic and clonic seizure frequency fell by 50%."
+  sample = "After a temporal lobe resection, the atonic " \
+           "and clonic seizure frequency fell by 50%."
 
   bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
@@ -252,7 +262,7 @@ These subword units behave like normal word vectors and can store semantic and s
 
   for token, id  in zip(encoded_tokens, encoded_ids):
     print("{}: {}".format(token,id))
-\end{verbatim}
+\end{python}
 
 In example two,
 
@@ -332,12 +342,6 @@ This is placeholder text
 \subsection{Avoiding Epilepsy Misdiagnosis}
 
 This is placeholder text. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4419916/
-
-
-\section{Full Walkthrough - SUDEP Detection}
-
-This is placeholder text
-
-\section{Full Walkthrough - Financial Impact of Epilepsy}
-
-This is placeholder text
+\input{chapters/NLP/research_process.tex}
+\input{chapters/NLP/sudep.tex}
+\input{chapters/NLP/financial_impact.tex}
