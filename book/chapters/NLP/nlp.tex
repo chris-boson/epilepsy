@@ -16,8 +16,6 @@ To wrap it all together, we walk through a complete example that highlights best
 \item Bootstrapping techniques to iterate on a dataset in the low-resource setting
 \item Storing of a reference dataset in a publicly-accessible location
 \item Downloading, caching, loading, splitting, and preprocessing of the data
-\item Setting up of a cloud-based GPU workstation (?) (--this might be overkill for now, but keep if we can)
-\item VSCode (?)
 \item Monitoring the training run:
   \subitem Logging and experiment tracking
   \subitem Learning curves
@@ -36,7 +34,7 @@ Common NLP tasks include sentence segmentation, tokenization, part-of-speech tag
 
 How can we teach a computer to perform these tasks?
 The first challenge is that computers, at their core, only understand numbers.
-So first we need to think about how words can be represented with numbers such that we can perform calculations on them.
+So first we need to think about how words, or more generally text, can be represented with numbers such that we can perform calculations on them.
 The numbers should allow the computer to assign meaning to words and their context with other words around it.
 
 There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
@@ -99,15 +97,14 @@ distribution than non-medical corpora, particulary because of nuanced vocabulary
 %TODO - add some epilepsy-themed example that throws away all the epilepsy words%
 
 In Example 1 above, notice the importance of the words that have been thrown away. If this sentence were to be loaded into a machine as-is, we might be losing far too much information because we have to nearly all of the relevant terminology with OOV tokens.
-
-We will address this issue in the ensuing sections. For now, suffice it to say that we should make sure our vocabularies are catered toward our task at hand or are built in such a way that they can still extract signal from these tokens.
+We will address this issue in the ensuing sections. For now, suffice it to say that we should make sure our vocabularies are catered toward our task at hand or are built in such a way that they can still extract signal from these tokens. Furthermore, we should always sanity check our sample token outputs against our raw text inputs.
 
 \subsection{Word Representations}
 
 Given that we have defined a vocabulary $V$ of words, these are the keys to our lookup table of numeric representations. But what do we store in that table as the value?
 
 A simple way to achieve this representation for $V$ is to assign each word a unique integer $i$.
-The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one at index $i$\footnote{This is also known as a one-hot encoding}.
+The word is then represented as a vector $w$ of length $|V|$ with all zeros and a one\footnote{This is also known as a one-hot encoding}. at index $i$.
 
 \begin{python}
   have = [1, 0, 0, 0, 0, 0, ... 0]
@@ -122,24 +119,24 @@ This simple representation fulfills our requirements but comes with some drawbac
 \begin{itemize}
     \item We implicitly assume that each word in the sentence is equally important.
     \item Each word is equally similar to every other word (e.g. by taking the euclidian distance between word vectors).
-    \item The representation is invariant to reordering of the words.
+    \item The representation is invariant to a reordering of the words.
 \end{itemize}
 The first point is a problem, because as we add more word vectors together, the sentence reperesentation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
-To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$, and there are statistical methods we can use to compute an importance value\footnote{TF-IDF}.
+To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$. There are statistical methods we can use to compute an importance value\footnote{TF-IDF}.
 For example a word like \textit{the} is very common and appears in many different contexts.
 It is unlikely that there is a lot of signal we can extract from it.
 On the other hand, a word like \textit{epilepsy} will be much more rare and specific to a given task, and we would like to raise its importance.
-This has the net effect of allowing us to find a good representation for larger word sequences.
+This has the net effect of allowing us to find good representations for larger word sequences.
 
 To address the second point, we will be touching on a very important concept, not just relevant in NLP, but also in the world of ML in general: Embeddings.
 
 \subsection{Embeddings}
 \label{embeddings}
 An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
-Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way, and the final performance of a given architecture is largely determined by the quality of the embeddings it learns.
+Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way. The final performance of a given architecture is often largely determined by the quality of the embeddings it learns.
 
 To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec} \cite{mikolov13}, a technique pioneered by a team led by Thomas Mikolov.
-The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. In NLP, the study of techniques that determine the probability of a given sequence of words is known as language modeling.
+The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. As it turns out, this idea that similar words appear in similar contexts, is an extremely powerful signal for achieving quality word embeddings. In NLP, the study of techniques that determine the probability of a given sequence of words is known as language modeling.
 
 For example the word \textit{epilepsy} may appear in the context of words like \textit{symptom}, \textit{medication}, or \textit{episode} and vice versa.
 However, we would not expect that \textit{epilepsy} would appear in the context of words like \textit{volleyball}.
@@ -178,9 +175,11 @@ The hard part of understanding the meaning of the sentence is already done.
 Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
 Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
 
+Using these pre-trained text representations is often critical. Without doing so, the majority of what a machine learns is the basic syntax and semantics of language. By using these pre-trained word embeddings, we allow our models to learn to focus more on the downstream task. By simplifying the learning task with these pre-trained embeddings, we need to use far fewer labeled examples than we would training from scratch.
+
 This underlying assumption that similar neighboring words share a semantic similarity to center words is powerful, and at the heart of many modern training objectives for embeddings that are used in many downstream ML systems.
 We do not inherently inject a great deal of model bias, but rather rely on having a large enough training set that the word vectors will become meaningful representations with respect to one another.
-A corpus such as Common Crawl\footnote{Common Crawl Link}, which contains roughly 840 billion tokens of over two million unique words, provide such scale.
+A corpus such as Common Crawl\footnote{Common Crawl Link}, which contains roughly 840 billion tokens of over two million unique words, provides such scale.
 There are other corpora used in these unsupervised processes, one such common candidate being a collection of all Wikipedia articles.
 
 In practice, one training objective can be to use the distributed representation of a set of context words to guess a center word. This is known as the continuous bag of words (CBOW) model.
@@ -227,8 +226,26 @@ Note that we will address many of these in the sections to follow.
 What if we choose to use only a center word, and have our model predict all of the surrounding context words?
 This is a common training technique for embeddings as well, and is known as the Skip-Gram model.
 
-\subsubsection{Spacy Example}
-This is placeholder text
+\subsubsection{Spacy Example of Word Embeddings}
+
+\begin{python}
+  import spacy
+
+  sample_words = ["epilepsy", "seizure", "patient", "language"]
+
+  nlp = spacy.load("en_core_web_md")
+  docs = [nlp(sample) for sample in sample_words]
+
+  #Spacy's Medium English Model Stores Words As Vectors of Dimension 300
+  #Note each word has this vector size
+  for doc in docs:
+      assert doc.vector.shape[0] == 300
+
+  #The cosine distance, ranging from [0,1], of the vectors tells us how similar the words are
+  print(docs[0].similarity(docs[1])) #epilepsy and seizure -> 0.9999
+  print(docs[0].similarity(docs[2])) #epilepsy and patient -> 0.4434
+  print(docs[0].similarity(docs[3])) #epilepsy and language -> 0.1273
+\end{python}
 
 \subsubsection{Character and Subword Embeddings}
 
@@ -237,10 +254,10 @@ However, there are other strategies that are commonly used that help to avoid th
 One such simple way around out-of-vocabulary tokens is to use character-level tokenization.
 Instead of having a vocabulary that is tens of thousands of words long, you only have a vocabulary that contains the characters in
 your language, with the addition of punctuation, digits, and a few special tokens for sentence and word marking.
-As long as tokenizer is able to mark which characters start a word and which characters are continuations of a word, then the original sequence of words can always be recovered.
+As long as the tokenizer is able to mark which characters start a word and which characters are continuations of a word, then the original sequence of words can always be recovered.
 
 Unfortunately, the tradeoff for a small vocabulary size with no unknown word entries is that the length of tokens to represent a sentence is clearly much larger.
-Empirically, these models do not perform as well, partially because of this sequence but also because of the loss of information that is represented in word vectors.
+Empirically, these models do not perform as well, partially because of this sequence length but also because of the loss of information that is represented in word vectors.
 
 In practice, the best models are often somewhere in the middle, in what is known as word-piece, or subword, vocabularies.
 These tokenizers and vocabularies contain a rich set of common words, but also have subword units that can be used to piece together out-of-vocabulary words.
@@ -248,7 +265,7 @@ These subword units behave like normal word vectors and can store semantic and s
 
 
 \begin{python}
-  # Example 2 - Wordpiece Tokenizers
+  # Example 3 - Wordpiece Tokenizers
 
   from transformers import BertTokenizer
 
@@ -267,9 +284,6 @@ These subword units behave like normal word vectors and can store semantic and s
 In example two,
 
 % \subsubsection{Vocabularies and Medical Embeddings}
-% This is placeholder text.
-% Would \texttt{BioBERT} and \texttt{Bio\textunderscore ClinicalBERT} here be worth mentioning?
-% If not, should maybe follow the transformers section
 
 \subsection{Transformers}
 There have been significant advancements in ML due to a variety of factors, such as the availability of larger and larger datasets, as well as ever increasing computational power at lower and lower prices, better software tools, libraries and model architectures.
@@ -290,43 +304,88 @@ This paradigm shift has led to a step function improvement in terms of performan
 In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
 
 \subsubsection{Pre-training}
-Modern DL based systems, such as the aforementioned Transformer architectures, are pre-trained on gigantic datasets\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} and can be downloaded for free\footnote{Huggingface}.
+Modern DL-based systems, such as the aforementioned Transformer architectures, are pre-trained on gigantic datasets\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} and can be downloaded for free\footnote{Huggingface}.
 Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve a given performance.
-Furthermore, it may be helpful to start with a model that is pre-trained on more domain specific datasets such as \texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}} or \texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}, or pre-train your model from scratch.
+Furthermore, it may be helpful to start with a model that is pre-trained on more domain-specific datasets such as \texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}} or \texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}, or pre-train your model from scratch.
 
 \section{NLP Tasks in Epilepsy}
 
-% This is a placeholder title.
-% A couple pages here might do nicely as example studies for some important techniques for epileptologists.
 Now that we have an understanding of some of the basics of computational representations of language data, let us take a look at some of the modern use cases for NLP in industry, catered toward epileptologists and other medical practitioners.
-
 
 \subsection{Unstructured Text - Retrospective Research}
 Within the medical field, there are many sources of unstructured text that are primarily aimed as a either a communication channel between specialists, or a way for patients to pass information that isn't captured in a structured format.
 Clinical Notes, Progress Notes, Operative Notes, Discharge Summaries, Pathology Reports, Surgery Reports; all of these sources carry information, but traditionally require experts in the field to extract it.
 If we can teach systems to read through this unstructured text and perform respectably close to these experts, we can perform large-scale clinical retrospective research much faster and at a much lower cost.
 
-Example:
-https://academic.oup.com/jamia/advance-article/doi/10.1093/jamia/ocac018/6534112
+Because these pre-trained language models can draw upon information from so many domains and have a sound understanding of language, they need relatively few
+labeled examples to begin to perform tasks such as classifying text. All they have to learn is the task at hand, not the nuances of languages.
+If a team of experts is able to identify a set of labels in which they are interested, they can label this data in a single shot. The next step is to fine-tune a pre-trained language model, often by just attaching a logistic regression layer to the outputs of the language model,
+to recognize each of these labels.
+
+Instead of having to wait for, not to mention pay for, experts to do large-scale retrospective research, fine-tuned pre-trained language models can perform admirably on text classification with, in many cases, only a few hundred labeled examples.
+The trained model can then read through and extract targeted text much faster and much cheaper.
+Studies have already been done applying this strategy\cite{10.1093/jamia/ocac018}, using three pre-trained neural language models, Bio_ClinicalBERT, to extract
+seizure frequency from epilepsy clinical notes.
 
 \subsection{Unstructured Text - Quality of Life}
-This is a placeholder for some of the work that is done on the Quality of Life surveys for the INJS Seizure Tracker datasets.
+When treating patients with epilepsy, often our principal aim is to target improving quality of life. Seizure frequency is a numeric represenation that has a measurement
+that is well-understood and directly impacts quality of life. However, many measurements of quality of life come directly from patient surveys and other more subjective
+metrics that can be more difficult to interpret at scale. While often these surveys call for responses on numeric scales, many offer unstructured text as a method for
+patients to freely communicate other information relevant to quality of life, or further explain their responses. This information is of exceptional importance, but it
+can be difficult to parse through it at scale without modern natural language processing techniques.
 
+Sentiment analysis, the task of extracting and studying subjective sentiment in text and speech data, is yet another field of NLP that has greatly benefited from the
+widespread adoption of transformer architectures, particularly in specialized domains. Freeform responses that can be evaluated as positive or negative, or sometimes into more
+granular sentiments, can be learned with machine learning methods. It's worth noting that naive methods on sentiment tend to capture some cases well. The words love and hate are
+strong signals, but even their simple negation becomes a diluted signal with possible interpretations of sarcasm that become subjective. Add in the many colorful ways that people
+write, and we start to see why rules-based text-mining systems for sentiment are so difficult.
+
+Sentiment analysis models using transformer architectures such as RoBERTa aim to project the large-dimensional output vector of the text, and project this semantic representation
+into a basic sentiment of two class, positive or negative. Very often a third class is used to represent neutral sentiment. This method should be used when analyzing free-form responses
+in patient surveys using NLP models trained on sentiment. While a model trained on medical data is ideal, it's quite impressive how well a model trained on movie reviews will transfer
+over to other sentiment tasks.
+
+The same methods for analyzing basic sentiment can be used to label tones, more granular emotional classifications, or other task-specific points of interest. Similar to
+the case with the retrospective research in section 1.2.1, it is important to have the survey designers, and/or other domain experts, label these targeted semantic
+expressions of their patients. Once a model is trained with a set of positive examples of these targets, it can be used on any text response.
+
+The datasets provided by SeizureTracker, as part of their It's Not Just Seizures (INJS) initiative, provides an excellent example of unstructured text responses being
+used as a guide to a suggested set of useful labels that can be learned with NLP techniques. This is outlined in section 1.5
 \subsection{Text Preprocessing and Tokenization}
 
 Placeholder.
 
 \subsection{Named Entity Recognition and PII}
 
-This is a working title. NER is an important problem in medicine, for PII if nothing else, and I figure we could go through some basics of using it with Spacy, NLTK, or Stanford NLP here.
+Named Entity Recognition (NER) is a subtask of information extraction that classifies unstructured text into personal names, locations, time indications, organizations, and other tags.
+NER is an important problem in medicine, if nothing else to provide an ability to mask out Personally-Identifiable Information.
+If a model, probably a transformer architecture in practice, is able to identify text as a first name, a home address, or a credit card number, then we can anonymize this information to mask information that is PII-specific.
 
-The reluctance towards data sharing and common formats in the medical domain has hampered progress significantly.
+It should be noted that, although some of this text is easy to catch with rule-based approaches and regular expressions, such as a credit card number, other information requires contextual understanding and an ML solution
+to achieve the necessary performance.
 
-Stopwords would be worth mentioning?
+Spacy, NLTK, and Stanford NLP all provide out-of-the-box NER models that perform well on unstructured text. Let's look at a Spacy example in practice.
+
+\begin{python}
+  # Example 4 - Simple PII Anonymizer
+
+  import spacy
+
+  sample = "The patient, John Smith, began feeling symptoms at his home in Seattle, and was taken to Virginia Mason Medical Center for treatment"
+  nlp = spacy.load("en_core_web_md")
+
+  doc = nlp(sample)
+
+  for word in doc.ents:
+      sample = sample.replace(word.text, word.label_)
+
+  print(sample)
+
+  #The patient, PERSON, began feeling symptoms at his home in GPE, and was taken to ORG for treatment
+
+\end{python}
 
 \subsection{Mining Unstructured Text and Clinical Documentation}
-
-
 
 This is placeholder text. Talk about clinical documentation and EHR notes, and other forms of unstructred text, being used for downstream classification tasks.
 Then, give some examples of them, and what these people did, and possibly how transformers could probably improve this work greatly.
