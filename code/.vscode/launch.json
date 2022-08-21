@@ -1,6 +1,14 @@
 {
     "configurations": [
         {
+            "name": "Inference",
+            "type": "python",
+            "request": "launch",
+            "module": "inference.handler",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Train Debug",
             "type": "python",
             "request": "launch",
@@ -9,11 +17,15 @@
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
-                "CUDA_VISIBLE_DEVICES": "0"
+                "CUDA_VISIBLE_DEVICES": "0",
+                "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
+                "--entity=shappy",
+                "--project=financial_impact",
                 "--experiment_name=debug",
-                "--output_dir=~/projects/epilepsy/models",
+                "--disable_logging",
+                "--output_dir=~/projects/",
                 "--config=./config/config_financial_impact_small.json",
                 "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
             ]
@@ -26,10 +38,13 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}"
+                "PYTHONPATH": "${workspaceFolder}",
+                "TOKENIZERS_PARALLELISM": "false"
             },
             "args": [
-                "--output_dir=~/projects/epilepsy/models",
+                "--entity=shappy",
+                "--project=financial_impact",
+                "--output_dir=~/projects/",
                 "--config=./config/config_financial_impact.json",
                 "--data_dir=~/projects/epilepsy/datasets/financial_impact/general.csv"
             ]

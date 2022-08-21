@@ -49,15 +49,15 @@ class FinancialImpactDataModule(MultiLabelCSVDataModule):
         if stage == "fit" or stage is not None:
             self.train_dataframes = self._read_csv_directory(self.args.data_dir)
 
-            for label in self.args.hparams["label"]:
+            for label in self.args.label:
                 self.train_dataframes[0][label] = self.train_dataframes[0][label].map(
                     {"nan": "0", 1.0: "1", "1.0": "1"}
                 )
             self._train_dataset, self._val_dataset, self._test_dataset = split_dataframes(
                 self.train_dataframes,
-                train_ratio=self.args.hparams["train_ratio"],
-                validation_ratio=self.args.hparams["validation_ratio"],
-                test_ratio=self.args.hparams["test_ratio"],
+                train_ratio=self.args.train_ratio,
+                validation_ratio=self.args.validation_ratio,
+                test_ratio=self.args.test_ratio,
                 shuffle=True,
             )
 
@@ -70,7 +70,7 @@ class FinancialImpactDataModule(MultiLabelCSVDataModule):
             )
 
             train_label_size_out = "Training Dataset Sample Size For Each Label:\n"
-            for label in self.args.hparams["label"]:
+            for label in self.args.label:
                 support = self._train_dataset[self._train_dataset[label] == "1"].shape[0]
                 train_label_size_out += "\t{}: {} samples ({} %)\n".format(
                     label, support, round(100 * support / self._train_dataset.shape[0], 4)
