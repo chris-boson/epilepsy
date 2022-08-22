@@ -1,9 +1,13 @@
+# Example 1 - hello_world.py
 import random
 
 
 def main():
-    print(f"Hello World {random.random()}")
+    print("Hello World")
+    a = random.random()
+    return a
 
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    print(result)
