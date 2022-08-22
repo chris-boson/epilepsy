@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Hello World",
+            "type": "python",
+            "request": "launch",
+            "module": "scripts.hello_world",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
