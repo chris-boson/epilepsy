@@ -1,1 +1,126 @@
 \section{Python}
+
+Python is an popular and powerful programming language used throughout industry and academia.
+It is a common first choice for new programmers because it has a clean and understandable syntax.
+Rich library support is one of the many reasons it is a great choice for everything from scripting to large-scale applications such as Dropbox or major components of Youtube and Instagram.
+Python has become the dominant language used across data science and machine learning in large part due to the development of sophisticated frameworks and strong community support.
+
+\subsection{Flavors of Python}
+
+Similar to Git, Python comes pre-installed on Mac OS and most distributions of Linux.
+\textit{Python3} is the current and recommended version for development as \textit{Python2} support ended on January 1, 2020.
+It is recommended to have at least Python 3.8. As with all software, there are differences between versions of Python that can lead to unexpected and incorrect behavior across platforms.
+All software versions as well as the python version should be \textit{pinned} (set to a specific version) to ensure this does not happen.
+The authors recommend \textit{pyenv} as a tool in your systems to manage python versions between projects.
+To verify installation of python in your machine, open a terminal and enter \pythoninline{python}.
+If Python is installed, you will enter into a program that lets you enter commands on your machine and get their outputs. \pythoninline{exit()} will close this program.
+It is never recommended to develop Python from the terminal, but instead use an IDE and Virtual Environments.
+
+\subsection{IDEs and Virtual Environments}
+
+Using the right tools can speed up development time and help avoid easy mistakes as you build out code bases.
+As code become more complex, the importance of having these tools will continue to rise.
+There is an unfortunate tendency in academia, and to a considerable degree in industry, to use one-off scripts and throwaway code.
+This often leads to duplicate efforts and an unmaintainable and incomprehensible mess. 
+It slows down scientific progress and presents an unnecessary and all-too-often understated risk to patients.
+
+\textit{Visual Studio Code} (VSCode), developed and maintained by Microsoft, is an excellent choice for an Integrated Development Environment (IDE).
+It makes the life of developers much easier by providing easy navigation across files, access to a terminal, git integration, and debugging support.
+In addition, it houses thousands of extensions that make writing Python, or nearly any other programming language, that much easier.
+Readers are recommended to download and install VSCode.
+Often developers will include a \textit{workspace} file that defines the required extensions and settings for the development environment of your project.
+As an example, you can clone the repository accompanying this book by running \pythoninline{git clone https://github.com/chris-boson/epilepsy.git}.
+You will see a file called \pythoninline{epilepsy.code-workspace}. 
+If you open this file, an \textit{Open Workspace} button will appear that applies the same settings and extensions to anybody that clones the repository.
+
+While it is important to define your exact version of Python, it is equally important to define (and pin) the exact versions of all dependencies you use for a given project.
+It is strongly recommended that you don't use your system Python, but instead create a new \textit{Virtual Environment} for each new project, as you may need different versions of the same dependency. 
+A tool that can help with all these aspects is \pythoninline{poetry}\footnote{https://python-poetry.org/}. 
+Once installed, it allows you to specify a \pythoninline{pyproject.toml} configuration file that contains some metadata about your project, as well as defines compatible Python and required dependencies and their versions.
+Dependencies have their own dependencies and may only be compatible with some versions.
+To avoid conflicts and help others recreate exactly which versions of dependencies were used when you ran your experiments you should always create a \textit{lock file} via \pythoninline{poetry lock} that you check into source control.
+
+To follow along in the tutorial, navigate to the folder in this repository corresponding to this chapter (\pythoninline{code/CodingBasics}) and run \pythoninline{poetry install}.
+This will create a new virtual environment using a compatible Python version and install the exact versions of all dependencies specified in \pythoninline{poetry.lock}.
+
+\subsection{Walkthrough of Python Syntax}
+
+Here we will walkthrough the usage of Python with a running example of a program that demonstrates some basic statistical calculations. We aim to highlight basic to moderate syntax and usage of different data structures.
+Each of the following sections has an accompanying Python file that you can run located in the \pythoninline{scripts} folder.
+%maybe mention having workspace file already give them highlights, formatting, etc.
+
+\subsection{Running Modular Python Files}
+
+The file \pythoninline{hello_world.py} contains code to print some basic output back to the console.
+To run this file, execute the following command from the \pythoninline{code/CodingBasics/scripts} directory in your terminal:\\
+\pythoninline{python hello_world.py}\\
+This will run the following program:
+
+\pythonexternal{../code/CodingBasics/scripts/hello_world.py}
+
+You should see the output \pythoninline{Hello World} on one line, and on the second line you should see some random number between 0 and 1.
+Let's break down what is going on here under the hood:
+
+The first thing that happens in this file is that we import a \textit{module} called \pythoninline{random}. This module houses a library of code related to random-number generation, a complicated field of Computer Science.
+When you install Python, it comes packaged with the standard library, which is a catalog of modules providing useful functionality. Always rely on these libraries when you can as they are written by experts and tested continuously.
+By importing \pythoninline{random}, we now have access to everything in this library.
+
+The next thing that happens in this file is that we define a \textit{function} called \pythoninline{main()}. Functions in Python have zero or more inputs and zero or more outputs. This function has no inputs, and one output.
+If a function has an output, its execution will finish with a \pythoninline{return} statement.
+Functions can also print output directly to the console by using the \pythoninline{print} function.
+Here we print \pythoninline{Hello World} to the console.
+
+The \pythoninline{random} library has many functions, one of which is called \pythoninline{random()}.
+It takes zero inputs and returns one output, namely a pseudo-random number between 0 and 1.
+We \textit{assign} this value to the variable \pythoninline{a} and return it.
+
+The line \pythoninline{if __name__ == "__main__":} is a common way of defining the execution point of a piece of code.
+It tells your machine where to begin when you run the command \pythoninline{python hello_world.py}. In this case we call our function, receive its returned value, and print it to the console. The other critical piece of this statement is that it prevents your code from being executed if it is imported somewhere else.
+
+\subsection{Defining Classes}
+
+Using Python classes is one of the best ways to organize your code into reusable components.
+Python is considered an object-oriented language.
+An \textit{object} is a entity that combines functions (called \textit{methods}) and data (called \textit{attributes}).
+The purpose is to bundle together related code to simplify composition and reuse, and make the code overall more readable and digestible.
+Objects are created by initializing (\textit{instantiating}) \textit{classes}.
+Classes have an \pythoninline{__init__} method that is called upon initialization.
+
+Run \pythoninline{python classes.py}\\ to execute the following program:
+
+\pythonexternal{../code/CodingBasics/scripts/classes.py}
+
+Let us break down this code as well.
+
+The class is defined with a name as well as an \pythoninline{__init__} method.
+Notice this method takes '\pythoninline{self}' as a first argument.
+All methods in Python classes begin with the '\pythoninline{self}' argument.
+It stores a reference to the object itself, which means that at any time you can access other attributes and methods by referencing '\pythoninline{self}'.
+In the \pythoninline{__init__} method we store two argument values to the object, the \textit{name} and \textit{age}
+
+The \pythoninline{get_age_difference} method accesses the stored \textit{age} attribute for the current object, as well as another \textit{Patient} object passed in as the first argument, and computes the absolute difference.
+The reusability of classes shines when they are instantiated many times. Here we instantiate two Patient classes.
+In large software systems, it is common to design the high-level classes you need before writing too much code.
+Classes tend to be nouns, and their methods tend to be verbs associated with their behavior.
+
+% Notes:
+% - python basics
+% - organizing and factoring code (mention it helps to test code)
+% - objects
+%     - python notebooks good vs bad
+% - pyenv to install version of python
+% - virtualenv
+%     - poetry
+% - walkthrough
+%     - clone repository
+%     - random data
+%     - load data
+%     - transform data (incorporate python stuff )
+%     - visualize something / compute some stats
+% - (as an exercise, you can also clone the repository accompanying this book\footnote{\pythoninline{git clone https://github.com/chris-boson/epilepsy.git}}).
+% - mention later branch and blah blah
+% a sentence or two on the depth that we cover here
+% recommendations section at the end - DEBUGGERS
+
+%python best practice list
+% no heavy computation in init

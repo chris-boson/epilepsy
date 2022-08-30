@@ -1,23 +1,11 @@
 [tool.poetry]
-name = "epilepsy"
+name = "epilepsy-coding-basics"
 version = "0.1.0"
 description = ""
 authors = []
 
 [tool.poetry.dependencies]
 python = "3.8.*"
-sheepy = {path = "../sheepy", develop = true}
-pytorch-lightning = "1.5.8"
-torch = "1.11"
-boto3 = "^1.21.0"
-pandas = "^1.4.1"
-sentence-transformers = "^2.2.0"
-umap-learn = "^0.5.2"
-numba = "0.53"
-hdbscan = "^0.8.28"
-matplotlib = "^3.5.1"
-nbformat = "^5.2.0"
-Flask = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
 black = "22.3.0"

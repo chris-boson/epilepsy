@@ -3,12 +3,6 @@
 Part of any research process is rigorous record keeping to ensure experiments can be independently and reliably reproduced.
 While researchers keep meticulous journals, when dealing with software this bookkeeping can be largely automated.
 
-
-\subsection{Version Control}
-Software engineering primarily relies on version control systems, such as GitHub or BitBucket, to keep track of code changes.
-
-....
-
 \subsection{Experiment Tracking}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/model.png}
@@ -271,3 +265,5 @@ Another common technique is to add \textit{dropout}, where a fraction of neurons
 This ensures that each neuron has a unique purpose and learns to detect a specific set of features in the data, without co-adapting to the output of other neurons.
 Another interpretation of dropout is that it can be seen as an approximation to a bagging technique, where the outputs of different models at each iteration are averaged, leading to an overall reduction in errors if they are uncorrelated.
 This tends to reduce generalization error, prevent the model from fitting to irrelevant details, and make it more robust to noise.
+
+% NOTE - \subsection{Data Sharing for ML (include somewhere here?)}
