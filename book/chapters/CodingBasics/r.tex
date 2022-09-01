@@ -1,1 +1,112 @@
-\section{R}
+\section{Programming with R}
+
+\subsection{Why R?}
+
+In this section we focus on introduction to data analysis and visualizations with R. After introducing the versatility of Python in the previous section, one may wonder do we need R and if so why? R is one of the most popular programming languages used for data analysis, visualizations and statistics. Due to its open-source nature, the community using and contributing to R is vast. It is widely used in academia which brings new research to users quickly. Various specialized packages for data wrangling, plotting and statistical inference and learning exist, which make it a great choice for statistical analysis and experimentation. Given a data set, it is very easy to get started with R and be exploring and analyzing data in matter of minutes. Moreover, it is an excellent choice for new algorithmic and statistical methodology development or analysis as one does not need to deal with the overhead existing from complex data structures and initial set up. The goal of this section is to introduce the readers to data analysis and visualizations with R.
+
+\subsection{Data Loading and Structures}
+The data set that we will be exploring consists of several files pertaining to flight related data. The data files are available in the GitHub repository of the book. While the data is available with recent version of the R distribution and can be loaded directly from R, we have exported it into different files, because most often the data been analyzed is not contained in the R distribution, it is contained in multiple files, which may have different formats, and needs to be joined together for cleaning, visualizations and analysis. In order to replicate the experiments below please download the data from the $r_data$ folder in the book's GitHub repository.
+
+Before loading the data, we review the most common data structures used in R along with some of their benefits. As most programming languages that deal with numerical operations, R provides the users with \textbf{vector} and \textbf{matrix} structures. Atomic vectors in R can be one of four types - integer, double, Boolean/logical and character. Each atomic vector can contain only a homogeneous type of data, i.e. at most one of the four types. In contrasts, lists are similar to atomic vectors, but they can contain more than one data type. Additionally, nesting lists within lists is also acceptable in R. Atomic vectors can be extended to 2-dimensional matrices. The atomic vectors constituting the matrices are all of the same length. The matrix inherits the data structure properties of atomic vectors. The homogeneous structure of the atomic vectors and matrices allows for a trade off between computational efficiency and flexibility of storing data. To allow users the flexibility to store data from different formats, R uses \textbf{dataframes}. A dataframe is a list of vectors with the same length. Since it is a list, it allows for containing mixed types of data. In fact, one can store lists within a column. Additionally, dataframes can contain factors, data types used for storing categorical data in R. Finally, a newer version of dataframes are called tibbles. Some of the benefits that tibbles provide are ability to use the \textit{tidyverse} package in R, display the data types, no automatic conversion of the types on inputs, such as converting string to factors etc. Tibbles further increase the convenience for users at the cost of decreased computational efficiency relative to dataframes. For more extensive treatment of the different data structures within R, we refer the readers to (Hadley for tibbles and other source for matrix/vector and df).
+
+The first file is \textit{flights.csv}. It contains information on departure flights (reference here Hadley's package). We begin by loading the data and check that it is loaded into a data.frame.
+\begin{lstlisting}[language=R]
+flights <- read.csv('flights.csv', header=TRUE, sep=',', fill=TRUE)
+is.data.frame(flights)
+\end{lstlisting}
+The second file that we will load is a JSON file that contain weather information for all airports in New York City. Once the file is loaded we again check whether the file is loaded as a dataframe.
+\begin{lstlisting}[language=R]
+weather <- read_json('weather.json', simplifyVector = TRUE)
+weather <- fromJSON(weather)
+is.data.frame(weather)
+\end{lstlisting}
+Finally, we load an rds data file that contains plane information, such as plane type, seat capacity, number of engines etc.
+\begin{lstlisting}[language=R]
+planes <- readRDS(file = "planes.rds")
+is.data.frame(planes)
+\end{lstlisting}
+
+\subsection{Data Wrangling}
+\subsubsection{Relational Data}
+The scenario we consider here is a simplification of what a real project looks like. Typically, when performing analysis, one needs to obtain data from multiple files / databases that may or may not be in the same format. These data sets are usually related in some way but each also provides unique information not available in the others. The values that the data sources share in common are referred to as keys. Typically, there are two types of keys - primary and foreign keys. Primary keys refer to the column in the data that uniquely identifies a row in its own data set. A foreign key refers to the column that identifies unique values of the current data into another table. To make these concepts more concrete we need to explore the loaded data sets. A quick way to take a look at a data.frame in R is via \textit{str()}, which retrieves some of the characteristics of the data.frame, such as number of columns, number of rows, the type of each vector and all the columns in the data.frame.
+\begin{lstlisting}[language=R]
+'data.frame':	336776 obs. of  12 variables:
+ $ year          : int  2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+ $ dep_time      : int  517 533 542 544 554 554 555 557 557 558 ...
+ $ sched_dep_time: int  515 529 540 545 600 558 600 600 600 600 ...
+ $ arr_time      : int  830 850 923 1004 812 740 913 709 838 753 ...
+ $ sched_arr_time: int  819 830 850 1022 837 728 854 723 846 745 ...
+ $ carrier       : chr  "UA" "UA" "AA" "B6" ...
+ $ flight        : int  1545 1714 1141 725 461 1696 507 5708 79 301 ...
+ $ tailnum       : chr  "N14228" "N24211" "N619AA" "N804JB" ...
+ $ origin        : chr  "EWR" "LGA" "JFK" "JFK" ...
+ $ dest          : chr  "IAH" "IAH" "MIA" "BQN" ...
+ $ distance      : int  1400 1416 1089 1576 762 719 1065 229 944 733 ...
+ $ time_hour     : chr  "2013-01-01 05:00:00" "2013-01-01 05:00:00"
+\end{lstlisting}
+The data set contains ~337K observations of 19 variables. The variables are a mix of integers and characters. The exact definitions of each column name can be seen by running \textit{?flights} in the R console. The primary key of this table consists of multiple columns, namely day, month, year, hour and flight, because they are all needed in order to identify a unique row in the data.frame.
+
+The planes data set consists of 9 columns and 3322 observations. To obtain only the dimensions of the data without displaying additional information, one can use the command \textit{dim(planes)}. We also encourage the readers to use \textit{str(planes)} to take a look at all columns and data types within the dataframe. The primary key is tailnum. The planes and flights data sets connect uniquely, the rows map 1-1 between the two data.frames, via the tailnum column, which is a foreign key for the flights data set.
+
+Finally, the primary key for the weather data consists of the columns hour, day, month, year and origin. If one is interested in merging the planes and weather datasets, these are the keys that must be used. This is suggesting that we have weather data available only for the origin of the flight and not the final destination. Otherwise, one will need to add it to the primary key of the weather data and use it when merging the two datasets.
+
+\subsubsection{Joining Relational Data}
+We begin by exploring how multiple data.frames can be combined into one to simplify analysis. For general overview of relational databases and different ways of joining the data we refer the reader to (REFERENCE). From our description of the data in the previous section, one can note that the flights data needs to be joined with the planes and weather data if one is to bring all data.frames into one. We begin by first joining the flights and planes data, using the join function from the plyr package.
+\begin{lstlisting}[language=R]
+flights_planes <- merge(flights, planes, by = 'tailnum', all.x = FALSE, all.y = FALSE)
+\end{lstlisting}
+where we specify the primary key to join on - 'tailnum'. We use an inner join, which joins so that if a flight has a tailnum value that is not in the plane data set, the row is dropped. To achieve that we set all.x and all.y to FALSE. Running \textit{dim(flights\_planes)} indicates that the new data set has ~28K rows and 27 columns. It turns out that some of the tailnum from the flights data was not found in the planes data and hence the row were dropped from the joined data. Additionally, there are 27 columns now, which is combining the 19 from the flights data and the 9 from the planes data, minus the primary key tailnum, which is the same in both data.frames. If we run \textit{str(flights\_planes)} and look through the columns, one notices that there are two columns named year.x and year.y. This is due to having two columns with the name year in each of the two data.frames that were joined. \textit{merge()} automatically renames them in the merged data.frame so that the information from both columns is kept. In particular, year.x corresponds to the year that flight was taken, while year.y corresponds to the year the plane that took that particular flight from the data was manufactured. We will rename the columns to reflect their meaning within the data.
+\begin{lstlisting}[language=R]
+colnames(flights_planes)[colnames(flights_planes) == 'year.x'] <- 'year'
+colnames(flights_planes)[colnames(flights_planes) == 'year.y'] <- 'year_manufactured'
+\end{lstlisting}
+Before we can begin exploring the data in detail we also join in the weather data. There are two differences between the previous join and this one - 1. now there are multiple keys to join on and 2. not all keys that we need to use for joining in both data.frames have the same name 3. we would like to join the data such that all flights are kept regardless of whether there is weather information available at the time of the flight. To accomplish the last point, one can use a \textit{left join}. The R implementation to join the data frames as described above is:
+\begin{lstlisting}[language=R]
+flights_planes <- merge(flights_planes, weather,
+                    by.x = c("hour", "day", "month", "year", "origin", "time_hour"),
+                    by.y = c("hour", "day", "month", "year", "airport_code", "time_hour"),
+                    all.x = TRUE, all.y = FALSE)
+\end{lstlisting}
+The function inputs \textit{by.x} and \textit{by.y} allow users to specify all keys from each of the two data.frames. When multiple keys are used for joining, they are passed via the vector argument \textit{c("a", "b", ...)}. In order to keep all rows from the first data set we set \textit{all.x = TRUE} and \textit{all.y = FALSE}.
+As there are quite a few columns in the dataframe we drop a few to make it easier to analyze:
+\begin{lstlisting}[language=R]
+flights_planes_weather <- subset(flights_planes_weather,
+                            select = -c(type, manufacturer,
+                                        model, speed, engine,
+                                        dewp, humid, wind_dir))
+\end{lstlisting}
+
+Once we have our initial data ready we can begin exploring it. Since we are not familiar with the data and we have joined data from different sources, a good first step is to check the number of missing values in the data. To that end we introduce here custom defined functions in R. The function that we define takes two inputs, a data.frame for which we are interested in calculating the proportion of missing values and a threshold value used for returning columns in the data frame that exceed it. The output is column names along with proportion of missing values above the user input threshold.
+\begin{lstlisting}[language=R]
+display_na <- function(df, threshold){
+
+  # Inputs:
+  # df: data.frame - data frame for which the NA percentage is to be calculated
+  # threshold: double - value between 0 and 1 indicating that columns with NA
+  #                     proportion higher than threshold should be returned
+
+  # Output:
+  # named vector with all columns that have more than threshold proportion
+  # of values with NA
+  na_percent_per_column <- round(colMeans(is.na(flights_planes_weather)),3)
+  return(na_percent_per_column[na_percent_per_column > threshold])
+}
+display_na(flights_planes_weather, 0.01)
+
+dep_time          arr_time    year_manufactured  pressure   wind_gust
+0.015             0.016             0.019         0.114       0.763
+\end{lstlisting}
+The columns with the most missing values are pressure and wind\_gust. The percentage of missing values in the later is particularly high. There are different ways to treat missing values, and their details are beyond the scope of this chapter, here we drop wind\_gust and impute the remaining columns with the median of the data for that corresponding column.
+\begin{lstlisting}[language=R]
+flights_planes_weather <- subset(flights_planes_weather,
+                            select = -c(wind_gust))
+fill_na <- function(df){
+  return(replace(df, is.na(df), median(df, na.rm = TRUE)))
+}
+replace_na_with_median <- function(df){
+  is_numeric <- sapply(df, is.numeric)
+  clean_df <- replace(df, is_numeric, lapply(df[is_numeric], fill_na))
+  return(clean_df)
+}
+flights_planes_weather = replace_na_with_median(flights_planes_weather)
+\end{lstlisting}
