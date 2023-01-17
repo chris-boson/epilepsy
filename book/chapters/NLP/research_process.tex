@@ -1,7 +1,7 @@
 
 \section{Research Process}
 Part of any research process is rigorous record keeping to ensure experiments can be independently and reliably reproduced.
-While researchers keep meticulous journals, when dealing with software this bookkeeping can be largely automated.
+While researchers keep meticulous journals, bookkeeping can be largely automated when dealing with software.
 
 \subsection{Experiment Tracking}
 \begin{figure}[h]
@@ -10,14 +10,14 @@ While researchers keep meticulous journals, when dealing with software this book
 \end{figure}
 An experiment is defined by the training code, data, and configuration.
 When ML and Data Science are involved, the data generating process has to be documented.
-In software engineering we say that code doesn't exist until it is "checked into" version control.
-Similarly, data doesn't exist until it is stored in the cloud.
+In software engineering we say that code doesn't exist until it is tracked in a VCS and pushed to a remote repository that holds the source of turth.
+Similarly, data doesn't exist until it is stored in a secure location, where it can be reliably retrieved.
 In addition to the raw data, we should also store documentation about how it was created, by whom, when, and any additional processing steps.
-This should be done in a way that is easy to replicate and understand -- ideally directly in code.
+All processing steps should be done in a way that is easy to replicate and understand -- ideally directly in code.
 
-Version control system are specialized to keep track changes in plain text files, but they are not well suited for tracking the other aspects of an experiment.
+VCSs are specialized to efficiently keep track of changes in plain text files, but they are not well suited for tracking other aspects of an experiment.
 The ML community has developed specialized tools\footnote{Weights\&Biases, Neptune}, which we have integrated into Sheepy.
-These tools are excellent at visualizing and comparing of
+These tools are excellent at tracking, visualizing and comparing of
 \begin{itemize}
     \item Hyperparameters
     \item Model metrics
@@ -32,19 +32,14 @@ and facilitate collaboration and sharing of results by directly linking to the e
 
 At the beginning of a new training run an experiment is initialized and data related to the run streamed to a web based platform.
 The next step is obtaining data artifacts from a cloud storage provider\footnote{Amazon S3, Google Cloud Storage}, preprocessing, training and finally storing and tracking of output artifacts and metadata.
-Metadata can include information about how many samples the data contains, the size and type of fields, input features and outputs of a model, when it was created etc..
-This facilitates discovery, analysis, iteration, and collaboration.
+Metadata can include information about how many samples the data contains, the size and type of fields, input features and outputs of a model, when it was created etc., facilitating discovery, analysis, iteration, and collaboration.
 
 \subsection{Data Preparation}
-We will go over each step of data preparation in the next sections:
-\begin{itemize}
-    \item Data download
-    \item Pre-processing
-    \item Splitting into training, validation, and test sets
-    \item Feeding data to the model during training
-\end{itemize}
+We will go over each step of data preparation in the next sections: Data download, pre-processing, splitting and efficiently feeding data to the model during training.
 
-The goal is to rerun an experiment from scratch with a single command and we build on top of PyTorch Lightning's \pythoninline{DataModule} class to handle these steps.
+The goal is to rerun an experiment from scratch with a single command.
+We build on top of PyTorch Lightning's \pythoninline{DataModule} class to handle these steps.
+
 \subsubsection{Data Download}
 Downloading the dataset from cloud storage and caching are handled in the \pythoninline{prepare_data} method and only executed once per run.
 We will first check if the data is already cached, and if not, download it.
