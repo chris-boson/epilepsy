@@ -26,7 +26,7 @@ These tools are excellent at tracking, visualizing and comparing of
     \item Hardware configuration
     \item Hardware metrics
     \item Code and dependency versions
-    \item Artifacts (raw data, processed data, models)
+    \item Data and Model Artifacts
 \end{itemize}
 and facilitate collaboration and sharing of results by directly linking to the experiments.
 
@@ -151,78 +151,6 @@ In practice, we will choose a batch size that is much smaller than the number of
     \label{fig:mini-batch}
 \end{figure}
 
-\subsection{Evaluation and Metrics}
-\label{evaluation}
-To know how well our model is doing we need to define how to measure its performance.
-When the target is a real number (regression) we can simply compare the model output using one of the metrics in Table \ref{table:regression_metrics}.
-\begin{table}
-    \centering
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabular}{|c| c| c|}
-    Metric Name & Function & Abbreviation \\[0.5ex] \hline
-    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$ & MSE \\ [0.5ex]
-    Mean Absolute Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|\end{array}$ & MAE \\ [0.5ex]
-    Root Mean Squared Error & $\begin{array} {lcl} \sqrt{\frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2}\end{array}$ & RMSE\\ [0.5ex]
-    Mean Absolute Percentage Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N \left| \frac{\hat{y}_i - y_i}{y_i}\right|\end{array}$ & MAPE\\ [0.5ex]
-    Symmetric Mean Absolute Percentage Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N\frac{|\hat{y}_i - y_i|}{|\hat{y}_i| + |y_i|}\end{array}$  & SMAPE \\ [0.5ex]
-    \end{tabular}
-    \caption{Regression metrics}
-    \label{table:regression_metrics}
-\end{table}
-
-When the target is a categorical variable (classification) we will still get a distribution of real numbers as output, i.e. the confidence of the model that a sample belongs to a certain class or set of classes.
-The model output will be close to one if the sample belongs to the class, and close to zero if it does not.
-To compute classification metrics, we critically need to define a \textit{threshold} $t$.
-By default we could choose $t=0.5$, as that corresponds to how the loss function determines whether to push a sample in one direction or the other.
-Later we will discuss reasons and tips for how and why you might want to change this value.
-
-Assuming we have only have two classes, i.e. $True$ or $False$, once a threshold has been chosen, every sample will be in one of four categories:
-\begin{itemize}
-    \item The model output is greater than the threshold and the sample belongs to the $True$ class, we call this a True Positive ($TP$)
-    \item The model output is greater than the threshold and the sample belongs to the $False$ class, we call this a False Positive ($FP$)
-    \item The model output is less than the threshold and the sample belongs to the $True$ class, we call this a False Negative ($FN$)
-    \item The model output is less than the threshold and the sample belongs to the $False$ class, we call this a True Negative ($TN$)
-\end{itemize}
-With this we can define the metrics in Table \ref{table:classification_metrics}.
-\begin{table}
-    \centering
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabular}{|c| c| c|}
-    Metric Name & Function & Interpretation \\[0.5ex] \hline
-    $Accuracy$ & $\begin{array} {lcl} \frac{TP + TN}{TP + FP + FN + TN}\end{array}$ & Fraction of samples classified correctly  \\ [0.5ex]
-    $Precision$ & $\begin{array} {lcl} \frac{TP}{TP + FP}\end{array}$ & Of all samples predicted as $True$, fraction of $True$ samples \\ [0.5ex]
-    $Recall$ & $\begin{array} {lcl} \frac{TP}{TP + FN}\end{array}$ & Of all $True$ samples, fraction of samples predicted as $True$ \\ [0.5ex]
-    $F_1$ & $\begin{array} {lcl}2\frac{Precision \times Recall}{Precision + Recall} \end{array}$ & Harmonic mean between Precision and Recall \\ [0.5ex]
-    \end{tabular}
-    \caption{Classification metrics}
-    \label{table:classification_metrics}
-\end{table}
-Most classification problems are strongly imbalanced and we typically assign the $True$ label to the less common class.
-This also means that $Accuracy$ is rarely the best metric to consider.
-For example, assume we have an imbalance of $1 : 100$ of $True : False$, if we have an algorithm that always predicts $False$ we will get $Accuracy = 0.99$, $Precision = undefined$, $Recall = 0.00$, $F_1 = undefined$.
-By adjusting the threshold we can change the tradeoff between $Precision$ and $Recall$ according to our downstream needs, reflecting whether it is more acceptable to have have a higher rate of $FP$ or $FN$ predictions.
-For example, it may be acceptable to lower the threshold if the goal is finding very rare events from a large dataset for manual inspection, resulting in lower $Precision$ but higher $Recall$.
-The $F_1$ score is balanced measure of $Precision$ and $Recall$ and will be low if any of them is low, and there is a threshold for which it will be maximal.
-As a rule of thumb, you should aim to achieve $F_1 \gtrsim 0.7$.
-
-There is another metric that is often used in classifcation tasks that is independent of class imbalance and threshold called the area under the $Receiver\; Operating\; Charateristic$ curve, or $ROC\; AUC$ (Figure \ref{fig:roc_curve}).
-For this we determine the $False\; Positive\; Rate$ ($FPR$) and $True\; Positive\; Rate$ ($TPR$) for each threshold $t$
-\begin{equation}
-    FPR(t) = \frac{FP(t)}{FP(t) + TN(t)}; \;\;
-    TPR(t) = \frac{TP(t)}{TP(t) + FN(t)}
-\end{equation}
-and take the integral
-\begin{equation}
-    ROC\; AUC = \int_0^1 TPR\bigl(FPR(t)\bigr)\; dt,
-\end{equation}
-corresponding to the weighted mean over all possible thresholds.
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{chapters/NLP/figures/Roc_curve.svg.png}
-    \caption{ROC curve, a random classifier would achieve $AUC = 0.5$, a perfect one $1.0$.}
-    \label{fig:roc_curve}
-\end{figure}
-We automatically generate metrics and plots relevant for text classification tasks in the code accompanying this chapter.
 \subsection{Over- and Underfitting}
 \begin{figure}[h]
     \centering
