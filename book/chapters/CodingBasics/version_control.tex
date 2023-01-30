@@ -45,13 +45,6 @@ Using a VCS is of \textit{critical} importance -- we cannot afford to put the we
     \label{fig:model}
 \end{figure}
 An experiment is defined by the training code, data, and configuration.
-When ML and Data Science are involved, the data generating process has to be documented.
-In software engineering, code doesn't exist until it is tracked in a VCS and pushed to a remote repository.
-Similarly, data doesn't exist until it is stored in a secure location, where it can be reliably retrieved, for example from a cloud storage provider, such as Dropbox, Google Drive, Amazon S3, or Google Cloud Storage.
-We emphasize again the importance of having a single source of truth for all data.
-In addition to the raw data, we should also store documentation about how it was created, by whom, when, and any additional processing steps.
-All processing steps should be done in a way that is easy to replicate and understand -- ideally directly in code.
-
 While VCSs are specialized to keep track of changes in plain text files, they are not well suited for tracking other aspects of an experiment.
 The ML community has developed specialized tools\footnote{Weights\&Biases, Neptune}, which are excellent at tracking, visualizing and comparing of
 \begin{itemize}
@@ -67,7 +60,7 @@ The ML community has developed specialized tools\footnote{Weights\&Biases, Neptu
 This facilitates the collaboration and sharing of results by directly linking to the experiments.
 
 At the beginning of a new training run you should initialize an experiment tracking tool to ensure that all data related to the run is streamed to a web based platform.
-For example with \texttt{Weights\&Biases} you can initialize a new experiment as follows:
+For example in Python, we can use a tool like \texttt{Weights \& Biases} as follows:
 \begin{python}
 import wandb
 
@@ -97,15 +90,35 @@ parser.add_argument(
 )
 args = parser.parse_args()
 \end{python}
-The \pythoninline{argparse} module will automatically parse the command line arguments and make them available as attributes of the \pythoninline{args} object.
-This also doubles as a form of documentation and validation of hyperparameters.
-Next we can easily track the exact setting by using \pythoninline{wandb.config.update(args)}.
+The \pythoninline{argparse} module will parse the command line arguments and make them available as attributes of the \pythoninline{args} object, for example as \pythoninline{args.learning_rate}.
+You can then start the training by running:
+\begin{python}
+python train.py \
+    --learning_rate 0.001 \
+    --batch_size 32
+\end{python}
+which you can also store in a script that you modify as needed.
+This doubles as a form of documentation and validation of hyperparameters, and allows easy tracking by using \pythoninline{wandb.config.update(args)}.
 
-The remote platform again takes on the role of a single source of truth, making the results available to all collaborators, independently of who started the run or on which machine or service they did it.
+In addition to hyperparameters, the data generating process has to be documented.
+In software engineering, code doesn't exist until it is tracked in a VCS and pushed to a remote repository.
+Similarly, data doesn't exist until it is stored in a secure location, where it can be reliably retrieved, for example from a cloud storage provider, such as Dropbox, Google Drive, Amazon S3, or Google Cloud Storage.
+In addition to the raw data, we should store documentation about how it was created, by whom, when, and any additional processing steps.
+Data that only exists on your machine is easily lost, and data preprocessing steps that are not documented are easily forgotten.
+All processing steps should be done in a way that is easy to replicate and understand -- ideally directly in code.
+You can then track references to the data artifacts with
+\begin{python}
+run = wandb.init()
+artifact = wandb.Artifact('sudep_data', type='dataset')
+artifact.add_reference('s3://my-bucket/datasets/sudep_data')
+run.log_artifact(artifact)
+\end{python}
+
+The cloud storage and remote tracking platform again take on the role of a single source of truth, making experiments replicable and results available to all collaborators, independently of who started the run or on which machine or service they did it.
 This saves valuable time, reduces the risk of errors, and makes it easy to share results with others.
-The platform will also automatically track the hardware configuration, such as the number of GPUs, CPU, RAM, and the operating system.
-Once multiple experiments are tracked, the platform will allow you to compare them, for example by plotting the training loss over time, or by allowing you to filter runs by a specific tag or hyperparameter setting.
+In addition, the platform will automatically track the hardware configuration and utilization, such as the number of GPUs, CPU, RAM, and the operating system, allowing you to identify bottlenecks and compare performance on different systems.
 
-In Machine Learning, it is not uncommon to conduct hundreds of experiments until a satisfactory model and configuration is found for a given project.
+In Machine Learning research, it is not uncommon to conduct hundreds of experiments until a satisfactory model and configuration is found for a given project.
+The platform will allow you to compare them, for example by plotting the training loss over time, or by allowing you to filter runs by a specific tag or hyperparameter setting.
 Without automated and rigorous tracking, it is very easy to lose track of what you have tried and what the results were.
 This is especially true when working with a team of collaborators, or when you want to build on the work of others -- or on your own work a few months later.
