@@ -1,0 +1,2 @@
+patient_id,age,gender,seizure_focus,lead_location,date_of_implant
+156,20,False,potato,tomato,11/24/2018

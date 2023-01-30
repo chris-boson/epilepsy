@@ -1,0 +1,30 @@
+import os
+import pandas as pd
+
+#TODO - this file won't get checked in, just helps to modularize the run scripts
+
+def load_person_data():
+
+    #Initialize all the required paths
+    data_path = "/home/rob/Projects/epilepsy/code/CodingBasics/dummy_data/person_data" #TODO - delete this
+    
+    #If we are concerned about memory, we can concatenate the dataframes on the fly as we read them
+    df_metadata = None
+    for parent_dir, subdirs, file_names in os.walk(data_path):
+
+        #at each directory level, get a list of any csv files
+        csv_file_names= [f for f in file_names if f.endswith(".csv")]
+
+        #create a full file path using the parent dir and the filename
+        for csv_file_name in csv_file_names:
+            file_path = os.path.join(parent_dir, csv_file_name)
+
+            #read each file separately
+            df = pd.read_csv(file_path)
+
+            #concat the original dataframe every time, except the very first time we read it, in which case we simply create a copy of it
+            df_metadata = df if df_metadata is None else pd.concat([df_metadata, df])
+
+    #Finally we reset the index as before as it would have been very repetitive to do so every time 
+    df_metadata = df_metadata.reset_index(drop=True)
+    return df_metadata
