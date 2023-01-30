@@ -37,3 +37,75 @@ While the setup for VCS may seem like a pain at first, it is critical to the dev
 Within medicine, it becomes even more critical. Having a single source of truth that we can rely on prevents us from making silly mistakes, or silent bugs that affect the behavior of our code. We should only be committing source code files to repositories. It is generally unadvisable to commit generated files or data to a repository. Git will not be able to track changes to binary files efficiently. Once committed, files remain part of the history in a repository, forever bloating its size for all collaborators.
 
 Using a VCS is of \textit{critical} importance -- we cannot afford to put the well-being of patients at risk because of the setup and learning curve behind one of the world's most popular and important pieces of software across all industries. It is a worthwhile investment of your time.
+
+\subsection{Experiment Tracking}
+\label{sec:experiment_tracking}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/model.png}
+    \label{fig:model}
+\end{figure}
+An experiment is defined by the training code, data, and configuration.
+When ML and Data Science are involved, the data generating process has to be documented.
+In software engineering, code doesn't exist until it is tracked in a VCS and pushed to a remote repository.
+Similarly, data doesn't exist until it is stored in a secure location, where it can be reliably retrieved, for example from a cloud storage provider, such as Dropbox, Google Drive, Amazon S3, or Google Cloud Storage.
+We emphasize again the importance of having a single source of truth for all data.
+In addition to the raw data, we should also store documentation about how it was created, by whom, when, and any additional processing steps.
+All processing steps should be done in a way that is easy to replicate and understand -- ideally directly in code.
+
+While VCSs are specialized to keep track of changes in plain text files, they are not well suited for tracking other aspects of an experiment.
+The ML community has developed specialized tools\footnote{Weights\&Biases, Neptune}, which are excellent at tracking, visualizing and comparing of
+\begin{itemize}
+    \item Hyperparameters,
+    \item Model metrics,
+    \item (Interactive) plots,
+    \item Logs,
+    \item Hardware configuration,
+    \item Hardware metrics,
+    \item Code and dependency versions, as well as
+    \item Data and Model Artifacts.
+\end{itemize}
+This facilitates the collaboration and sharing of results by directly linking to the experiments.
+
+At the beginning of a new training run you should initialize an experiment tracking tool to ensure that all data related to the run is streamed to a web based platform.
+For example with \texttt{Weights\&Biases} you can initialize a new experiment as follows:
+\begin{python}
+import wandb
+
+wandb.init(
+  project="sudep-detection",
+  notes="tweak baseline",
+  tags=["baseline", "paper1"],
+)
+\end{python}
+The \pythoninline{wandb.init()} function will create a new experiment in the \texttt{sudep-detection} project, with the notes \texttt{tweak baseline} and the tags \texttt{baseline} and \texttt{paper1}.
+To set and track hyperparamters we recommend using an argument parser such that we can pass in the hyperparameters as command line arguments.
+Python has a built-in argument parser, \pythoninline{argparse}, which can be used as follows:
+\begin{python}
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--learning_rate",
+    type=float,
+    default=0.001,
+    help="Learning rate"
+)
+parser.add_argument(
+    "--batch_size",
+    type=int,
+    default=32,
+    help="Batch size"
+)
+args = parser.parse_args()
+\end{python}
+The \pythoninline{argparse} module will automatically parse the command line arguments and make them available as attributes of the \pythoninline{args} object.
+This also doubles as a form of documentation and validation of hyperparameters.
+Next we can easily track the exact setting by using \pythoninline{wandb.config.update(args)}.
+
+The remote platform again takes on the role of a single source of truth, making the results available to all collaborators, independently of who started the run or on which machine or service they did it.
+This saves valuable time, reduces the risk of errors, and makes it easy to share results with others.
+The platform will also automatically track the hardware configuration, such as the number of GPUs, CPU, RAM, and the operating system.
+Once multiple experiments are tracked, the platform will allow you to compare them, for example by plotting the training loss over time, or by allowing you to filter runs by a specific tag or hyperparameter setting.
+
+In Machine Learning, it is not uncommon to conduct hundreds of experiments until a satisfactory model and configuration is found for a given project.
+Without automated and rigorous tracking, it is very easy to lose track of what you have tried and what the results were.
+This is especially true when working with a team of collaborators, or when you want to build on the work of others -- or on your own work a few months later.
