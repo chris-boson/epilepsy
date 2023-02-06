@@ -58,68 +58,7 @@ We use PyTorch's \pythoninline{DataLoader} class to parallelize this process acr
 A \pythoninline{DataLoader} takes as argument a \pythoninline{Dataset} and provides a stream of batches of data.
 The \textit{batch size} is an important parameter that needs to be tuned on a case by case basis, as we will explain in the next section.
 
-\subsection{Training}
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/model_architecture.png}
-    \caption{Deep neural network architecture}
-    \label{fig:model_architecture}
-\end{figure}
 
-While glossing over some details, model training can summarized in the following steps:
-\begin{itemize}
-    \item Given data pairs $(x_i, y_i)$, where $x_i$ is an input sample, and $y_i$ is the desired output
-    \item Determine a function $f$, such that $f(\theta, x_i) = \hat{y}_i \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
-    \item Define a loss function $L(\theta) = \sum_i L(\hat{y}_i, y_i)$ that measures how close the model's output is to the desired output
-    \item Optimize $\theta$ to minimize $L(\theta)$
-\end{itemize}
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
-    \caption{Minimizing the loss function}
-    \label{fig:loss}
-\end{figure}
-Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in Table \ref{table:losses}.
-\begin{table}
-    \centering
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabular}{|c| c| c|}
-    Loss Name & Function & Use \\[0.5ex] \hline
-    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  & regression \\ [0.5ex]
-    Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & binary classification \\ [0.5ex]
-    Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ & multiclass classification \\ [0.5ex]
-    \end{tabular}
-    \caption{Loss functions}
-    \label{table:losses}
-\end{table}
-Parameters in the last layer are then optimized according to the rule
-\begin{equation}
-    \label{eq:optimization}
-    \theta \rightarrow \theta - \alpha \frac{\partial L}{\partial \theta}
-\end{equation}
-where $\alpha$ is called the \textit{learning rate} and determines the step size, the partial derivative of the loss function with respect to the parameters is called the \textit{gradient}.
-For other parameters the rule is similar, but involves the application of the chain rule from calculus.
-The algorithm is called \textit{gradient descent} and is the workhorse of all modern deep learning.
-In contemporary architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
-
-To optimize the parameters as outlined in Eq. \ref{eq:optimization} we need to evaluate the gradient of the loss function given the data $(x_i, y_i)$.
-To compute the optimial update step we need to sum over all samples in the dataset, compute and store all the gradients, update the parameters once, and repeat the process until convergence.
-This, however is not practical, given the size of typical datasets and the number of model parameters -- each step would be very computationally expensive and the training slow.
-
-On the other end of the spectrum we could use only a single sample to compute approximations of the optimal gradients, and they will take us close to the global minimum.
-This method is called \textit{stochastic gradient descent} and generally works well, but it comes with some tradeoffs:
-\begin{itemize}
-    \item Loading single samples from the dataset is slow, due to CPU, RAM and bus overhead when copying data to VRAM
-    \item There is overhead in the GPU related to scheduling of compute operations
-    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly (see Fig. \ref{fig:mini-batch})
-\end{itemize}
-There is a happy middle ground called \textit{mini-batch gradient descent} which is a combination of stochastic gradient descent with mini-batches.
-Using mini-batches allows for a more accurate estimate of the gradient, and reduces the overhead per sample, as we can take advantage of hardware accelerated vectorized compute operations in CPUs and GPUs.
-In practice, we will choose a batch size that is much smaller than the number of samples in the dataset, and as big as possible without running out of VRAM, where the latter condition is typically the more relevant constraint.
-
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/mini-batch.png}
-    \caption{Batch vs mini-batch vs stochastic gradient descent}
-    \label{fig:mini-batch}
-\end{figure}
 
 \subsection{Over- and Underfitting}
 \begin{figure}[h]
