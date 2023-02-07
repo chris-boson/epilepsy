@@ -85,7 +85,7 @@ But even then, the maximum achievable sequence length is limited to about 100 to
 Lastly, RNNs are inherently sequential because the output of a step depends on the output of the previous step, and vice versa during backpropagation.
 We can not parallelize this process making parameter updates, and therefore scaling to large datasets, as well as inference very slow.
 
-\subsection{Attention}
+\subsubsection{Attention}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/attention.png}
     \caption{In vanilla encoder / decoder architectures, the decoder is only able to attend to the last hidden state of the encoder. Attention allows the decoder to attend to different parts of the input sequence in parallel.}
@@ -108,7 +108,6 @@ The development of attention mechanisms in RNNs laid the foundation for the deve
 The main drawback of attention mechanisms in RNNs is that they require sequential processing of the input sequence, which can be slow and inefficient for long sequences, and doesn't scale to large datasets.
 The Transformer architecture was introduced as a solution, as it uses self-attention mechanisms to allow for parallel processing of the entire sequence.
 
-\subsection{Attention}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/self-attention.png}
     \caption{Here we visualize the attention weights for the word "it". The model learns to include the representation of "The Animal" as part of its encoding.}
