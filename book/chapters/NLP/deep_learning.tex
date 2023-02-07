@@ -86,31 +86,54 @@ Lastly, RNNs are inherently sequential because the output of a step depends on t
 We can not parallelize this process making parameter updates, and therefore scaling to large datasets, as well as inference very slow.
 
 \subsection{Attention}
-Attention is a mechanism that allows the model to focus on different parts of the input sequence in parallel.
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/attention.png}
+    \caption{In vanilla encoder / decoder architectures, the decoder is only able to attend to the last hidden state of the encoder. Attention allows the decoder to attend to different parts of the input sequence in parallel.}
+    \label{fig:attention}
+\end{figure}
+One way to address the vanishing gradient problem is to use a so called attention mechanisms.
+The intuition behind them is to assign a weight to each part of the input sequence, indicating the importance of that part for the current task.
+These weights are computed dynamically for each step in the processing of the input sequence and allow the model to focus on the most relevant parts of the sequence.
+
+They are implemented as additional layers in the model that calculate the attention weights using a set of learnable parameters and use these weights to weight the hidden states of the RNN at each step in the processing of the input sequence.
+The weighted hidden states are then combined and passed through a feedforward neural network to produce the final output.
+
+There are several different types of attention mechanisms, including additive attention, multiplicative attention, and self-attention. Each of these mechanisms has its own strengths and weaknesses, and the choice of mechanism to use depends on the specific requirements of the task and the nature of the input data.
+
+% The seminal paper introducing attention mechanisms is \cite{bahdanau2014neural},
 
 \subsection{Transformers}
-Transformers are a type of neural network that is based on self-attention, which allows the network to attend to different parts of the input sequence in parallel.
-This allows transformers to effectively capture long-term dependencies in sequential data, without the limitations of the vanishing gradient problem.
+The development of attention mechanisms in RNNs laid the foundation for the development of the Transformer architecture, which is now the state-of-the-art in many natural language processing tasks.
 
-Transformers have proven to be highly effective in NLP, and have become the state-of-the-art architecture for many tasks, including machine translation, text classification, and question answering.
-This is largely due to the ability of transformers to effectively capture the relationships between different parts of the input sequence, which is critical for NLP tasks where understanding the context and relationships between words is important.
+The main drawback of attention mechanisms in RNNs is that they require sequential processing of the input sequence, which can be slow and inefficient for long sequences, and doesn't scale to large datasets.
+The Transformer architecture was introduced as a solution, as it uses self-attention mechanisms to allow for parallel processing of the entire sequence.
 
-There have been significant advancements in ML due to a variety of factors, such as the availability of larger and larger datasets, as well as ever increasing computational power at lower and lower prices, better software tools, libraries and model architectures.
-Especially the advent of deep learning (DL), fueled by the emergence of GPUs from about 2012, enabled scaling to many orders of magnitude larger datasets and models.
-The common wisdom before DL was that as the number of parameters in a model increases beyond a certain threshold, it tends to overfit the training data, leading to poor generalization when deployed in the real world.
-Deep Learning based models empirically do not seem to exhibit this behavior, and instead tend gain performance as they get bigger, albeit more slowly.
+\subsection{Attention}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/self-attention.png}
+    \caption{Here we visualize the attention weights for the word "it". The model learns to include the representation of "The Animal" as part of its encoding.}
+    \label{fig:self-attention}
+\end{figure}
 
-Until recently, building strong NLP systems required deep understanding of language and its structure, as well as large amounts of data, even when relying on pre-trained word embeddings - the resulting systems were often still brittle.
+Self-attention works by first embedding the input sequence into a continuous vector space. Then, for each position in the input sequence, the model calculates a set of attention scores, which indicate the degree of dependence between that position and all other positions in the sequence. These attention scores are used to compute a weighted sum of the input representations, which is then used as the input to the next layer of the model.
+It is called self-attention because the model is able to put the representations of each token into context of all surrounding tokens (see Fig. \ref{fig:self-attention}).
 
-% In recent years some surprisingly powerful architectures and pre-training regimes have emerged that build on the concepts we have discussed here, most notably under the name of \textit{Transformers\footnote{BERT, GPT}}, that address the last bullet point of our representation's shortcomings.
-
-The details of the inner workings are beyond the scope of this tutorial, for now it suffices to know that they are able to learn robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
-In fact, they can be considered near the level of a human that just knows the English language (or other languages), along with a broad array of factual knowledge about the world (think Wikipedia).
-Just like a human, they can be taught specialty knowledge that is relevant to a given task, in ML we would say we \textit{finetune} them.
-% Where these models to date generally fall short is in terms of logical inference.
-This paradigm shift has led to a step function improvement in terms of performance and sample efficiency in a wide variety of NLP tasks where Transformers are the defacto state of the art.
-
-In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/queries_keys_values.png}
+    \caption{Here we visualize the attention weights for the word "it". The model learns to include the representation of "The Animal" as part of its encoding.}
+    \label{fig:queries-keys-values}
+\end{figure}
+Each token is assigned an embedding which is multiplied with three trainable weight matrices to obtain three vectors, called Queries, Keys, and Values.
+The model first computes the dot product of the Query vector with each of the Key vectors, and then applies a softmax function to the resulting vector to obtain attention scores that are between 0 and 1 and sum to 1, where the softmax function is defined as:
+\begin{equation}
+    \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}
+\end{equation}
+Finally, the resulting vector of attention scores (Fig. \ref{fig:self-attention}) for each token is multiplied with the Value vectors to obtain the representation for this token (Fig. \ref{fig:queries-keys-values}).
+The outputs of the self-attention mechanism are then passed through a feedforward neural network to produce the output of a so called \textit{encoder block}.
+Many such encoder blocks are stacked on top of each other to form the encoder of the Transformer architecture.
+In some architectures one wants to generate new text, for which we need a \textit{decoder}.
+It has a very similar structure, but we will defer that discussion here.
+For more details on the Transformer architecture, we refer the reader to \cite{vaswani2017attention} and for a more intuitive explanation we recommend \cite{illustratedtransformer}.
 
 \subsubsection{Pre-training and Finetuning}
 The state of the art in NLP is currently dominated by Transformer-based models, which are trained using a two-stage process called \textit{pre-training} and \textit{fine-tuning}. Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve great performance.
@@ -119,7 +142,8 @@ Pre-training refers to the process of training a model on a large corpus\footnot
 The model is trained to predict masked tokens in a sequence, or to reconstruct the input sequence itself, using only the context information provided by surrounding tokens.
 This process enables the model to learn general language patterns and relationships between words and concepts, and can be compared to a human learning a new language.
 Just as a human needs to understand the basic rules and patterns of a language before they can use it to apply it effectively, a model needs to do the same.
-Pre-trained Transformer models are freely available for downloa\footnote{Huggingface} and can be used as a starting point for many NLP tasks.
+Pre-trained Transformer models are freely available for download\footnote{Huggingface} and can be used as a starting point for many NLP tasks.
+They are able to produce robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
 You can also pre-train your own model from scratch, but this requires a lot of data, time and money, and is rarely worth the investment.
 
 Fine-tuning on the other hand refers to the process of adapting the pre-trained model on a much smaller dataset to a specific task, such as classification, sentiment analysis, question answering, or machine translation.
