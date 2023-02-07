@@ -112,14 +112,39 @@ This paradigm shift has led to a step function improvement in terms of performan
 
 In the following sections, we will discuss a broad set of problem statements Transformers are suitable for, along with a set of techniques a practitioner can employ to arrive at robust solutions, even with limited data.
 
-\subsection{Pre-training}
-Modern DL-based systems, such as the aforementioned Transformer architectures, are pre-trained on gigantic datasets\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} and can be downloaded for free\footnote{Huggingface}.
-Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve a given performance.
-Furthermore, it may be helpful to start with a model that is pre-trained on more domain-specific datasets such as \texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}} or \texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}, or pre-train your model from scratch.
+\subsubsection{Pre-training and Finetuning}
+The state of the art in NLP is currently dominated by Transformer-based models, which are trained using a two-stage process called \textit{pre-training} and \textit{fine-tuning}. Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve great performance.
+
+Pre-training refers to the process of training a model on a large corpus\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} of text, sometimes in multiple languages, or on domain-specific datasets\footnote{\texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}}}\footnote{\texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}}, but without any task-specific supervision.
+The model is trained to predict masked tokens in a sequence, or to reconstruct the input sequence itself, using only the context information provided by surrounding tokens.
+This process enables the model to learn general language patterns and relationships between words and concepts, and can be compared to a human learning a new language.
+Just as a human needs to understand the basic rules and patterns of a language before they can use it to apply it effectively, a model needs to do the same.
+Pre-trained Transformer models are freely available for downloa\footnote{Huggingface} and can be used as a starting point for many NLP tasks.
+You can also pre-train your own model from scratch, but this requires a lot of data, time and money, and is rarely worth the investment.
+
+Fine-tuning on the other hand refers to the process of adapting the pre-trained model on a much smaller dataset to a specific task, such as classification, sentiment analysis, question answering, or machine translation.
+This can be compared to a human adapting their language skills to a specific context.
+For example, a person who has learned a new language may need to modify their language skills to fit a particular situation, such as a formal business setting or a casual conversation with friends.
+During fine-tuning, a task-specific layer is added on the on top of the pre-trained model and either only that layer or the entire network is trained end-to-end on the task-specific data.
 
 \subsection{Practical Considerations}
 In contemporary architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
 
+\subsubsection{Feeding Data to the Model}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{chapters/NLP/figures/ram_cpu_vram.png}
+    \caption{Data needs to be moved from disk to RAM to VRAM so that it can be used to update the model parameters.}
+    \label{fig:ram_cpu_vram}
+\end{figure}
+Model parameters are stored in GPU memory (known as VRAM); in order to update them, the GPU needs to process data from the training set.
+After downloading the data from cloud storage it resides on local disk, from where it needs to be moved to RAM and finally VRAM.
+Loading data into the model needs to be fast, or we run the risk of starving the GPU, meaning the GPU processes each batch of data faster than the CPU can deliver the next one, leading to low resource utilization and slow training.
+We use PyTorch's \pythoninline{DataLoader} class to parallelize this process across multiple CPU workers.
+A \pythoninline{DataLoader} takes as argument a \pythoninline{Dataset} and provides a stream of batches of data.
+The \textit{batch size} is an important parameter that needs to be tuned on a case by case basis, as we will explain in the next section.
+
+
+\subsubsection{Mini-batch Gradient Descent}
 To optimize the parameters as outlined in Eq. \ref{eq:optimization} we need to evaluate the gradient of the loss function given the data $(x_i, y_i)$.
 To compute the optimial update step we need to sum over all samples in the dataset, compute and store all the gradients, update the parameters once, and repeat the process until convergence.
 This, however is not practical, given the size of typical datasets and the number of model parameters -- each step would be very computationally expensive and the training slow.
@@ -140,3 +165,42 @@ In practice, we will choose a batch size that is much smaller than the number of
     \caption{Batch vs mini-batch vs stochastic gradient descent}
     \label{fig:mini-batch}
 \end{figure}
+
+
+\subsubsection{Regularization}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.2\textwidth]{chapters/NLP/figures/over_and_underfitting.png}
+    \caption{Left: Underfitting, a straight line doesn't fit  the data well.
+    Right: Overfitting, a complex curve fits the (training) data perfectly, but will likely not generalize well.
+    Center: The model and true underlying function match closely.}
+    \label{fig:over_and_underfitting}
+\end{figure}
+A common problem in ML is the balance between over- and underfitting (Figure \ref{fig:over_and_underfitting}).
+Underfitting can happen when the model is too simple, i.e. it is not able to capture the underlying function (rarely a problem in deep learning).
+Overfitting happens when the model is too complex or has too many degrees of freedom, such that it can fit the training data well, but does not capture the essence of the true data generating process, leading to poor generalization performance when applied to new data.
+
+An easy way to detect these issues is by observing training and validation metrics as a function training steps or epochs, called learning curves.
+We want to see that both, training and validation metrics continue to improve as training progresses until they both taper off at a certain point.
+Note that it is normal to see a difference in the absolute value and rate of change between the training and validation metrics.
+This is called the generalization error, and is nothing to be too concerned about, ultimately only the validation and test metrics are relevant.
+What \textit{is} problematic is if we observe that the validation metrics start to get worse, while the training metrics continue to improve -- this is a clear sign of overfitting and we should stop the training early (Figure \ref{fig:learning_curves}).
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{chapters/NLP/figures/learning_curves.png}
+    \caption{Learning curves, the training and validation loss are plotted as a function of the number of training steps / epochs.}
+    \label{fig:learning_curves}
+\end{figure}
+To address underfitting, the easiest remedy is to increase the complexity of the model (e.g. add more layers) or to increase the number of training steps.
+We can also try to add more features to the dataset, such as adding more words to the vocabulary.
+When dealing with overfitting in deep learning, we usually don't want to reduce the model complexity, but instead add \textit{regularization} and more data.
+Regularization is a technique that restricts the freedom of the model, for example by introducing a penalty on the magnitude of the model parameters.
+For this, the loss functions in Table \ref{table:losses} are modified as
+\begin{equation}
+    \tilde{L}(\theta) = L(\theta) + \frac{1}{2} \sum_{i} |\theta_i|^2.
+\end{equation}
+
+Another common technique is to add \textit{dropout}, where a fraction of neurons is randomly turned off for each training step.
+This ensures that each neuron has a unique purpose and learns to detect a specific set of features in the data, without co-adapting to the output of other neurons.
+Another interpretation of dropout is that it can be seen as an approximation to a bagging technique, where the outputs of different models at each iteration are averaged, leading to an overall reduction in errors if they are uncorrelated.
+This tends to reduce generalization error, prevent the model from fitting to irrelevant details, and make it more robust to noise.
