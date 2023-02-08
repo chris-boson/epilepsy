@@ -189,6 +189,20 @@ In practice, we will choose a batch size that is much smaller than the number of
     \label{fig:mini-batch}
 \end{figure}
 
+Many optimization algorithms exist that aim to minimize the objective loss function that represents a deep learning model. Stochastic
+gradient descent is often a good first choice for this optimization. It requires tuning the \textit{learning rate} parameter, which controls how much the parameters
+will adjust on each step of the iteration after calculating the relative error of the model with respect to each of these parameters. A large learning rate
+will often get stuck in local optima because it is unable to find the minimum in a complex multi-dimensional optimization space, whereas a smaller learning rate
+might take too long to train. Learning rate schedules are often used that aim to get the best of both worlds. One schedule that is often used is to
+begin with a higher learning rate and to slowly decay it as you train. This often allows for faster overall training but still converging to a lower final loss. 
+Another technique that is used in practice is also to cycle learning rates between high and low numbers, as this allows the loss functions to escape
+from local optima and finely explore other parts of the decision space.
+
+As mentioned, mini-batch gradient descent is not the only loss function available to us. Most deep learning libraries support many others that
+automatically compute these partial derivatives for each parameter and adjust them on every backpropagation pass. Some incorporate weighted averages to establish
+a momentum term to smooth out the jumpiness of the loss value. Others have learning rates that exist for each separate parameter and not a single global learning rate.
+The Adam optimizer is a good first choice that combines these techniques and works out of the box quite well for a variety of NLP problems.
+
 
 \subsubsection{Regularization}
 \begin{figure}[h]
@@ -227,3 +241,11 @@ Another common technique is to add \textit{dropout}, where a fraction of neurons
 This ensures that each neuron has a unique purpose and learns to detect a specific set of features in the data, without co-adapting to the output of other neurons.
 Another interpretation of dropout is that it can be seen as an approximation to a bagging technique, where the outputs of different models at each iteration are averaged, leading to an overall reduction in errors if they are uncorrelated.
 This tends to reduce generalization error, prevent the model from fitting to irrelevant details, and make it more robust to noise.
+
+There are many other regularization techniques that are used in practice. They are all designed to reduce
+generalization error, and not training error. Often they come in the flavor of the additional terms added to the
+objective function, as exemplified in Equation 2.3, or as model restrictions, such as dropout. Another common technique
+is on the dataset level, wherein practitioners will directly augment datasets. You will see this happen often in image classification
+tasks where a dataset will create random copies of samples that are rotated and stretched in different directions to make
+the model robust to such invariance. Direct injection of noise, randomly-generated numbers, also occurs on both the input
+as well as label side. 
