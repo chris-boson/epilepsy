@@ -1,0 +1,158 @@
+\section{Embeddings}
+\label{embeddings}
+An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
+Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way. The final performance of a given architecture is often largely determined by the quality of the embeddings it learns.
+
+To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec} \cite{mikolov13}, a technique pioneered by a team led by Thomas Mikolov.
+The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. As it turns out, this idea that similar words appear in similar contexts, is an extremely powerful signal for achieving quality word embeddings. In NLP, the study of techniques that determine the probability of a given sequence of words is known as language modeling.
+
+For example the word \textit{epilepsy} may appear in the context of words like \textit{symptom}, \textit{medication}, or \textit{episode} and vice versa.
+However, we would not expect that \textit{epilepsy} would appear in the context of words like \textit{volleyball}.
+
+We then translate this idea into a training task:
+Given the sum of the one-hot encoded word vectors of the words surrounding the target word, map it to the one-hot encoded vector of the target word.
+
+This is a task that can be solved by a neural network with the following setup:
+Add a layer $l_1$ that maps from the input dimension (of size $|V|$) to an intermediate dimension of size $h$ and then another layer $l_2$ that maps from the intermediate dimension to the output dimension (of size $|V|$).
+Here $h$ is what is called embedding dimension and $h << |V|$.
+\begin{figure}
+  \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
+  \caption{Word2vec}
+  \label{fig:word2vec}
+\end{figure}
+While $h$ is generally a hyperparameter that can be optimized at a later stage, a reasonable choice is to use a value according to the rule of thumb:
+\begin{equation}
+  h \approx 4\sqrt[\leftroot{3} \uproot{3} 4]{|V|}
+\end{equation}
+For a vocabulary size $|V| = 30000$ this comes to a value of about $50$.
+During training, the network will learn to encode the original sparse indicator vectors in a way that preserves the maximum amount of information necessary to predict the target word, while being forced to squeeze the information through the low dimensional bottleneck.
+An interesting side effect of this approach is that we can use part of the network to encode a given word in $V$ by using for example the inverse of $l_2$ as a lookup table.
+The vectors that we obtain from this lookup table are called word embeddings and they have some very useful properties:
+\begin{itemize}
+    \item Similar words tend to be close together (e.g. in terms of euclidian distance).
+    \item Averaging word embeddings of a sentence will give us a more robust representation than our naive approach.
+    \item We can perform some arithmetic, such as adding and subtracting the embedding vectors to traverse the space.
+\end{itemize}
+\begin{figure}
+  \includegraphics[width=\linewidth]{chapters/NLP/figures/king-man+woman.png}
+  \caption{Word2vec}
+  \label{fig:kingmanwoman}
+\end{figure}
+These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straightforward - it only has to slice the embedding space.
+The hard part of understanding the meaning of the sentence is already done.
+Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
+Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
+
+Using these pre-trained text representations is often critical. Without doing so, the majority of what a machine learns is the basic syntax and semantics of language. By using these pre-trained word embeddings, we allow our models to learn to focus more on the downstream task. By simplifying the learning task with these pre-trained embeddings, we need to use far fewer labeled examples than we would training from scratch.
+
+This underlying assumption that similar neighboring words share a semantic similarity to center words is powerful, and at the heart of many modern training objectives for embeddings that are used in many downstream ML systems.
+We do not inherently inject a great deal of model bias, but rather rely on having a large enough training set that the word vectors will become meaningful representations with respect to one another.
+A corpus such as Common Crawl\footnote{Common Crawl Link}, which contains roughly 840 billion tokens of over two million unique words, provides such scale.
+There are other corpora used in these unsupervised processes, one such common candidate being a collection of all Wikipedia articles.
+
+In practice, one training objective can be to use the distributed representation of a set of context words to guess a center word. This is known as the continuous bag of words (CBOW) model.
+
+Consider a training document describing patients with epilepsy, where we are attempting to train a model with a predefined vocabulary $V$ of the top For a vocabulary $V$, where we have chosen the top $|V|$ most common words in English to learn.
+The document being chosen in this training iteration may contain the following excerpt:
+
+\begin{verbatim}
+  ... recommended administering Lamictal to treat their
+  focal seizures, the patient continued experiencing
+  symptoms though reported a 50% reduction in ...
+  \end{verbatim}
+
+In training our word embeddings, we will randomly mask one of the words, in this case \textit{patient}.
+Our model makes use of an additional parameter, a context window size $c$, that helps to provide necessary context.
+If we choose $c = 8$, our training sample would become
+
+\begin{verbatim}
+  ... lamictal to treat their focal seizures, the [MASK]
+  continued experiencing symptoms though reported a 50 % ...
+  \end{verbatim}
+
+For a given center word at index $i$, we consider previous words at indexes $i-1$, $i-2$, ..., $i-c$, and all subsequent words at indexes $i+1$, $i+2$, ..., $i+c$.
+In our word sequence $S$, we may then choose to sum the word vectors of each of these context words.
+Our context input can be written as:
+\begin{equation}
+  \sum_{ \substack {j=-c \\ j \neq 0}}^c w_{i+j}
+\end{equation}
+
+Our task is then to predict a probability distribution over the size of our vocabulary $|V|$, where the target is a vector of all 0's with a 1 at the index in the vocabulary for the word \textit{patient}.
+
+There are a few additional takeaways from this example.
+Note that we will address many of these in the sections to follow.
+\begin{itemize}
+  \item The training process will likely consider this text many times, and mask out different words in each iteration.
+  \item Our processed sentence is slightly modified from our original input.
+  Notice that the number and percent symbol are split, and that Lamictal is lowercased.
+  \item The word \textit{patient} can also be an adjective.
+  Our \textit{patient} embedding will also capture this meaning in our model, dependent upon how often it is used with that meaning.
+  \item If our context window is too small, we lose information.
+  If it is too large, our signal becomes fuzzy as we converge to the global mean vector.
+\end{itemize}
+
+What if we choose to use only a center word, and have our model predict all of the surrounding context words?
+This is a common training technique for embeddings as well, and is known as the Skip-Gram model.
+
+\subsection{Spacy Example of Word Embeddings}
+
+\begin{python}
+  import spacy
+
+  sample_words = ["epilepsy", "seizure", "patient", "language"]
+
+  nlp = spacy.load("en_core_web_md")
+  docs = [nlp(sample) for sample in sample_words]
+
+  #Spacy's Medium English Model Stores Words As Vectors of Dimension 300
+  #Note each word has this vector size
+  for doc in docs:
+      assert doc.vector.shape[0] == 300
+
+  #The cosine distance, ranging from [0,1], of the vectors tells us how similar the words are
+  print(docs[0].similarity(docs[1])) #epilepsy and seizure -> 0.9999
+  print(docs[0].similarity(docs[2])) #epilepsy and patient -> 0.4434
+  print(docs[0].similarity(docs[3])) #epilepsy and language -> 0.1273
+\end{python}
+
+\subsection{Character and Subword Embeddings}
+
+In Example 1, we covered the issue of missing vocabulary that is frequently encountered when using word-level tokenization.
+However, there are other strategies that are commonly used that help to avoid this issue.
+One such simple way around out-of-vocabulary tokens is to use character-level tokenization.
+Instead of having a vocabulary that is tens of thousands of words long, you only have a vocabulary that contains the characters in
+your language, with the addition of punctuation, digits, and a few special tokens for sentence and word marking.
+As long as the tokenizer is able to mark which characters start a word and which characters are continuations of a word, then the original sequence of words can always be recovered.
+
+Unfortunately, the tradeoff for a small vocabulary size with no unknown word entries is that the length of tokens to represent a sentence is clearly much larger.
+Empirically, these models do not perform as well, partially because of this sequence length but also because of the loss of information that is represented in word vectors.
+
+In practice, the best models are often somewhere in the middle, in what is known as word-piece, or subword, vocabularies.
+These tokenizers and vocabularies contain a rich set of common words, but also have subword units that can be used to piece together out-of-vocabulary words.
+These subword units behave like normal word vectors and can store semantic and syntactic information.
+
+
+\begin{python}
+  # Example 3 - Wordpiece Tokenizers
+
+  from transformers import BertTokenizer
+
+  sample = "After a temporal lobe resection, the " \
+           "atonic and clonic seizure frequency fell " \
+           "by 50%."
+
+  bert_tokenizer = BertTokenizer.from_pretrained(
+      'bert-base-uncased'
+  )
+
+  encoded_ids = bert_tokenizer.encode(sample)
+  encoded_tokens = bert_tokenizer.convert_ids_to_tokens(
+      encoded_ids
+  )
+
+  for token, id  in zip(encoded_tokens, encoded_ids):
+      print("{}: {}".format(token,id))
+\end{python}
+
+In example two,
+% \subsubsection{Vocabularies and Medical Embeddings}
