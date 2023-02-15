@@ -27,7 +27,7 @@ is.data.frame(planes)
 \end{lstlisting}
 
 \subsection{Data Wrangling}
-\subsubsection{Relational Data}
+\subsubsection*{Relational Data}
 The scenario we consider here is a simplification of what a real project looks like. Typically, when performing analysis, one needs to obtain data from multiple files / databases that may or may not be in the same format. These data sets are usually related in some way but each also provides unique information not available in the others. The values that the data sources share in common are referred to as keys. Typically, there are two types of keys - primary and foreign keys. Primary keys refer to the column in the data that uniquely identifies a row in its own data set. A foreign key refers to the column that identifies unique values of the current data into another table. To make these concepts more concrete we need to explore the loaded data sets. A quick way to take a look at a data.frame in R is via \textit{str()}, which retrieves some of the characteristics of the data.frame, such as number of columns, number of rows, the type of each vector and all the columns in the data.frame.
 \begin{lstlisting}[language=R]
 'data.frame':	336776 obs. of  12 variables:
@@ -50,7 +50,7 @@ The planes data set consists of 9 columns and 3322 observations. To obtain only 
 
 Finally, the primary key for the weather data consists of the columns hour, day, month, year and origin. If one is interested in merging the planes and weather datasets, these are the keys that must be used. This is suggesting that we have weather data available only for the origin of the flight and not the final destination. Otherwise, one will need to add it to the primary key of the weather data and use it when merging the two datasets.
 
-\subsubsection{Joining Relational Data}
+\subsubsection*{Joining Relational Data}
 We begin by exploring how multiple data.frames can be combined into one to simplify analysis. For general overview of relational databases and different ways of joining the data we refer the reader to (REFERENCE). From our description of the data in the previous section, one can note that the flights data needs to be joined with the planes and weather data if one is to bring all data.frames into one. We begin by first joining the flights and planes data, using the join function from the plyr package.
 \begin{lstlisting}[language=R]
 flights_planes <- merge(flights, planes, by = 'tailnum', all.x = FALSE, all.y = FALSE)
