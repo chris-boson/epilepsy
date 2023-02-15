@@ -36,7 +36,7 @@ The vectors that we obtain from this lookup table are called word embeddings and
 \end{figure}
 These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straightforward - it only has to slice the embedding space.
 The hard part of understanding the meaning of the sentence is already done.
-Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
+Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus and then reuse them, in effect giving us a headstart when building task-specific models.\cite{pennington-etal-2014-glove}
 Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
 
 Using these pre-trained text representations is often critical. Without doing so, the majority of what a machine learns is the basic syntax and semantics of language. By using these pre-trained word embeddings, we allow our models to learn to focus more on the downstream task. By simplifying the learning task with these pre-trained embeddings, we need to use far fewer labeled examples than we would training from scratch.
