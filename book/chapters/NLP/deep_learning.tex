@@ -9,7 +9,7 @@ The key advantage of DNNs is their ability to automatically learn complex repres
 
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/model_architecture.png}
-    \caption{Deep neural network architecture}
+    \caption{Generic architecture of a fully connected neural network. The input is mapped to the output via a series of linear transformations and non-linear activation functions. The number of hidden layers and the number of nodes in each layer are hyperparameters that can be tuned.}
     \label{fig:model_architecture}
 \end{figure}
 
@@ -22,7 +22,7 @@ While glossing over some details, training any type of DNN can summarized in the
 \end{itemize}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
-    \caption{Minimizing the loss function}
+    \caption{To minimize the loss function we need to adjust the parameters $\theta$ in the direction of the steepest descent, which can be calculated by taking the derivative of the loss function with respect to the parameter.}
     \label{fig:loss}
 \end{figure}
 Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in Table \ref{table:losses}.
@@ -30,12 +30,12 @@ Here the loss function can take on many forms, depending on the training task, w
     \centering
     \renewcommand{\arraystretch}{1.3}
     \begin{tabular}{|c| c| c|}
-    Loss Name & Function & Use \\[0.5ex] \hline
-    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  & regression \\ [0.5ex]
-    Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & binary classification \\ [0.5ex]
-    Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ & multiclass classification \\ [0.5ex]
+    Loss Name & Function \\[0.5ex] \hline
+    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  \\ [0.5ex]
+    Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ \\ [0.5ex]
+    Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ \\ [0.5ex]
     \end{tabular}
-    \caption{Loss functions}
+    \caption{Most common loss functions used for various ML tasks. Mean Squared Error is used for regression tasks, Binary Cross Entropy for binary classification, and Cross Entropy for multi-class classification.}
     \label{table:losses}
 \end{table}
 Training is then formulated as the task of finding the parameter configuration that minimizes the loss function.
