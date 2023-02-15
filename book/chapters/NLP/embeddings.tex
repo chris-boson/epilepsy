@@ -29,7 +29,7 @@ During training, the network will learn to encode the original sparse indicator 
 An interesting side effect of this approach is that we can use part of the network to encode a given word in $V$ by using for example the inverse of $l_2$ as a lookup table.
 The vectors that we obtain from this lookup table are called word embeddings and they have some very useful properties:
 \begin{itemize}
-    \item Similar words tend to be close together (e.g. in terms of euclidian distance).
+    \item Similar words tend to be close together (e.g. in terms of Euclidean distance).
     \item Averaging word embeddings of a sentence will give us a more robust representation than our naive approach.
     \item We can perform some arithmetic, such as adding and subtracting the embedding vectors to traverse the space.
 \end{itemize}

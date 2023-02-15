@@ -90,10 +90,10 @@ We could now represent a sentence as the sum of the word vectors $S = \sum_j w_j
 This simple representation fulfills our requirements but comes with some drawbacks:
 \begin{itemize}
     \item We implicitly assume that each word in the sentence is equally important.
-    \item Each word is equally similar to every other word (e.g. by taking the euclidian distance between word vectors).
+    \item Each word is equally similar to every other word (e.g. by taking the Euclidean distance between word vectors).
     \item The representation is invariant to a reordering of the words.
 \end{itemize}
-The first point is a problem, because as we add more word vectors together, the sentence reperesentation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
+The first point is a problem, because as we add more word vectors together, the sentence representation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
 To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$. There are statistical methods we can use to compute an importance value\footnote{TF-IDF}.
 For example a word like \textit{the} is very common and appears in many different contexts.
 It is unlikely that there is a lot of signal we can extract from it.
