@@ -15,11 +15,7 @@ Given the sum of the one-hot encoded word vectors of the words surrounding the t
 This is a task that can be solved by a neural network with the following setup:
 Add a layer $l_1$ that maps from the input dimension (of size $|V|$) to an intermediate dimension of size $h$ and then another layer $l_2$ that maps from the intermediate dimension to the output dimension (of size $|V|$).
 Here $h$ is what is called embedding dimension and $h << |V|$.
-\begin{figure}
-  \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
-  \caption{Word2vec}
-  \label{fig:word2vec}
-\end{figure}
+
 While $h$ is generally a hyperparameter that can be optimized at a later stage, a reasonable choice is to use a value according to the rule of thumb:
 \begin{equation}
   h \approx 4\sqrt[\leftroot{3} \uproot{3} 4]{|V|}
@@ -144,19 +140,19 @@ These subword units behave like normal word vectors and can store semantic and s
   from transformers import BertTokenizer
 
   sample = "After a temporal lobe resection, the " \
-           "atonic and clonic seizure frequency fell " \
-           "by 50%."
+           "atonic and clonic seizure frequency " \
+           "fell by 50%."
 
   bert_tokenizer = BertTokenizer.from_pretrained(
       'bert-base-uncased'
   )
 
-  encoded_ids = bert_tokenizer.encode(sample)
-  encoded_tokens = bert_tokenizer.convert_ids_to_tokens(
+  ids = bert_tokenizer.encode(sample)
+  tokens = bert_tokenizer.convert_ids_to_tokens(
       encoded_ids
   )
 
-  for token, id  in zip(encoded_tokens, encoded_ids):
+  for token, id  in zip(tokens, ids):
       print("{}: {}".format(token,id))
 \end{python}
 

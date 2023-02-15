@@ -4,7 +4,9 @@ class Patient:
         self.name = name
         self.age = age
 
-    def get_age_difference(self, other: "Patient") -> int:
+    def get_age_difference(
+        self, other: "Patient"
+    ) -> int:
         return abs(self.age - other.age)
 
 
