@@ -1,4 +1,3 @@
-
 \section{Introduction to Natural Language Processing}
 
 Natural language processing (NLP) is a field of computer science that deals with the extraction, processing, and understanding of human language.
@@ -12,7 +11,7 @@ The numbers should allow the computer to assign meaning to words and their conte
 
 There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
 Syntactic information refers to grammatical constructs and the way that words are put together in a language. Semantic information refers to the meaning of this body of text. Such distinctions are fundamental concepts in computer science
-and date back to the very foundations of information theory. \cite{shannon48}.
+and date back to the very foundations of information theory. \cite{shannon48}
 Much of this chapter, as well as much of the current work in the field of computational linguistics is centered around finding better and better representations that capture both types of this information.
 
 How do we begin to choose these representations?
@@ -34,15 +33,17 @@ There are a number of great tokenization libraries that are open source, and you
   # Example 1: Spacy Tokenization Using Medical Words
 
   import spacy
-  sample = "After a temporal lobe resection, the atonic " \
-           "and clonic seizure frequency fell by 50%."
+  sample = "After a temporal lobe resection, the " \
+           "atonic and clonic seizure frequency " \
+           "fell by 50%."
 
   nlp = spacy.load("en_core_web_sm")
   english_vocab = set(nlp.vocab.strings)
   spacy_document = nlp(sample)
 
   for token in spacy_document:
-      found = "found" if token.text in english_vocab else "NOT FOUND"
+      found = token.text in english_vocab
+
       print("{}: {}".format(token.text, found))
 \end{python}
 
@@ -91,11 +92,11 @@ We could now represent a sentence as the sum of the word vectors $S = \sum_j w_j
 This simple representation fulfills our requirements but comes with some drawbacks:
 \begin{itemize}
     \item We implicitly assume that each word in the sentence is equally important.
-    \item Each word is equally similar to every other word (e.g. by taking the euclidian distance between word vectors).
+    \item Each word is equally similar to every other word (e.g. by taking the Euclidean distance between word vectors).
     \item The representation is invariant to a reordering of the words.
 \end{itemize}
-The first point is a problem, because as we add more word vectors together, the sentence reperesentation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
-To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$. There are statistical methods we can use to compute an importance value\footnote{TF-IDF}.
+The first point is a problem, because as we add more word vectors together, the sentence representation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
+To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$. There are statistical methods we can use to compute an importance value (e.g. TF-IDF).
 For example a word like \textit{the} is very common and appears in many different contexts.
 It is unlikely that there is a lot of signal we can extract from it.
 On the other hand, a word like \textit{epilepsy} will be much more rare and specific to a given task, and we would like to raise its importance.

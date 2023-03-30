@@ -14,8 +14,8 @@ to recognize each of these labels.
 
 Instead of having to wait for, not to mention pay for, experts to do large-scale retrospective research, fine-tuned pre-trained language models can perform admirably on text classification with, in many cases, only a few hundred labeled examples.
 The trained model can then read through and extract targeted text much faster and much cheaper.
-Studies have already been done applying this strategy\cite{10.1093/jamia/ocac018}, using three pre-trained neural language models, \texttt{Bio\textunderscore ClinicalBERT}, to extract
-seizure frequency from epilepsy clinical notes.
+Studies have already been done applying this strategy, using three pre-trained neural language models, \texttt{Bio\textunderscore ClinicalBERT}, to extract
+seizure frequency from epilepsy clinical notes.\cite{10.1093/jamia/ocac018}
 
 \subsection{Unstructured Text - Quality of Life}
 When treating patients with epilepsy, often our principal aim is to target improving quality of life. Seizure frequency is a numeric represenation that has a measurement
@@ -28,19 +28,19 @@ Sentiment analysis, the task of extracting and studying subjective sentiment in 
 widespread adoption of transformer architectures, particularly in specialized domains. Freeform responses that can be evaluated as positive or negative, or sometimes into more
 granular sentiments, can be learned with machine learning methods. It's worth noting that naive methods on sentiment tend to capture some cases well. The words love and hate are
 strong signals, but even their simple negation becomes a diluted signal with possible interpretations of sarcasm that become subjective. Add in the many colorful ways that people
-write, and we start to see why rules-based text-mining systems for sentiment are so difficult.
+write, and we start to see why rule-based text-mining systems for sentiment are so difficult.
 
 Sentiment analysis models using transformer architectures such as RoBERTa aim to project the large-dimensional output vector of the text, and project this semantic representation
 into a basic sentiment of two class, positive or negative. Very often a third class is used to represent neutral sentiment. This method should be used when analyzing free-form responses
 in patient surveys using NLP models trained on sentiment. While a model trained on medical data is ideal, it's quite impressive how well a model trained on movie reviews will transfer
 over to other sentiment tasks.
 
-The same methods for analyzing basic sentiment can be used to label tones, more granular emotional classifications, or other task-specific points of interest. Similar to
-the case with the retrospective research in section 1.2.1, it is important to have the survey designers, and/or other domain experts, label these targeted semantic
+The same methods for analyzing basic sentiment can be used to label tones, more granular emotional classifications, or other task-specific points of interest.
+It is important to have the survey designers, and/or other domain experts, label these targeted semantic
 expressions of their patients. Once a model is trained with a set of positive examples of these targets, it can be used on any text response.
 
 The datasets provided by SeizureTracker, as part of their It's Not Just Seizures (INJS) initiative, provides an excellent example of unstructured text responses being
-used as a guide to a suggested set of useful labels that can be learned with NLP techniques. This is outlined in section 1.5
+used as a guide to a suggested set of useful labels that can be learned with NLP techniques.
 \subsection{Text Preprocessing and Tokenization}
 
 Placeholder.
@@ -61,7 +61,10 @@ Spacy, NLTK, and Stanford NLP all provide out-of-the-box NER models that perform
 
   import spacy
 
-  sample = "The patient, John Smith, began feeling symptoms at his home in Seattle, and was taken to Virginia Mason Medical Center for treatment"
+  sample = "The patient, John Smith, began feeling " \
+           "symptoms at his home in Seattle, and was " \
+           "taken to Virginia Mason Medical Center " \
+           "for treatment"
   nlp = spacy.load("en_core_web_md")
 
   doc = nlp(sample)
@@ -71,7 +74,8 @@ Spacy, NLTK, and Stanford NLP all provide out-of-the-box NER models that perform
 
   print(sample)
 
-  #The patient, PERSON, began feeling symptoms at his home in GPE, and was taken to ORG for treatment
+  #The patient, PERSON, began feeling symptoms at his
+  #home in GPE, and was taken to ORG for treatment
 
 \end{python}
 
