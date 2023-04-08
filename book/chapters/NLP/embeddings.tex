@@ -15,9 +15,15 @@ Given the sum of the one-hot encoded word vectors of the words surrounding the t
 This is a task that can be solved by a neural network with the following setup:
 Add a layer $l_1$ that maps from the input dimension (of size $|V|$) to an intermediate dimension of size $h$ and then another layer $l_2$ that maps from the intermediate dimension to the output dimension (of size $|V|$).
 Here $h$ is what is called embedding dimension and $h << |V|$.
+% \begin{figure}
+%   \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
+%   \caption{Word2vec}
+%   \label{fig:word2vec}
+% \end{figure}
+
 \begin{figure}
-  \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
-  \caption{Word2vec}
+  \input{chapters/NLP/figures/word2vec.tex}
+  \caption{Illustration of the Continuous Bag of Words (CBOW) approach to the Word2Vec model. The model takes a window of surrounding (context) words as input, and the goal is to predict the input word. The context words are first projected onto a hidden layer, and the input word is predicted based on the activations in the hidden layer. The weight are learned through training.}
   \label{fig:word2vec}
 \end{figure}
 
