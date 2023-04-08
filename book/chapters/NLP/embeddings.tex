@@ -179,10 +179,23 @@ These subword units behave like normal word vectors and can store semantic and s
 In the tokenizer output in example 3 above, note the following:
 \begin{enumerate}
   \item The text is silently preprocessed to be lowercased. Other functions, such as whitespace trimming, are common.
-  \item The output token sequence includes the specialized tokens (CLS), and (SEP), that not only help to mark the beginning and end of a sequece,
-  but aid in downstream classification in the model.
-  \item The word resection is split into two tokens, with a special marker for the continuation of a word that was split, namely ##
-\end{itemize}
+  \item The output token sequence includes the specialized tokens (CLS), and (SEP), that not only help to mark the beginning and end of a sequence but aid in downstream classification in the model.
+  \item The word resection is split into two tokens, with a special marker for the continuation of a word that was split.
+\end{enumerate}
+
+\subsection{Domain-Specific Medical Embeddings} \label{Domain-Specific Medical Embeddings}
+
+Many of the datasets and models that are available online are trained on general text, and not specific to any particular domain.
+Unsurprisingly, vocabularies that include medical terminology are used in practice, as are the models that have been trained to
+represent these vectors in NLP tasks specific to medicine. Using these models is a common practice and often gives a better result
+than a general-purpose approach. Because data collection is an expensive process, the better pre-trained embeddings we have, the
+faster we can get to a high-quality model for our specialized task.
+
+Predictive models from electronic health records have been used to train transformer-based models, and \texttt{Med-Bert}\cite{rasmy2020medbert}
+is an example of one such model giving a boost to prediction accuracy with respect to the number of training examples required by a
+specialized model. The \texttt{BioBERT}\cite{DBLP:journals/corr/abs-1901-08746} model,  \texttt{Bio\textunderscore ClinicalBERT}\cite{https://doi.org/10.48550/arxiv.1904.03323} model, 
+can be loaded as a drop-in replacement for a BERT model from the Huggingface library to achieve better results in clinical tasks. Many other such models
+exist and it is recommended to keep an eye out for advancements in this respect when attempting to use pre-trained models for tasks
+in not only epilepsy but other domains.
 
 
-% \subsubsection{Vocabularies and Medical Embeddings}
