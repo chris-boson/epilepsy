@@ -3,7 +3,11 @@
 An embedding is a representation of a vector space that captures the similarity between the entities we are encoding, where entities can be words, images, e-commerce products, movies, houses, and many other data modalities.
 Scientific progress in the field of ML is often directly about finding algorithms that can learn high-quality robust embeddings in an efficient and scalable way. The final performance of a given architecture is often largely determined by the quality of the embeddings it learns.
 
+<<<<<<< HEAD
 To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec} \cite{mikolov13}, a technique pioneered by a team led by Thomas Mikolov.
+=======
+To illustrate this concept, we will be talking briefly about one of the earliest algorithms that has been used to learn embeddings for words: \textit{word2vec}, a technique pioneered by a team led by Thomas Mikolov.\cite{https://doi.org/10.48550/arxiv.1301.3781}
+>>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 The idea behind \textit{word2vec} is to set a word into context with the words surrounding it. As it turns out, this idea that similar words appear in similar contexts, is an extremely powerful signal for achieving quality word embeddings. In NLP, the study of techniques that determine the probability of a given sequence of words is known as language modeling.
 
 For example the word \textit{epilepsy} may appear in the context of words like \textit{symptom}, \textit{medication}, or \textit{episode} and vice versa.
@@ -20,6 +24,7 @@ Here $h$ is what is called embedding dimension and $h << |V|$.
   \caption{Word2vec}
   \label{fig:word2vec}
 \end{figure}
+
 While $h$ is generally a hyperparameter that can be optimized at a later stage, a reasonable choice is to use a value according to the rule of thumb:
 \begin{equation}
   h \approx 4\sqrt[\leftroot{3} \uproot{3} 4]{|V|}
@@ -29,7 +34,7 @@ During training, the network will learn to encode the original sparse indicator 
 An interesting side effect of this approach is that we can use part of the network to encode a given word in $V$ by using for example the inverse of $l_2$ as a lookup table.
 The vectors that we obtain from this lookup table are called word embeddings and they have some very useful properties:
 \begin{itemize}
-    \item Similar words tend to be close together (e.g. in terms of euclidian distance).
+    \item Similar words tend to be close together (e.g. in terms of Euclidean distance).
     \item Averaging word embeddings of a sentence will give us a more robust representation than our naive approach.
     \item We can perform some arithmetic, such as adding and subtracting the embedding vectors to traverse the space.
 \end{itemize}
@@ -40,7 +45,7 @@ The vectors that we obtain from this lookup table are called word embeddings and
 \end{figure}
 These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straightforward - it only has to slice the embedding space.
 The hard part of understanding the meaning of the sentence is already done.
-Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus\footnote{GloVe} and then reuse them, in effect giving us a headstart when building task-specific models.
+Since the training data can be generated from just raw text, it is sufficient to train the embeddings once on a very large corpus and then reuse them, in effect giving us a headstart when building task-specific models.\cite{pennington-etal-2014-glove}
 Instead of also having to learn what words mean, and some of the syntactic rules behind written language, we can get a head start on this and focus our computational resources on adapting this knowledge to a specific task.
 
 Using these pre-trained text representations is often critical. Without doing so, the majority of what a machine learns is the basic syntax and semantics of language. By using these pre-trained word embeddings, we allow our models to learn to focus more on the downstream task. By simplifying the learning task with these pre-trained embeddings, we need to use far fewer labeled examples than we would training from scratch.
@@ -59,7 +64,7 @@ The document being chosen in this training iteration may contain the following e
   ... recommended administering Lamictal to treat their
   focal seizures, the patient continued experiencing
   symptoms though reported a 50% reduction in ...
-  \end{verbatim}
+\end{verbatim}
 
 In training our word embeddings, we will randomly mask one of the words, in this case \textit{patient}.
 Our model makes use of an additional parameter, a context window size $c$, that helps to provide necessary context.
@@ -99,20 +104,26 @@ This is a common training technique for embeddings as well, and is known as the 
 \begin{python}
   import spacy
 
-  sample_words = ["epilepsy", "seizure", "patient", "language"]
+  sample_words = ["epilepsy", "seizure",
+                  "patient", "language"]
 
   nlp = spacy.load("en_core_web_md")
   docs = [nlp(sample) for sample in sample_words]
 
-  #Spacy's Medium English Model Stores Words As Vectors of Dimension 300
+  #Spacy's Medium English Model Stores Words As
+  # Vectors of Dimension 300
   #Note each word has this vector size
   for doc in docs:
       assert doc.vector.shape[0] == 300
 
-  #The cosine distance, ranging from [0,1], of the vectors tells us how similar the words are
-  print(docs[0].similarity(docs[1])) #epilepsy and seizure -> 0.9999
-  print(docs[0].similarity(docs[2])) #epilepsy and patient -> 0.4434
-  print(docs[0].similarity(docs[3])) #epilepsy and language -> 0.1273
+  #The cosine distance, ranging from [0,1], of
+  # the vectors tells us how similar the words are
+  print(docs[0].similarity(docs[1]))
+  #epilepsy and seizure -> 0.9999
+  print(docs[0].similarity(docs[2]))
+  #epilepsy and patient -> 0.4434
+  print(docs[0].similarity(docs[3]))
+  #epilepsy and language -> 0.1273
 \end{python}
 
 \subsection{Character and Subword Embeddings}
@@ -138,19 +149,19 @@ These subword units behave like normal word vectors and can store semantic and s
   from transformers import BertTokenizer
 
   sample = "After a temporal lobe resection, the " \
-           "atonic and clonic seizure frequency fell " \
-           "by 50%."
+           "atonic and clonic seizure frequency " \
+           "fell by 50%."
 
   bert_tokenizer = BertTokenizer.from_pretrained(
       'bert-base-uncased'
   )
 
-  encoded_ids = bert_tokenizer.encode(sample)
-  encoded_tokens = bert_tokenizer.convert_ids_to_tokens(
+  ids = bert_tokenizer.encode(sample)
+  tokens = bert_tokenizer.convert_ids_to_tokens(
       encoded_ids
   )
 
-  for token, id  in zip(encoded_tokens, encoded_ids):
+  for token, id  in zip(tokens, ids):
       print("{}: {}".format(token,id))
 \end{python}
 

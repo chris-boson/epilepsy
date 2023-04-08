@@ -2,12 +2,38 @@
 
 \subsection{Why R?}
 
-In this section we focus on introduction to data analysis and visualizations with R. After introducing the versatility of Python in the previous section, one may wonder do we need R and if so why? R is one of the most popular programming languages used for data analysis, visualizations and statistics. Due to its open-source nature, the community using and contributing to R is vast. It is widely used in academia which brings new research to users quickly. Various specialized packages for data wrangling, plotting and statistical inference and learning exist, which make it a great choice for statistical analysis and experimentation. Given a data set, it is very easy to get started with R and be exploring and analyzing data in matter of minutes. Moreover, it is an excellent choice for new algorithmic and statistical methodology development or analysis as one does not need to deal with the overhead existing from complex data structures and initial set up. The goal of this section is to introduce the readers to data analysis and visualizations with R.
+In this section we focus on introduction to data analysis and visualizations with R.
+After introducing the versatility of Python in the previous section, one may wonder do we need R and if so why?
+R is one of the most popular programming languages used for data analysis, visualizations and statistics.
+Due to its open-source nature, the community using and contributing to R is vast.
+It is widely used in academia which brings new research to users quickly. Various specialized packages for data wrangling, plotting and statistical inference and learning exist, which make it a great choice for statistical analysis and experimentation.
+Given a data set, it is very easy to get started with R and be exploring and analyzing data in matter of minutes.
+Moreover, it is an excellent choice for new algorithmic and statistical methodology development or analysis as one does not need to deal with the overhead existing from complex data structures and initial set up.
+The goal of this section is to introduce the readers to data analysis and visualizations with R.
 
 \subsection{Data Loading and Structures}
-The data set that we will be exploring consists of several files pertaining to flight related data. The data files are available in the GitHub repository of the book. While the data is available with recent version of the R distribution and can be loaded directly from R, we have exported it into different files, because most often the data been analyzed is not contained in the R distribution, it is contained in multiple files, which may have different formats, and needs to be joined together for cleaning, visualizations and analysis. In order to replicate the experiments below please download the data from the $r_data$ folder in the book's GitHub repository.
+The data set that we will be exploring consists of several files pertaining to flight related data.
+The data files are available in the GitHub repository of the book.
+While the data is available with recent version of the R distribution and can be loaded directly from R, we have exported it into different files, because most often the data been analyzed is not contained in the R distribution, it is contained in multiple files, which may have different formats, and needs to be joined together for cleaning, visualizations and analysis. In order to replicate the experiments below please download the data from the $r_data$ folder in the book's GitHub repository.
 
-Before loading the data, we review the most common data structures used in R along with some of their benefits. As most programming languages that deal with numerical operations, R provides the users with \textbf{vector} and \textbf{matrix} structures. Atomic vectors in R can be one of four types - integer, double, Boolean/logical and character. Each atomic vector can contain only a homogeneous type of data, i.e. at most one of the four types. In contrasts, lists are similar to atomic vectors, but they can contain more than one data type. Additionally, nesting lists within lists is also acceptable in R. Atomic vectors can be extended to 2-dimensional matrices. The atomic vectors constituting the matrices are all of the same length. The matrix inherits the data structure properties of atomic vectors. The homogeneous structure of the atomic vectors and matrices allows for a trade off between computational efficiency and flexibility of storing data. To allow users the flexibility to store data from different formats, R uses \textbf{dataframes}. A dataframe is a list of vectors with the same length. Since it is a list, it allows for containing mixed types of data. In fact, one can store lists within a column. Additionally, dataframes can contain factors, data types used for storing categorical data in R. Finally, a newer version of dataframes are called tibbles. Some of the benefits that tibbles provide are ability to use the \textit{tidyverse} package in R, display the data types, no automatic conversion of the types on inputs, such as converting string to factors etc. Tibbles further increase the convenience for users at the cost of decreased computational efficiency relative to dataframes. For more extensive treatment of the different data structures within R, we refer the readers to (Hadley for tibbles and other source for matrix/vector and df).
+Before loading the data, we review the most common data structures used in R along with some of their benefits.
+ As most programming languages that deal with numerical operations, R provides the users with \textbf{vector} and \textbf{matrix} structures.
+ Atomic vectors in R can be one of four types - integer, double, Boolean/logical and character.
+ Each atomic vector can contain only a homogeneous type of data, i.e. at most one of the four types.
+ In contrasts, lists are similar to atomic vectors, but they can contain more than one data type.
+ Additionally, nesting lists within lists is also acceptable in R.
+ Atomic vectors can be extended to 2-dimensional matrices.
+ The atomic vectors constituting the matrices are all of the same length.
+ The matrix inherits the data structure properties of atomic vectors.
+ The homogeneous structure of the atomic vectors and matrices allows for a trade off between computational efficiency and flexibility of storing data.
+ To allow users the flexibility to store data from different formats, R uses \textbf{dataframes}.
+ A dataframe is a list of vectors with the same length.
+ Since it is a list, it allows for containing mixed types of data.
+ In fact, one can store lists within a column.
+ Additionally, dataframes can contain factors, data types used for storing categorical data in R.
+ Finally, a newer version of dataframes are called tibbles.
+ Some of the benefits that tibbles provide are ability to use the \textit{tidyverse} package in R, display the data types, no automatic conversion of the types on inputs, such as converting string to factors etc. Tibbles further increase the convenience for users at the cost of decreased computational efficiency relative to dataframes.
+ For more extensive treatment of the different data structures within R, we refer the readers to (Hadley for tibbles and other source for matrix/vector and df).
 
 The first file is \textit{flights.csv}. It contains information on departure flights (reference here Hadley's package). We begin by loading the data and check that it is loaded into a data.frame.
 \begin{lstlisting}[language=R]
@@ -27,7 +53,7 @@ is.data.frame(planes)
 \end{lstlisting}
 
 \subsection{Data Wrangling}
-\subsubsection{Relational Data}
+\subsubsection*{Relational Data}
 The scenario we consider here is a simplification of what a real project looks like. Typically, when performing analysis, one needs to obtain data from multiple files / databases that may or may not be in the same format. These data sets are usually related in some way but each also provides unique information not available in the others. The values that the data sources share in common are referred to as keys. Typically, there are two types of keys - primary and foreign keys. Primary keys refer to the column in the data that uniquely identifies a row in its own data set. A foreign key refers to the column that identifies unique values of the current data into another table. To make these concepts more concrete we need to explore the loaded data sets. A quick way to take a look at a data.frame in R is via \textit{str()}, which retrieves some of the characteristics of the data.frame, such as number of columns, number of rows, the type of each vector and all the columns in the data.frame.
 \begin{lstlisting}[language=R]
 'data.frame':	336776 obs. of  12 variables:
@@ -50,7 +76,7 @@ The planes data set consists of 9 columns and 3322 observations. To obtain only 
 
 Finally, the primary key for the weather data consists of the columns hour, day, month, year and origin. If one is interested in merging the planes and weather datasets, these are the keys that must be used. This is suggesting that we have weather data available only for the origin of the flight and not the final destination. Otherwise, one will need to add it to the primary key of the weather data and use it when merging the two datasets.
 
-\subsubsection{Joining Relational Data}
+\subsubsection*{Joining Relational Data}
 We begin by exploring how multiple data.frames can be combined into one to simplify analysis. For general overview of relational databases and different ways of joining the data we refer the reader to (REFERENCE). From our description of the data in the previous section, one can note that the flights data needs to be joined with the planes and weather data if one is to bring all data.frames into one. We begin by first joining the flights and planes data, using the join function from the plyr package.
 \begin{lstlisting}[language=R]
 flights_planes <- merge(flights, planes, by = 'tailnum', all.x = FALSE, all.y = FALSE)
@@ -81,15 +107,22 @@ Once we have our initial data ready we can begin exploring it. Since we are not 
 display_na <- function(df, threshold){
 
   # Inputs:
-  # df: data.frame - data frame for which the NA percentage is to be calculated
-  # threshold: double - value between 0 and 1 indicating that columns with NA
-  #                     proportion higher than threshold should be returned
+  # df: data.frame    - data frame for which the NA
+  #                     percentage is to be calculated
+  # threshold: double - value between 0 and 1 indicating
+  #                     that columns with NA proportion
+  #                     higher than threshold should be
+  #                     returned
 
   # Output:
-  # named vector with all columns that have more than threshold proportion
-  # of values with NA
-  na_percent_per_column <- round(colMeans(is.na(flights_planes_weather)),3)
-  return(na_percent_per_column[na_percent_per_column > threshold])
+  # named vector with all columns that have more than
+  # threshold proportion of values with NA
+  na_percent_per_column <- round(
+    colMeans(is.na(flights_planes_weather)),3
+  )
+  return(na_percent_per_column[
+    na_percent_per_column > threshold
+  ])
 }
 display_na(flights_planes_weather, 0.01)
 
