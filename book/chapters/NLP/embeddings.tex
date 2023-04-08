@@ -15,16 +15,11 @@ Given the sum of the one-hot encoded word vectors of the words surrounding the t
 This is a task that can be solved by a neural network with the following setup:
 Add a layer $l_1$ that maps from the input dimension (of size $|V|$) to an intermediate dimension of size $h$ and then another layer $l_2$ that maps from the intermediate dimension to the output dimension (of size $|V|$).
 Here $h$ is what is called embedding dimension and $h << |V|$.
-% \begin{figure}
-%   \includegraphics[width=\linewidth]{chapters/NLP/figures/word2vec.png}
-%   \caption{Word2vec}
-%   \label{fig:word2vec}
-% \end{figure}
 
 \begin{figure}
   \input{chapters/NLP/figures/word2vec.tex}
-  \caption{Illustration of the Continuous Bag of Words (CBOW) approach to the Word2Vec model. The model takes a window of surrounding (context) words as input, and the goal is to predict the input word. The context words are first projected onto a hidden layer, and the input word is predicted based on the activations in the hidden layer. The weight are learned through training.}
-  \label{fig:word2vec}
+  \caption{Illustration of the Continuous Bag of Words (CBOW) approach to the word2vec model. The model takes a window of surrounding (context) words as input, and the goal is to predict the input word. The context words are first projected onto a hidden layer, and the input word is predicted based on the activations in the hidden layer. The weight are learned through training.}
+  \label{fig:word2vec_cbow}
 \end{figure}
 
 While $h$ is generally a hyperparameter that can be optimized at a later stage, a reasonable choice is to use a value according to the rule of thumb:
@@ -42,7 +37,7 @@ The vectors that we obtain from this lookup table are called word embeddings and
 \end{itemize}
 \begin{figure}
   \includegraphics[width=\linewidth]{chapters/NLP/figures/king-man+woman.png}
-  \caption{Word2vec}
+  \caption{Geometric illustration of word2vec performing vector arithmetic using word embeddings. If we take the representation of "king", subtract away the representation of "man", and add the representation of "woman", the vector representation closest to the result in our vocabulary table is the vector of the word "queen".}
   \label{fig:kingmanwoman}
 \end{figure}
 These properties also imply that the representions for two sentences will be close together if they are semantically similar, which will make the job of, say, a downstream classifier much more straightforward - it only has to slice the embedding space.
@@ -57,7 +52,7 @@ We do not inherently inject a great deal of model bias, but rather rely on havin
 A corpus such as Common Crawl\footnote{Common Crawl Link}, which contains roughly 840 billion tokens of over two million unique words, provides such scale.
 There are other corpora used in these unsupervised processes, one such common candidate being a collection of all Wikipedia articles.
 
-In practice, one training objective can be to use the distributed representation of a set of context words to guess a center word. This is known as the continuous bag of words (CBOW) model.
+In practice, one training objective can be to use the distributed representation of a set of context words to guess a center word. This is known as the continuous bag of words (CBOW) model and is illustrated in Figure \ref{fig:word2vec_cbow}
 
 Consider a training document describing patients with epilepsy, where we are attempting to train a model with a predefined vocabulary $V$ of the top For a vocabulary $V$, where we have chosen the top $|V|$ most common words in English to learn.
 The document being chosen in this training iteration may contain the following excerpt:
@@ -104,6 +99,7 @@ This is a common training technique for embeddings as well, and is known as the 
 \subsection{Spacy Example of Word Embeddings}
 
 \begin{python}
+  # Example 2 - Spacy Word Embeddings
   import spacy
 
   sample_words = ["epilepsy", "seizure",
@@ -165,7 +161,28 @@ These subword units behave like normal word vectors and can store semantic and s
 
   for token, id  in zip(tokens, ids):
       print("{}: {}".format(token,id))
+  
+  #output:
+  # [CLS] 101
+  # after: 2044
+  # a: 1037
+  # temporal: 15850
+  # lobe: 21833
+  # res: 24501
+  # ##ection: 18491
+  # ... (output continues)
+  #   %: 1003
+  # .: 1012
+  # [SEP]: 102
 \end{python}
 
-In example two,
+In the tokenizer output in example 3 above, note the following:
+\begin{enumerate}
+  \item The text is silently preprocessed to be lowercased. Other functions, such as whitespace trimming, are common.
+  \item The output token sequence includes the specialized tokens (CLS), and (SEP), that not only help to mark the beginning and end of a sequece,
+  but aid in downstream classification in the model.
+  \item The word resection is split into two tokens, with a special marker for the continuation of a word that was split, namely ##
+\end{itemize}
+
+
 % \subsubsection{Vocabularies and Medical Embeddings}
