@@ -8,13 +8,8 @@ The addition of a non-linear activation function allows for the capture of non-l
 The key advantage of DNNs is their ability to automatically learn complex representations of the input data using multiple hidden layers, allowing for the capture of high-level features that could not be easily hand-engineered.
 
 \begin{figure}[h]
-<<<<<<< HEAD
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/model_architecture.png}
-    \caption{Deep neural network architecture}
-=======
     \input{chapters/NLP/figures/model_architecture.tex}
     \caption{Generic architecture of a fully connected neural network. The input is mapped to the output via a series of linear transformations and non-linear activation functions. The number of hidden layers and the number of nodes in each layer are hyperparameters that can be tuned.}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
     \label{fig:model_architecture}
 \end{figure}
 
@@ -27,11 +22,7 @@ While glossing over some details, training any type of DNN can summarized in the
 \end{itemize}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
-<<<<<<< HEAD
-    \caption{Minimizing the loss function}
-=======
     \caption{To minimize the loss function we need to adjust the parameters $\theta$ in the direction of the steepest descent, which can be calculated by taking the derivative of the loss function with respect to the parameter.}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
     \label{fig:loss}
 \end{figure}
 Here the loss function can take on many forms, depending on the training task, we summarize some of the most common ones in Table \ref{table:losses}.
@@ -39,21 +30,12 @@ Here the loss function can take on many forms, depending on the training task, w
     \centering
     \renewcommand{\arraystretch}{1.3}
     \begin{tabular}{|c| c| c|}
-<<<<<<< HEAD
-    Loss Name & Function & Use \\[0.5ex] \hline
-    Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  & regression \\ [0.5ex]
-    Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ & binary classification \\ [0.5ex]
-    Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ & multiclass classification \\ [0.5ex]
-    \end{tabular}
-    \caption{Loss functions}
-=======
     Loss Name & Function \\[0.5ex] \hline
     Mean Squared Error & $\begin{array} {lcl} \frac{1}{N} \sum_{i=1}^N|\hat{y}_i - y_i|^2\end{array}$  \\ [0.5ex]
     Binary Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N (y_i \cdot log(\hat{y}_i) + (1 - y_i) \cdot log(1-\hat{y}_i)) \end{array}$ \\ [0.5ex]
     Cross Entropy & $\begin{array} {r@{}l@{}} -\frac{1}{N} \sum_{i=1}^N y_i \cdot log(\hat{y}_i) \end{array}$ \\ [0.5ex]
     \end{tabular}
     \caption{Most common loss functions used for various ML tasks. Mean Squared Error is used for regression tasks, Binary Cross Entropy for binary classification, and Cross Entropy for multi-class classification.}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
     \label{table:losses}
 \end{table}
 Training is then formulated as the task of finding the parameter configuration that minimizes the loss function.
@@ -103,21 +85,13 @@ But even then, the maximum achievable sequence length is limited to about 100 to
 Lastly, RNNs are inherently sequential because the output of a step depends on the output of the previous step, and vice versa during backpropagation.
 We can not parallelize this process making parameter updates, and therefore scaling to large datasets, as well as inference very slow.
 
-<<<<<<< HEAD
-\subsubsection{Attention}
-=======
 \subsubsection*{Attention}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/attention.png}
     \caption{In vanilla encoder / decoder architectures, the decoder is only able to attend to the last hidden state of the encoder. Attention allows the decoder to attend to different parts of the input sequence in parallel.}
     \label{fig:attention}
 \end{figure}
-<<<<<<< HEAD
-One way to address the vanishing gradient problem is to use a so called attention mechanisms.
-=======
 One way to address the vanishing gradient problem is to use a so called attention mechanisms.\cite{https://doi.org/10.48550/arxiv.1409.0473}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 The intuition behind them is to assign a weight to each part of the input sequence, indicating the importance of that part for the current task.
 These weights are computed dynamically for each step in the processing of the input sequence and allow the model to focus on the most relevant parts of the sequence.
 
@@ -126,10 +100,6 @@ The weighted hidden states are then combined and passed through a feedforward ne
 
 There are several different types of attention mechanisms, including additive attention, multiplicative attention, and self-attention. Each of these mechanisms has its own strengths and weaknesses, and the choice of mechanism to use depends on the specific requirements of the task and the nature of the input data.
 
-<<<<<<< HEAD
-% The seminal paper introducing attention mechanisms is \cite{bahdanau2014neural},
-=======
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 
 \subsection{Transformers}
 The development of attention mechanisms in RNNs laid the foundation for the development of the Transformer architecture, which is now the state-of-the-art in many natural language processing tasks.
@@ -161,21 +131,12 @@ The outputs of the self-attention mechanism are then passed through a feedforwar
 Many such encoder blocks are stacked on top of each other to form the encoder of the Transformer architecture.
 In some architectures one wants to generate new text, for which we need a \textit{decoder}.
 It has a very similar structure, but we will defer that discussion here.
-<<<<<<< HEAD
-For more details on the Transformer architecture, we refer the reader to \cite{vaswani2017attention} and for a more intuitive explanation we recommend \cite{illustratedtransformer}.
-
-\subsubsection{Pre-training and Finetuning}
-The state of the art in NLP is currently dominated by Transformer-based models, which are trained using a two-stage process called \textit{pre-training} and \textit{fine-tuning}. Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve great performance.
-
-Pre-training refers to the process of training a model on a large corpus\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{bertpaper} of text, sometimes in multiple languages, or on domain-specific datasets\footnote{\texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}}}\footnote{\texttt{Bio\textunderscore ClinicalBERT\cite{clinicalbert}}}, but without any task-specific supervision.
-=======
 For more details on the Transformer architecture, we refer the reader to other source.\cite{https://doi.org/10.48550/arxiv.1706.03762}\cite{illustratedtransformer}.
 
 \subsubsection*{Pre-training and Finetuning}
 The state of the art in NLP is currently dominated by Transformer-based models, which are trained using a two-stage process called \textit{pre-training} and \textit{fine-tuning}. Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve great performance.
 
 Pre-training refers to the process of training a model on a large corpus\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{https://doi.org/10.48550/arxiv.1810.04805} of text, sometimes in multiple languages, or on domain-specific datasets\footnote{\texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}}}\footnote{\texttt{Bio\textunderscore ClinicalBERT\cite{https://doi.org/10.48550/arxiv.1904.03323}}}, but without any task-specific supervision.
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 The model is trained to predict masked tokens in a sequence, or to reconstruct the input sequence itself, using only the context information provided by surrounding tokens.
 This process enables the model to learn general language patterns and relationships between words and concepts, and can be compared to a human learning a new language.
 Just as a human needs to understand the basic rules and patterns of a language before they can use it to apply it effectively, a model needs to do the same.
@@ -191,11 +152,7 @@ During fine-tuning, a task-specific layer is added on the on top of the pre-trai
 \subsection{Practical Considerations}
 In contemporary architectures there are millions to hundreds of billions of parameters, and updating them efficiently is crucial.
 
-<<<<<<< HEAD
-\subsubsection{Feeding Data to the Model}
-=======
 \subsubsection*{Feeding Data to the Model}
->>>>>>> 637c4a1519613b999beb0de6b7d5552a4b2b92e9
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/ram_cpu_vram.png}
     \caption{Data needs to be moved from disk to RAM to VRAM so that it can be used to update the model parameters.}

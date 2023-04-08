@@ -7,7 +7,7 @@ Common NLP tasks include sentence segmentation, tokenization, part-of-speech tag
 How can we teach a computer to perform these tasks?
 The first challenge is that computers, at their core, only understand numbers.
 So first we need to think about how words, or more generally text, can be represented with numbers such that we can perform calculations on them.
-The numbers should allow the computer to assign meaning to words and their context with other words around it.
+The numbers should allow the computer to assign meaning to words and their context of surrounding words.
 
 There is no perfect way to represent language in this numeric fashion. The best we can do is to capture representations that we feel capture the \textit{syntactic} features of text, as well as \textit{semantic} features of text.
 Syntactic information refers to grammatical constructs and the way that words are put together in a language. Semantic information refers to the meaning of this body of text. Such distinctions are fundamental concepts in computer science
@@ -43,7 +43,6 @@ There are a number of great tokenization libraries that are open source, and you
 
   for token in spacy_document:
       found = token.text in english_vocab
-
       print("{}: {}".format(token.text, found))
 \end{python}
 
@@ -90,11 +89,11 @@ The word is then represented as a vector $w$ of length $|V|$ with all zeros and 
 
 We could now represent a sentence as the sum of the word vectors $S = \sum_j w_j$. This representation is suitable as input for any classification algorithm (such as logistic regression or a decision tree), to make a prediction about our target variable, e.g. whether the sentence is relevant to our epilepsy task.
 This simple representation fulfills our requirements but comes with some drawbacks:
-\begin{itemize}
+\begin{enumerate}
     \item We implicitly assume that each word in the sentence is equally important.
     \item Each word is equally similar to every other word (e.g. by taking the Euclidean distance between word vectors).
     \item The representation is invariant to a reordering of the words.
-\end{itemize}
+\end{enumerate}
 The first point is a problem, because as we add more word vectors together, the sentence representation will converge to the global average and drown out any signal relevant to the specific sentence at hand.
 To address this we can instead write a weighted sum $S = \sum_j \lambda_j w_j$, where each word vector is weighted by its importance $\lambda_j$. There are statistical methods we can use to compute an importance value (e.g. TF-IDF).
 For example a word like \textit{the} is very common and appears in many different contexts.
