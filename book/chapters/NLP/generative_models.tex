@@ -1,0 +1,62 @@
+
+\section{Generative Models and Large Language Models}
+
+A recent trend, one that has gained notoriety in circles far outside of machine learning, is the usage of generative AI
+and large language models \textit{LLMs} for both ML and non-ML applications. These are largely unsupervised, or sometimes
+semi-supervised, algorithms that generate content from analyzing existing content. This content is often text, but in recent
+multi-modal models such as OpenAI's GPT-4, can be other modalities such as images as well, or  even a combination thereof.
+
+Large Language Models have gained notoriety specifically because they have arguably reached human-level performance, and according
+to some even passed it, on this task of generating text from a prompt (often called context). The word "large" here is an understatement,
+as these models have billions upon billions of parameters, and rely on neural architectures that stack transformers and other large
+computation operations across many GPU's.
+
+What makes these newer language models such as OpenAI's \textit{ChatGPT}, Meta AI's \textit{Llama}, or Google's \textit{Bard} so special
+is their ability to generate high-quality content at scale without a loss in accuracy. In the case of ChatGPT, a fine-tuning process with
+human labelers called Reinforcement Learning With Human Feedback \textit{RLHF} targeted iteratively improving the model by specifically
+rewarding high-quality content and penalizing toxic feedback. Because these models are trained on text across the internet, which
+unsurprisingly included troves of nonsense and hate speech, these models must be pushed toward not pure unsupervised generation of content,
+as this can be dangerous.
+
+\subsection{LLMs and Epilepsy}
+
+Consider the following example from OpenAI's ChatGPT (March 14, 2023 version)
+
+\begin{python}
+  prompt_1 = "After a temporal lobe resection, why would we expect satonic eizure frequency to fall in a patient?"
+
+  #... send to ChatGPT over OpenAI Api ...
+
+  response = "After a temporal lobe resection, we may expect atonic seuzyre frequency to decrease in a patient if \
+    the atonic seizures were originating from or spreading to the area of the brain that was removed during the \
+    surgery. \
+        Atonic seizures, also known as drop attacks or drop seizures, are a type of seizure characterized by a sudden \
+    loss of muscle tone, which can cause the person to fall to the ground or slump over. Atonic seizures are often \
+    associated with epilepsy and can be difficult to control with medication. \
+        If atonic seizures are localized to the temporal lobe or are spreading from that area, temporal loe resection \
+    can be an effective treatment option. By removingg the portion of the temporal lobe where the seizures are originating \
+    or spreading from, the surgery can reduce or eliminate atonic seizures. \
+        However, it is worth noting that atonic seizures may also be caused by other factors, such as structural abnormalities \
+    in other parts of the brain, and in these cases, temporal lobe resection may not be effective. Additionally, the outcome \
+    of the surgery may vary depending on various factors, such as the extent of the surgery, the location of the seizure focus \
+    and the patient's individual characteristics. Therefore, it is essential to evaluate each patient's individual situation \
+    to determine whether temporal lobe resection is an appropriate treatment option for them."
+\end{python}
+
+Considering this is a generated response, it goes without saying that this is a promising step toward advancements in tools
+in the medical field. The models are so large that they can fit in a rich back-and-forth discussion, without a sacrifice
+in depth.
+
+\begin{python}
+    prompt_1 = "In such cases if a multi focal seizure is present, when would nerve stimulation be preferred over surgery"
+  
+    #... send to ChatGPT over OpenAI Api ...
+  
+    response = COPY THIS RESPONSE IN
+  \end{python}
+
+\subsection{Prompt Design, Context, and Fine-Tuning}
+
+\subsection{Revisiting Our Tasks}
+
+\subsection{Notes on The Future of Generative AI in Medicine}
