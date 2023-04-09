@@ -4,7 +4,7 @@
 A recent trend, one that has gained notoriety in circles far outside of machine learning, is the usage of generative AI
 and large language models \textit{LLMs} for both ML and non-ML applications. These are largely unsupervised, or sometimes
 semi-supervised, algorithms that generate content from analyzing existing content. This content is often text, but in recent
-multi-modal models such as OpenAI's GPT-4, can be other modalities such as images as well, or  even a combination thereof.
+multi-modal models such as OpenAI's GPT-4\cite{openai2023gpt4}, can be other modalities such as images as well, or  even a combination thereof.
 
 Large Language Models have gained notoriety specifically because they have arguably reached human-level performance, and according
 to some even passed it, on this task of generating text from a prompt (often called context). The word "large" here is an understatement,
@@ -17,19 +17,20 @@ human labelers called Reinforcement Learning With Human Feedback \textit{RLHF} t
 rewarding high-quality content and penalizing toxic feedback. Because these models are trained on text across the internet, which
 unsurprisingly included troves of nonsense and hate speech, these models must be pushed toward not pure unsupervised generation of content,
 as this can be dangerous.
+\\
+\textbf{DISCLAIMER:} Generative Language Models, while extremely powerful, should never solely be relied upon for medical advice. The examples in this text,
+as well as the models that are referenced, are used purely for educational purposes only
 
 \subsection{LLMs and Epilepsy}
 
 Consider the following example from OpenAI's ChatGPT (March 14, 2023 version)
 
 \begin{displayquote}
-  Prompt: "A patient with an epilepsy history is taking \
-  Phenytoin, and their morning lab work shows their Phenytoin\
-  level is 7 mcg/mL. What does this mean?"
+  \textbf{Prompt:} A patient with an epilepsy history is taking Phenytoin, and their morning lab work shows their Phenytoin level is 7 mcg/mL. What does this mean?
 \end{displayquote}
 
 \begin{displayquote}
-  ChatGPT response: "Phenytoin is an antiepileptic drug used to control seizures. The therapeutic range for Phenytoin is usually between 10 and 20 mcg/mL. If a patient's Phenytoin level is 7 mcg/mL, it is considered to be below the therapeutic range.
+  \textbf{ChatGPT response:} Phenytoin is an antiepileptic drug used to control seizures. The therapeutic range for Phenytoin is usually between 10 and 20 mcg/mL. If a patient's Phenytoin level is 7 mcg/mL, it is considered to be below the therapeutic range.
 
   A low Phenytoin level could indicate that the patient may be at risk of experiencing seizures, as the drug may not be providing adequate seizure control. Additionally, a low level may suggest that the patient is not taking the medication as prescribed or is not absorbing the drug adequately.
   
@@ -39,16 +40,12 @@ Consider the following example from OpenAI's ChatGPT (March 14, 2023 version)
 \end{displayquote}
 
 Considering this is a generated response, it goes without saying that this is a promising step toward advancements in tools
-in the medical field. The models are so large that they can fit in a rich back-and-forth discussion, without a sacrifice
-in depth.
+in the medical field. But how does a generative model, one that iteratively generates a single token at a time, manage to give
+this accuracy in an out-of-the-box response, with no specific training examples toward epilepsy? In this section, we will briefly explore
+discuss what is going on under the hood and revisit our ability to solve the examples addressed earlier in this chapter using these
+models. Finally, we touch on the future of AI tools in NLP in epilepsy.
 
-\begin{python}
-    prompt_1 = "In such cases if a multi focal seizure is present, when would nerve stimulation be preferred over surgery"
-  
-    #... send to ChatGPT over OpenAI Api ...
-  
-    response = COPY THIS RESPONSE IN
-  \end{python}
+\subsection{Generative Models}
 
 \subsection{Prompt Design, Context, and Fine-Tuning}
 
