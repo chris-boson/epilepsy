@@ -1,6 +1,8 @@
 \section{NLP Tasks in Epilepsy}
 
-Now that we have an understanding of some of the basics of computational representations of language data, let us take a look at some of the modern use cases for NLP in industry, catered toward epileptologists and other medical practitioners.
+Now that we have an understanding of some of the basics of computational representations of language data, let us take a general look at some of the modern use cases for NLP in industry, 
+catered toward epileptologists and other medical practitioners. In this section We will briefly cover examples of that all follow a common pattern. Once we establish this pattern, the
+following sections will take a deeper look with working examples of Financial Impact Analysis and SUDEP prediction.
 
 \subsection{Unstructured Text - Retrospective Research}
 Within the medical field, there are many sources of unstructured text that are primarily aimed as a either a communication channel between specialists, or a way for patients to pass information that isn't captured in a structured format.
@@ -41,9 +43,6 @@ expressions of their patients. Once a model is trained with a set of positive ex
 
 The datasets provided by SeizureTracker, as part of their It's Not Just Seizures (INJS) initiative, provides an excellent example of unstructured text responses being
 used as a guide to a suggested set of useful labels that can be learned with NLP techniques.
-\subsection{Text Preprocessing and Tokenization}
-
-Placeholder.
 
 \subsection{Named Entity Recognition and PII}
 
@@ -73,25 +72,31 @@ Spacy, NLTK, and Stanford NLP all provide out-of-the-box NER models that perform
       sample = sample.replace(word.text, word.label_)
 
   print(sample)
-
-  #The patient, PERSON, began feeling symptoms at his
-  #home in GPE, and was taken to ORG for treatment
+  # The patient, PERSON, began feeling symptoms at his
+  # home in GPE, and was taken to ORG for treatment
 
 \end{python}
 
-\subsection{Mining Unstructured Text and Clinical Documentation}
+\subsection{Clinical Trial Matching and Surgical Candidacy}
 
-This is placeholder text. Talk about clinical documentation and EHR notes, and other forms of unstructred text, being used for downstream classification tasks.
-Then, give some examples of them, and what these people did, and possibly how transformers could probably improve this work greatly.
+There has been an emergence of NLP technologies aimed at clinical trial matching. Different patient characteristics provide against eligibility
+criteria of available trials, and because much of this data comes in the form of unstructured text, NLP techniques can be used to turn target
+creating structures features for clinical trial matching.
 
-\subsection{Clinical Trial Matching and Eligibility Prescreening}
+Criteria2Query \cite{10.1093/jamia/ocy178} is a hybrid system that uses NLP methods to transform text into eligibility criteria features that can
+be extracted with structured queries. The Clinical Trial Parser and accompanying dataset of 3,314 trials\cite{tseo2020information}, made
+publicly available from Meta Research, is a system with a similar goal that combines a number of information extraction techniques from NLP to determine
+trial level eligibility.
 
-This is a placeholder text. https://www.nature.com/articles/d41586-019-02871-3
+Surgical Candidacy scoring models are yet another example of a classification task wherein recent NLP approaches have been used and evaluated \cite{Wissel2019ProspectiveVO}
+in epilepsy research. While this is a very broad introduction into some of the ways that the field has increasingly incorporated computational linguistics in recent years, it is enough
+to recognize a common pattern. As a general rule, when evaluating the potential candidacy of an NLP model to your specific task, ask yourself if the following criteria hold true:
+\begin{enumerate}
+  \item Is there text data in this task that provides signal toward a targeted classification that typically requires human involvement?
+  \item Have others in the medical field tried using NLP models on a similar task?
+  \item Does the task that requires either substantial amount of time, money, or scarce resources of domain expertise?
+  \item Is there a dataset I can use that is in good shape and does my group have full permissions to work with it on the required hardware?
+\end{enumerate}
 
-\subsection{Surgical Candidacy}
-
-This is placeholder text
-
-\subsection{Avoiding Epilepsy Misdiagnosis}
-
-This is placeholder text. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4419916/
+If the answer is yes to any of these questions, it may be worth trying some of these off-the-shelf techniques or even reaching out to a data scientist or machine learning engineer.
+If the answer is yes to all four, then it is definitely worth your time.

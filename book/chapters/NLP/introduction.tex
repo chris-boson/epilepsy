@@ -4,6 +4,10 @@ Natural language processing (NLP) is a field of computer science that deals with
 It is known as the field of computer linguistics, and is a subfield of artificial intelligence.
 Common NLP tasks include sentence segmentation, tokenization, part-of-speech tagging, named-entity recognition, parsing, question answering, summarization and classification.
 
+In this chapter, we will provide a foundational knowledge to the building blocks of computational linguistics, starting with how machines represent text. We will
+expand upon this with an introduction into more advanced machine learning models, and ultimately into state-of-the-art NLP models such as GPT4\cite{openai2023gpt4}. Along the way,
+coding examples and real-world examples will be presented to help to understand the ways that this field continues to be used by clinicans and researches in the field of epilepsy.
+
 How can we teach a computer to perform these tasks?
 The first challenge is that computers, at their core, only understand numbers.
 So first we need to think about how words, or more generally text, can be represented with numbers such that we can perform calculations on them.
@@ -66,8 +70,6 @@ Common special tokens include:
 The out-of-vocabulary token is of particular importance in medicine. If we load a vocabulary with 30,000 words, often these are roughly the most common 30,000 words in the English language. We will still have a few [OOV] tokens
 for rare words. However, just because a general system chooses its vocabulary based on word frequency does not mean that this is the best choice of vocabulary for the task at hand. Medical corpora have a very different word frequency
 distribution than non-medical corpora, particulary because of nuanced vocabulary that is absolutely crucial.
-
-%TODO - add some epilepsy-themed example that throws away all the epilepsy words%
 
 In Example 1 above, notice the importance of the words that have been thrown away. If this sentence were to be loaded into a machine as-is, we might be losing far too much information because we have to nearly all of the relevant terminology with OOV tokens.
 We will address this issue in the ensuing sections. For now, suffice it to say that we should make sure our vocabularies are catered toward our task at hand or are built in such a way that they can still extract signal from these tokens. Furthermore, we should always sanity check our sample token outputs against our raw text inputs.
