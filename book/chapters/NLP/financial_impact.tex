@@ -57,12 +57,13 @@ df = pd.read_csv(
 df = df[["financial_impact", "employment_burden"]]
 df["label"] = df["employment_burden"].astype("int32")
 print(df["label"].value_counts())
-df = df.sample(frac=1, random_state=123456).reset_index(drop=True)
+df = df.sample(frac=1,
+    random_state=123456).reset_index(drop=True)
 
 #Value Counts are:
 # 0 (negative) - 106
 # 1 (positive) - 71
-  \end{python}
+\end{python}
 
 If we run this, we will see that there are 71 positives and 106 negatives. This means 71 people surveyed expressed a financial burden
 with respect to their ability to find or keep employment.
@@ -100,13 +101,17 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
 
     precision = metric_precision.compute(
-        predictions=predictions, references=labels)["precision"]
+        predictions=predictions,
+        references=labels)["precision"]
     recall = metric_recall.compute(
-        predictions=predictions, references=labels)["recall"]
+        predictions=predictions,
+        references=labels)["recall"]
     f1 = metric_f1.compute(
-        predictions=predictions, references=labels)["f1"]
+        predictions=predictions,
+        references=labels)["f1"]
     accuracy = metric_accuracy.compute(
-        predictions=predictions, references=labels)["accuracy"]
+        predictions=predictions,
+        references=labels)["accuracy"]
 
     return {
         "precision": precision,
@@ -204,7 +209,8 @@ df = pd.read_csv(
     header=0)
 df = df[["financial_impact", "employment_burden"]]
 df["label"] = df["employment_burden"].astype("int32")
-df = df.sample(frac=1, random_state=123456).reset_index(drop=True)
+df = df.sample(frac=1,
+    random_state=123456).reset_index(drop=True)
 
 print("Building Roberta Model To Fine-Tune Classifier")
 tokenizer = AutoTokenizer.from_pretrained("roberta-base")

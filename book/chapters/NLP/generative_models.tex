@@ -7,48 +7,93 @@ semi-supervised, algorithms that generate content from analyzing existing conten
 multi-modal models such as OpenAI's GPT-4\cite{openai2023gpt4}, can be other modalities such as images as well, or even a combination thereof.
 
 Large Language Models have gained notoriety specifically because they have arguably reached human-level performance, and according
-to some even passed it, on this task of generating text from a prompt (often called context). The word "large" here is an understatement,
+to some even passed it, on various tasks of generating text from a prompt (often called context). The word "large" here is an understatement,
 as these models have billions upon billions of parameters, and rely on neural architectures that stack transformers and other large
-computation operations across many GPU's.
+computational operations across many GPU's. They are trained on massive amounts of text, sometimes on the order of trillions\cite{touvron2023llama} of tokens
 
-What makes these newer language models such as OpenAI's \textit{ChatGPT}, Meta AI's \textit{Llama}, or Google's \textit{Bard} so special
+What makes these newer language models such as OpenAI's \textit{ChatGPT}, Meta AI's \textit{Llama}\cite{touvron2023llama}, or Google's \textit{Bard} so special
 is their ability to generate high-quality content at scale without a loss in accuracy. In the case of ChatGPT, a fine-tuning process with
 human labelers called Reinforcement Learning With Human Feedback \textit{RLHF} targeted iteratively improving the model by specifically
 rewarding high-quality content and penalizing toxic feedback. Because these models are trained on text across the internet, which
 unsurprisingly included troves of nonsense and hate speech, these models must be pushed toward not pure unsupervised generation of content,
 as this can be dangerous.
-\\
-\textbf{DISCLAIMER:} Generative Language Models, while extremely powerful, should never solely be relied upon for medical advice. The examples in this text,
-as well as the models that are referenced, are used purely for educational purposes only
+\subsection{LLM's in Medicine}
+Generative Language Models, while extremely powerful, should never solely be relied upon for medical advice. The examples in this text,
+as well as the models that are referenced, are used purely for educational purposes only.
+These models are growing at rapid pace, and this trend will very likely continue in the coming years. As they become more powerful, there
+will inevitably be questions as to how they can be used within the medical field. Remember that an AI is trained on reading the text on the internet,
+and this should give you all you need to know that they should never be used to make a decision about a patient.
 
-\subsection{LLMs and Epilepsy}
+That being said, that does not mean they are not useful. Consider the task in the previous section where we identified whether or not a piece of text
+expressed a difficulty in attaining or maintaining employment. This is the sort of task that a large languge model can also help with. All we have to do
+is design a prompt that lets the LLM know what we are trying to model and provide the text sample.
 
-Consider the following example from OpenAI's ChatGPT (March 14, 2023 version)
+\subsection{Public vs Private Models}
+
+Can we simply send patient data, or even survey responses, to ChatGPT and ask for results? Of course not. ChatGPT is a model owned by OpenAI we cannot send
+patient data over an API. However, there are LLM's with weights that can be downloaded and used on a local machine, or within the compute plane of a healthcare
+organization. In all likelihood there will be more LLM's to come that are specialized to medicine that can be used as well. If you download one of these models,
+it is no different than using any other machine learning model.
+
+It is worth noting that there are likely to be state and national regulations surrounding the use of AI models, particularly LLM's, with respect to user data, and
+that as they develop we make sure to be in compliance.
+
+\subsection{Epilepsy Example}
+
+Consider the following example output from a state-of-the-art unnamed LLM that targets the task from the previous section.
+
+First let's try the sample positive:
 
 \begin{displayquote}
-  \textbf{Prompt:} A patient with an epilepsy history is taking Phenytoin, and their morning lab work shows their Phenytoin level is 7 mcg/mL. What does this mean?
+  \textbf{Prompt:} Does the following quote express a person's financial difficulties in their ability to maintain or attain employment: "We have found that employers are far less likely to want to hire our son because of his condition."
 \end{displayquote}
 
 \begin{displayquote}
-  \textbf{ChatGPT response:} Phenytoin is an antiepileptic drug used to control seizures. The therapeutic range for Phenytoin is usually between 10 and 20 mcg/mL. If a patient's Phenytoin level is 7 mcg/mL, it is considered to be below the therapeutic range.
-
-  A low Phenytoin level could indicate that the patient may be at risk of experiencing seizures, as the drug may not be providing adequate seizure control. Additionally, a low level may suggest that the patient is not taking the medication as prescribed or is not absorbing the drug adequately.
-
-  Therefore, it is essential to inform the healthcare provider of the patient's low Phenytoin level, and follow their instructions regarding further action. The healthcare provider may order additional testing or adjust the patient's medication dose to achieve the optimal therapeutic range.
-
-  It is also essential to monitor the patient's symptoms and seizure activity closely and report any changes or concerns to the healthcare provider. It is crucial to adhere to the healthcare provider's instructions and medication administration guidelines to ensure that the patient's seizures are adequately controlled.
+  \textbf{LLM Response:} LLM: Yes, the quote suggests that the parents of a child with a disability are saying that employers are less likely to want to hire their son due to his condition. This could have a significant financial impact on the person's ability to attain or maintain employment.
 \end{displayquote}
 
-Considering this is a generated response, it goes without saying that this is a promising step toward advancements in tools
-in the medical field. But how does a generative model, one that iteratively generates a single token at a time, manage to give
-this accuracy in an out-of-the-box response, with no specific training examples toward epilepsy? In this section, we will briefly explore
-discuss what is going on under the hood and revisit our ability to solve the examples addressed earlier in this chapter using these
-models. Finally, we touch on the future of AI tools in NLP in epilepsy.
+It looks like the LLM got this example correct. And now we can try the sample negative:
 
-\subsection{Generative Models}
+\begin{displayquote}
+  \textbf{Prompt:} Does the following quote express a person's financial difficulties in their ability to maintain or attain employment: "The medication costs are through the roof and it is simply too much for us to be able to handle."
+\end{displayquote}
 
-\subsection{Prompt Design, Context, and Fine-Tuning}
+\begin{displayquote}
+  \textbf{LLM Response:} Yes, the quote suggests that the person is struggling to afford the cost of their epilepsy medication. This could have a significant financial impact on their ability to maintain or attain employment.
+\end{displayquote}
 
-\subsection{Revisiting Our Tasks}
+Notice that this example is incorrect, though the reasoning is sound. This illustrates an important point in the usage of LLM's, and that is Prompt Design
 
-\subsection{Notes on The Future of Generative AI in Medicine}
+\subsection{Prompt Design and Context}
+
+Prompt design is key to the success of LLM's. In the above example, the model believes that the cost of epilepsy medication itself may lead to a difficulty in maintaining or attaining a job. While this might be true, the target was a direct expression of this difficulty.
+If we modify the query to express this directly, we get the kind of result we were looking for, at least in this case:
+
+\begin{displayquote}
+  \textbf{Prompt:} Does the following quote discuss the difficulty in maintaining or attaining employment: "The medication costs are through the roof and it is simply too much for us to be able to handle."
+\end{displayquote}
+
+\begin{displayquote}
+  \textbf{LLM Response:} No, the statement you provided does not specifically discuss the difficulty in maintaining or attaining employment. It focuses on the high cost of medication and how it's difficult for the person making the statement to handle it.
+\end{displayquote}
+
+Keep in mind that when working with LLM's, iterating on your prompts is well worth your time. You should work to clearly express what you are trying to solve.
+
+Some of these models have larger context lengths than others. What this means is that they can handle more input tokens, such as a longer set of instructions, or in our case a longer quote.
+You should try to use a model that can fit the entire context of the task at hand.
+
+\subsection{Fine-Tuning}
+
+It is very likely that models will soon be fine-tuned to the medical domain. What this means is that they tradeoff accuracy in their abilities to answer general prompts for an increased accuracy in their ability to answer prompts related to a target.
+In the same way that a transformer model like RoBERTa was fine-tuned to our task in the previous section, an LLM can have their weights fine-tuned.
+Currently, LLM fine-tuning to specific tasks comes at prohibitive costs. However, LoRA\cite{hu2021lora} optimization techniques are the method most often used to combat these costs. They inject trainable decomposed matrices into the transformer architectures that
+are easier to train than the entire model, which may be extremely large.
+This is beyond the scope of the current chapter, but these tools will soon become common place and it is not beyond the realm of possibility for a model to be fine-tuned specifically to deal with
+epilepsy.
+
+\subsection{What Comes Next}
+
+The development of LLM's will continue in the years to come. At the time of this text, Artificial Intelligence with respect to NLP is growing as fast as it ever has, and the general public is becoming more aware of their abilities. Above all else, we
+must remain vigilant with respect to privacy concerns, bad actors, and the understanding that these models should not be used for medical advice.
+
+It is likely that we will be able to fine-tune them, say on EHR's, for a series of questions relating to retrospective research. Until then, monitor the regulations around LLM's as well as the tools and frameworks created by researchers and engineers in the field.
