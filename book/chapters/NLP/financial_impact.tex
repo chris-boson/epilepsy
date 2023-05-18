@@ -10,27 +10,29 @@ We are providing self-contained code examples in the accompanying GitHub reposit
 For this section we started out with fairly small dataset ($\sim178$ rows) derived from survey responses regarding impact and treatment of epilepsy\footnote{Seizure Tracker}.
 We focus our example on one such survey response:
 \begin{displayquote}
-    Do you have any comments on the financial impact of epilepsy?
+    \textit{Do you have any comments on the financial impact of epilepsy?}
 \end{displayquote}
 
 Let us focus on a binary task. We will analyze the 178 responses and label them as to whether or not they expressed if the patient and/or their family was expressing difficulty related to attaining or holding onto their job. This
 type of burden is common and, while nowhere near the only financial burden, it is a significant one. We choose this label because it is moderately difficult to annotate, and therefore would be quite tiresome and costly to annotate at scale.
 
-A positive example to this survey response might be something like this (note that this is not a real example from the survey)
+A positive example to this survey response might be something like:
 \begin{displayquote}
-    We have found that employers are far less likely to want to hire our son because of his condition.
+    \textit{We have found that employers are far less likely to want to hire our son because of his condition.}
 \end{displayquote}
 
-A negative example to this survey response might be
+A negative example to this survey response might be:
 \begin{displayquote}
-    The medication costs are through the roof and it is simply too much for us to be able to handle.
+    \textit{The medication costs are through the roof and it is simply too much for us to be able to handle.}
 \end{displayquote}
+
+Note that neither of these quotes actually come from the dataset provided by Seizure Tracker.
 
 \subsection{Motivation}
 We aim to answer the question of whether or not we can learn to accurately model this type of employment burden with few training samples. If we can, this gives us confidence that these types of survey responses
 can be summarized by machine learning models at a large scale. If we can accurately train a model off very few examples, then we have effectively cut down on the time taken by a skilled professional, let alone the cost involved,
-in performing such analysis. This opens the door to many other types of semantic classifiers being built that can target other tasks, further cutting down the time and cost to analyze EHR's, surveys, and other documents that may
-have free-form responses. If we can model these accurately by labeling very few statements by hand, then we have confidence that we can aggregate over totals quickly and accurately.
+in performing such an analysis. This opens the door to many other types of semantic classifiers being built that can target other tasks, further cutting down the time and cost to analyze EHR's, surveys, and other documents that may
+have free-form responses.
 This dataset is small enough to manually inspect, but the techniques discussed here scale well into the order of million (or even billions) of samples.
 
 
