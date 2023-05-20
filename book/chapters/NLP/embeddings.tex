@@ -18,7 +18,7 @@ Here $h$ is what is called embedding dimension and $h << |V|$.
 
 \begin{figure}
   \input{chapters/NLP/figures/word2vec.tex}
-  \caption{Illustration of the Continuous Bag of Words (CBOW) approach to the word2vec model. The model takes a window of surrounding (context) words as input, and the goal is to predict the input word. The context words are first projected onto a hidden layer, and the input word is predicted based on the activations in the hidden layer. The weight are learned through training.}
+  \caption{Illustration of the Continuous Bag of Words (CBOW) approach to the word2vec model. The model takes a window of surrounding (context) words as input, and the goal is to predict the input word. The context words are first projected onto a hidden layer, and the input word is predicted based on the activations in the hidden layer. The weights are learned through training.}
   \label{fig:word2vec_cbow}
 \end{figure}
 
@@ -161,7 +161,7 @@ These subword units behave like normal word vectors and can store semantic and s
 
   for token, id  in zip(tokens, ids):
       print("{}: {}".format(token,id))
-  
+
   #output:
   # [CLS] 101
   # after: 2044
@@ -193,9 +193,7 @@ faster we can get to a high-quality model for our specialized task.
 
 Predictive models from electronic health records have been used to train transformer-based models, and \texttt{Med-Bert}\cite{rasmy2020medbert}
 is an example of one such model giving a boost to prediction accuracy with respect to the number of training examples required by a
-specialized model. The \texttt{BioBERT}\cite{DBLP:journals/corr/abs-1901-08746} model,  \texttt{Bio\textunderscore ClinicalBERT}\cite{https://doi.org/10.48550/arxiv.1904.03323} model, 
+specialized model. The \texttt{BioBERT}\cite{DBLP:journals/corr/abs-1901-08746} model,  \texttt{Bio\textunderscore ClinicalBERT}\cite{https://doi.org/10.48550/arxiv.1904.03323} model,
 can be loaded as a drop-in replacement for a BERT model from the Huggingface library to achieve better results in clinical tasks. Many other such models
 exist and it is recommended to keep an eye out for advancements in this respect when attempting to use pre-trained models for tasks
 in not only epilepsy but other domains.
-
-

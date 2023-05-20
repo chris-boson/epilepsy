@@ -7,7 +7,8 @@ We are providing self-contained code examples in the accompanying GitHub reposit
 
 
 \subsection{Problem Definition}
-For this section we started out with fairly small dataset ($\sim178$ rows) derived from survey responses regarding impact and treatment of epilepsy\footnote{Seizure Tracker}.
+For this section we started out with fairly small dataset ($\sim178$ rows) derived from survey responses regarding impact and treatment of epilepsy\footnote{Seizure Tracker. These survey results were provided as part of a data share between researchers and Seizure Tracker's \textit{It's Not Just Seizures} initiative.}.
+
 We focus our example on one such survey response:
 \begin{displayquote}
     \textit{Do you have any comments on the financial impact of epilepsy?}
@@ -30,9 +31,8 @@ Note that neither of these quotes actually come from the dataset provided by Sei
 
 \subsection{Motivation}
 We aim to answer the question of whether or not we can learn to accurately model this type of employment burden with few training samples. If we can, this gives us confidence that these types of survey responses
-can be summarized by machine learning models at a large scale. If we can accurately train a model off very few examples, then we have effectively cut down on the time taken by a skilled professional, let alone the cost involved,
-in performing such an analysis. This opens the door to many other types of semantic classifiers being built that can target other tasks, further cutting down the time and cost to analyze EHR's, surveys, and other documents that may
-have free-form responses.
+can be summarized by machine learning models at a large scale. The fewer the training samples needed, the less time required by skilled professionals to to perform such an analysis. We also stand to potentially have a great impact on the cost of such work.
+This also opens the door to many other types of semantic classifiers being built that can target other tasks analyzing EHR's, surveys, and other documents that may have free-form responses.
 This dataset is small enough to manually inspect, but the techniques discussed here scale well into the order of million (or even billions) of samples.
 
 
@@ -75,8 +75,8 @@ Instead of tuning a model from scratch, we will try to fine-tune one of the Tran
 architecture, and then see how it performs on the 178 samples in our dataset. Because this is such a small sample, we will split our dataset into five folds, training on four of the folds and testing on the holdout. We will do this for all
 five folds, and stitch together the results in order to get an accurate representation of our learner.
 
-Let's load our transformer model and tokenizer from huggingface. The following code will download and prepare the
-RoBERTa\cite{liu2019roberta} model from Huggingface, a model that was trained by Facebook AI in 2019.
+Let's load our transformer model and tokenizer from HuggingFace\cite{wolf2020huggingfaces}, a state-of-the-art library for Transformer models.
+The following code will download and prepare the RoBERTa\cite{liu2019roberta} model from HuggingFace, a model that was trained by Facebook AI in 2019.
 
 \begin{python}
 tokenizer = AutoTokenizer.from_pretrained("roberta-base")
@@ -147,11 +147,12 @@ Our dataset is now ready to train. If we create a \textit{Trainer} class, we wil
 datasets, as well as our metrics function, and get outputs as the model trains. Let's define those now, and start training.
 
 \begin{python}
-# Fine tune
+# fine-tune
 training_args = TrainingArguments(
     output_dir=f"financial_impact_trainer",
     evaluation_strategy="epoch",
-    num_train_epochs=2)
+    num_train_epochs=2
+)
 
 trainer = Trainer(
     model=model,
@@ -214,7 +215,7 @@ df["label"] = df["employment_burden"].astype("int32")
 df = df.sample(frac=1,
     random_state=123456).reset_index(drop=True)
 
-print("Building Roberta Model To Fine-Tune Classifier")
+print("Building Roberta Model To fine-tune Classifier")
 tokenizer = AutoTokenizer.from_pretrained("roberta-base")
 
 # Create vanilla fine-tuner
@@ -287,7 +288,7 @@ for i in range(N_FOLDS):
     test_dataset = test_dataset.map(
         tokenize_function, batched=True)
 
-    # Fine tune
+    # fine-tune
     training_args = TrainingArguments(
         output_dir=f"financial_impact_trainer_fold_{i}",
         evaluation_strategy="epoch",
