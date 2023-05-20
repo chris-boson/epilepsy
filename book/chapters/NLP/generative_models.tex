@@ -9,14 +9,35 @@ multi-modal models such as OpenAI's GPT-4\cite{openai2023gpt4}, can be other mod
 Large Language Models have gained notoriety specifically because they have arguably reached human-level performance, and according
 to some even passed it, on various tasks of generating text from a prompt (often called context). The word "large" here is an understatement,
 as these models have billions upon billions of parameters, and rely on neural architectures that stack transformers and other large
-computational operations across many GPU's. They are trained on massive amounts of text, sometimes on the order of trillions\cite{touvron2023llama} of tokens
+computational operations across many GPU's. They are trained on massive amounts of text, sometimes on the order of trillions\cite{touvron2023llama} of tokens.
 
 What makes these newer language models such as OpenAI's \textit{ChatGPT}, Meta AI's \textit{Llama}\cite{touvron2023llama}, or Google's \textit{Bard} so special
 is their ability to generate high-quality content at scale without a loss in accuracy. In the case of ChatGPT, a fine-tuning process with
 human labelers called Reinforcement Learning With Human Feedback \textit{RLHF} targeted iteratively improving the model by specifically
 rewarding high-quality content and penalizing toxic feedback. Because these models are trained on text across the internet, which
-unsurprisingly included troves of nonsense and hate speech, these models must be pushed toward not pure unsupervised generation of content,
-as this can be dangerous.
+unsurprisingly included troves of nonsense and hate speech, these models must be pushed away from purely unchecked generation of content,
+as this can be dangerous. While the possibility of generating this text can never be fully eliminated, or can perhaps be circumvented with the right prompts, it remains true
+that as we add more human labelers to push away this behavior, the chances of this type of text being generated continues to lower.
+
+\subsection{Instruction Tuning}
+
+“Instruction tuning” refers to fine tuning a language model of NLP tasks described with instructions, often with the aim of having the model
+be able to perform admirably on task on which it was never trained. Let's take a look at an example.
+
+Consider the Google FLAN\cite{chung2022scaling} model. As illustrated in figure 2.13, this model was provided not only a variety of datasets, but
+tuned with a variety of different tasks. Instructions were provided for the model to reason through many types of question answering, but also text
+generation tasks, common-sense reasoning tasks, or even tasks related to program execution. Researchers found that by fine-tuning a variety of instruction
+sets in this manner, models are able to generalize to not only these types of task but other tasks as well.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{chapters/NLP/figures/flan_finetune.png}
+  \caption{This figure, taken from the original Google FLAN paper, illustrates a model that was fine-tuned using a variety of instruction prompts, and tested using a set of held out instruction.}
+  \label{fig:flan_instruction_fine_tuning}
+\end{figure}
+
+This is a powerful step in the field of Artificial Intelligence. A model receiving instructions on common-sense reasoning tasks generalizing to an ability to perform tasks like arithmetic is a step
+toward generalized intelligence in AI systems. If enough of these types of prompts are instruction sets related to medical tasks, would a model be able to generalize to other types of information in the field?
+
 \subsection{LLM's in Medicine}
 \textbf{DISCLAIMER:} Generative Language Models, while extremely powerful, should never solely be relied upon for medical advice. The examples in this text,
 as well as the models that are referenced, are used purely for educational purposes only.
