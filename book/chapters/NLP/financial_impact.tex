@@ -31,9 +31,9 @@ Note that neither of these quotes actually come from the dataset provided by Sei
 
 \subsection{Motivation}
 We aim to answer the question of whether or not we can learn to accurately model this type of employment burden with few training samples. If we can, this gives us confidence that these types of survey responses
-can be summarized by machine learning models at a large scale. The fewer the training samples needed, the less time required by skilled professionals to to perform such an analysis. We also stand to potentially have a great impact on the cost of such work.
-This also opens the door to many other types of semantic classifiers being built that can target other tasks analyzing EHR's, surveys, and other documents that may have free-form responses.
-This dataset is small enough to manually inspect, but the techniques discussed here scale well into the order of million (or even billions) of samples.
+can be summarized by machine learning models at a large scale. The fewer training samples needed, the less time required by skilled professionals to to perform such an analysis. We also stand to potentially have a great impact on the cost of such work.
+This also opens the door to many other types of semantic classifiers being built that can target other tasks analyzing EHRs, surveys, and other documents that may have free-form responses.
+This dataset is small enough to manually inspect, but the techniques discussed here scale well into the order of millions (or even billions) of samples.
 
 
 \subsection{Walkthrough}
@@ -123,7 +123,7 @@ def compute_metrics(eval_pred):
     }
 \end{python}
 
-The \textit{compute\textunderscore metrics} function will be passed to our \textit{Trainer} class so that it can run the metrics whenever we're done with a training epoch. We now need to take our dataset and pass it to the tokenizer in order to prepare our inputs. We will make use of Huggingface's Dataset and pass our dataset to the tokenizer that we created.
+The \textit{compute\textunderscore metrics} function will be passed to our \textit{Trainer} class so that it can run the metrics whenever we're done with a training epoch. We now need to take our dataset and pass it to the tokenizer in order to prepare our inputs. We will make use of HuggingFace's Dataset and pass our dataset to the tokenizer that we created.
 
 \begin{python}
 N_FOLDS = 5

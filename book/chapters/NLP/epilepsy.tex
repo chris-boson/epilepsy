@@ -80,8 +80,8 @@ Spacy, NLTK, and Stanford NLP all provide out-of-the-box NER models that perform
 \subsection{Clinical Trial Matching and Surgical Candidacy}
 
 There has been an emergence of NLP technologies aimed at clinical trial matching. Different patient characteristics provide against eligibility
-criteria of available trials, and because much of this data comes in the form of unstructured text, NLP techniques can be used to turn target
-creating structures features for clinical trial matching.
+criteria of available trials. While sometimes this data is structured, often there are free-form responses with critical information. The NLP algorithms discussed in this chapter
+can help to create features on this type of text for clinical trial matching.
 
 Criteria2Query \cite{10.1093/jamia/ocy178} is a hybrid system that uses NLP methods to transform text into eligibility criteria features that can
 be extracted with structured queries. The Clinical Trial Parser and accompanying dataset of 3,314 trials\cite{tseo2020information}, made
@@ -94,7 +94,7 @@ to recognize a common pattern. As a general rule, when evaluating the potential 
 \begin{enumerate}
   \item Is there text data in this task that provides signal toward a targeted classification that typically requires human involvement?
   \item Have others in the medical field tried using NLP models on a similar task?
-  \item Does the task that requires either substantial amount of time, money, or scarce resources of domain expertise?
+  \item Does the task require either a substantial amount of time, money, or scarce resources of domain expertise?
   \item Is there a dataset I can use that is in good shape and does my group have full permissions to work with it on the required hardware?
 \end{enumerate}
 
