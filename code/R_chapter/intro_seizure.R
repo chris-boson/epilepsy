@@ -37,26 +37,26 @@ metadata_patient1 <- read.csv(file_path, header = TRUE, sep = ",")
 ### Write a for loop to read all patients
 
 # Initialize a list with all patient's folders
-patients_list = c()
-patient_size = 20
+patients_list <- c()
+patient_size <- 20
 for (i in 1:patient_size){
-  patients_list[i] = paste('Patient_', i, sep="")
+  patients_list[i] <- paste('Patient_', i, sep="")
 
 }
 
 # Initiliaze the vector where the patient's metdata will be stored
-df_metadata = data.frame()
+df_metadata <- data.frame()
 
 # Get the metadata for all patients
 for (i in 1:length(patients_list)){
   # Get the filepath for each patient
-  file_path = paste(data_path, patients_list[i], '/', filename, sep="")
+  file_path <- paste(data_path, patients_list[i], '/', filename, sep="")
 
   # Load the patient's metadata
   metadata_current_patient <- read.csv(file_path, header = TRUE, sep = ",")
 
   # Concatenate the dataframes
-  df_metadata = rbind(df_metadata, metadata_current_patient)
+  df_metadata <- rbind(df_metadata, metadata_current_patient)
 }
 
 
