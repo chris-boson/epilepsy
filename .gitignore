@@ -136,3 +136,5 @@ dmypy.json
 **/*.pdf
 
 code/model
+
+**/patient_data/*

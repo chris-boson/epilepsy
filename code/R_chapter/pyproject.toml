@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "epilepsy-r-chapter"
+version = "0.1.0"
+description = ""
+authors = []
+
+[tool.poetry.dependencies]
+python = "3.8.*"
+scipy = "^1.10.1"
+pandas = "^2.0.1"
+matplotlib = "^3.7.1"
+
+[tool.poetry.dev-dependencies]
+black = "22.3.0"
+coverage = "^5.5"
+flake8 = "^4.0.1"
+mypy = "^0.942"
+bandit = "^1.7.4"
+ipykernel = "^6.11.0"
+
+[build-system]
+requires = ["poetry-core<=1.0.4"]
+build-backend = "poetry.core.masonry.api"
