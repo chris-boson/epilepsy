@@ -55,6 +55,7 @@
 			]
 		}
 	},
+	"postCreateCommand": "make setup-dev",
 	"remoteUser": "vscode",
 	"features": {
 		"terraform": "1.2",
