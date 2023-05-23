@@ -24,7 +24,7 @@ library(ggplot2)
 ### Load in a single file
 
 # Initialize all the required paths
-data_path = "/Users/ev105g/Documents/temp/epilepsy_book/R_chapter/patient_data/"
+data_path = "./patient_data/"
 single_patient_folder = "Patient_1/"
 filename = "metadata.csv"
 
@@ -41,7 +41,7 @@ patients_list = c()
 patient_size = 20
 for (i in 1:patient_size){
   patients_list[i] = paste('Patient_', i, sep="")
-  
+
 }
 
 # Initiliaze the vector where the patient's metdata will be stored
@@ -51,13 +51,13 @@ df_metadata = data.frame()
 for (i in 1:length(patients_list)){
   # Get the filepath for each patient
   file_path = paste(data_path, patients_list[i], '/', filename, sep="")
-  
+
   # Load the patient's metadata
   metadata_current_patient <- read.csv(file_path, header = TRUE, sep = ",")
-  
+
   # Concatenate the dataframes
   df_metadata = rbind(df_metadata, metadata_current_patient)
-}  
+}
 
 
 # Initialize the directory containing the files and provide the filenames within each folder
@@ -82,11 +82,11 @@ rm(df_metadata)
 # Read in the json files
 # Create a function for reading and processing .json files
 read_json_files <- function(file_list){
-  
+
   # Load json data
   rdata <- read_json(file_list, simplifyVector = TRUE)
   seizure_data <- fromJSON(rdata)
-  
+
   return(seizure_data)
 }
 
@@ -122,7 +122,7 @@ str(metadata)
 str(seizure_data)
 
 # Convert patient_id to match format in metadata. Only for pedagogical purposes. Later we show how to convert both
-# to integers. 
+# to integers.
 seizure_data$patient_id <- paste0("Patient_", seizure_data$patient_id)
 
 # Join the metadata into the dataframe
@@ -163,22 +163,22 @@ colnames(seizure_data)
 display_na <- function(df, threshold){
   # Params:
   # df: data.frame - data frame for which the NA percentage is to be calculated
-  # threshold: double - value between 0 and 1 indicating that columns with NA 
+  # threshold: double - value between 0 and 1 indicating that columns with NA
   #                     proportion higher than threshold should be returned
-  
+
   # Return:
   # named vector with all columns that have more than threshold proportion of values with NA
-  na_percent_per_column <- round(colMeans(is.na(df)),3)  
+  na_percent_per_column <- round(colMeans(is.na(df)),3)
   return(na_percent_per_column[na_percent_per_column > threshold])
 }
 
-# It looks like the dataframe has 3 variables that have 10% missing values. 
+# It looks like the dataframe has 3 variables that have 10% missing values.
 display_na(seizure_data, 0.01)
 
 # If NA is present in any row of the entire dataframe drop that row
 any_na_drop = na.omit(seizure_data)
 
-# Complete case removal - allows for subseting specific columns when deciding whether to drop if NA is present. 
+# Complete case removal - allows for subseting specific columns when deciding whether to drop if NA is present.
 # In this case we notice that the two dataframes are identical size. This implies that any observation that had NAs in iea_lead1 and iea_lead2 (columns 3 and 4) also has NA in le (column 2)
 partial_na_drop = seizure_data[complete.cases(seizure_data[, 2:3]),]
 
@@ -192,10 +192,10 @@ median_noNA <- function(df){
 
 # Execute the function on each row in the dataframe
 replace_na <- function(df, impute_function){
-  
-  # Get only the numeric columns 
+
+  # Get only the numeric columns
   is_numeric <- sapply(df, is.numeric)
-  
+
   # Impute NA inplace with the median
   clean_df <- replace(df, is_numeric, lapply(df[is_numeric], impute_function))
   return(clean_df)
@@ -213,7 +213,7 @@ mean_noNA <- function(df){
 # Impute with mean
 seizure_data_mean_impute = replace_na(seizure_data, mean_noNA)
 
-seizure_data <- seizure_data %>% 
+seizure_data <- seizure_data %>%
   mutate_at(vars(c(le, iea_lead1, iea_lead2)), ~ifelse(is.na(.), median(., na.rm = TRUE), .))
 
 
@@ -225,11 +225,11 @@ seizure_data$iea_lead_agg = seizure_data$iea_lead1 + seizure_data$iea_lead2
 seizure_data = subset(seizure_data, select = -c(iea_lead1,iea_lead2) )
 
 # Built a histogram to explore the data - it looks like the majority of the seizure counts are near 0. We have a very left skewed histogram with very few observations having >10 seizures. Contributing to this may be the fact that each observation represents the number of seizures within a 1 hour window
-pdf("./Documents/temp/epilepsy_book/R_chapter/le_histogram.pdf")
+pdf("./outputs/le_histogram.pdf")
 hist(seizure_data$le, main = "", xlab = "Seizures", ylab = "Density", freq=FALSE)
 dev.off()
 
-pdf("./Documents/temp/epilepsy_book/R_chapter/iea_lead_agg.pdf")
+pdf("./outputs/iea_lead_agg.pdf")
 hist(seizure_data$iea_lead_agg, main = "", xlab = "Seizure Spikes", ylab = "Density", freq=FALSE)
 dev.off()
 
@@ -245,16 +245,16 @@ daily_seizures_spikes <- seizure_data %>%
   group_by(patient_id, seizure_date) %>%
   summarise(total_le = sum(le), total_iea_lead_agg = sum(iea_lead_agg))
 
-pdf("./Documents/temp/epilepsy_book/R_chapter/daily_le_histogram.pdf")
+pdf("./outputs/daily_le_histogram.pdf")
 hist(daily_seizures_spikes$total_le, main = "", xlab = "Seizures", ylab = "Density", freq=FALSE)
 dev.off()
 
-pdf("./Documents/temp/epilepsy_book/R_chapter/daily_iea_lead_agg.pdf")
+pdf("./outputs/daily_iea_lead_agg.pdf")
 hist(daily_seizures_spikes$total_iea_lead_agg, main = "", xlab = "Seizure Spikes", ylab = "Density", freq=FALSE)
 dev.off()
 
 # Look at the unique seizure focus values - there are 5
-unique(seizure_data$seizure_foci) 
+unique(seizure_data$seizure_foci)
 
 # Does each patient have each of the seizure foci - it looks like the seizure_focus is unique to each patient. Ask SHARON?
 seizure_data %>%
@@ -288,10 +288,10 @@ seizure_data_2017_patient_6 = seizure_data[seizure_data$patient_id == 'Patient_6
 seizure_data_subset_2017_patient_6 = seizure_data_2017_patient_6[(seizure_data_2017_patient_6$hourly_markers > '2017-02-01 00:00:00 UTC') & (seizure_data_2017_patient_6$hourly_markers <= '2017-03-20 00:00:00 UTC'),]
 
 # Create a plot for the spikes
-pdf("./Documents/temp/epilepsy_book/R_chapter/hourly_seizure_spikes.pdf",  height = 8, width = 10)
+pdf("./outputs/hourly_seizure_spikes.pdf",  height = 8, width = 10)
 spikes <- ggplot() +
-  geom_line(data=seizure_data_subset_2017_patient_6, aes(x=hourly_markers, y=iea_lead_agg)) + 
-  xlab("Date") + 
+  geom_line(data=seizure_data_subset_2017_patient_6, aes(x=hourly_markers, y=iea_lead_agg)) +
+  xlab("Date") +
   ylab("Spikes") +
   theme(
     axis.text = element_text(size = 14),
@@ -303,5 +303,3 @@ spikes <- ggplot() +
 spikes + geom_point(data=seizure_data_subset_2017_patient_6[seizure_data_subset_2017_patient_6$le > 0, ], aes(x=hourly_markers, y=iea_lead_agg), color='red')
 
 dev.off()
-
-
