@@ -1,55 +1,309 @@
-\section{Full Walkthrough - Brain Surgery and Financial Impact of Epilepsy}
+\section{Example Walkthrough - Financial Impact of Epilepsy}
 
 In this section we will demonstrate how the techniques discussed above can be applied to a practical example within the field of Epilepsy.
 Modern NLP techniques are a powerful tool to analyze large amounts of unstructred or semi structured text data, and we can employ them to develop a coding scheme and significantly reduce the time required to apply it to new data.
 
-We are providing self contained code examples in the acompanying GitHub repository\footnote{https://github.com/chris-boson/epilepsy} that makes use of a general purpose NLP library\footnote{https://github.com/robmsylvester/sheepy} we have developed to make current industry standard tools and libraries more accessible to researchers and practitioners.
+We are providing self-contained code examples in the accompanying GitHub repository\footnote{https://github.com/chris-boson/epilepsy}
 
 
-\subsection{Data Analysis}
-For this section we started out with fairly small dataset ($\sim150$ rows) derived from survey responses regarding  impact and treatment of epilepsy\footnote{Seizure Tracker}:
+\subsection{Problem Definition}
+For this section we started out with fairly small dataset ($\sim178$ rows) derived from survey responses regarding impact and treatment of epilepsy\footnote{Seizure Tracker. These survey results were provided as part of a data share between researchers and Seizure Tracker's \textit{It's Not Just Seizures} initiative.}.
+
+We focus our example on one such survey response:
 \begin{displayquote}
-    Do you have any comments on the financial impact of epilepsy?
-
-    Do you have any comments about brain surgery in general?
+    \textit{Do you have any comments on the financial impact of epilepsy?}
 \end{displayquote}
-This dataset is small enough to manually inspect, but we the techniques discussed here scale well beyond.
-\subsubsection*{Embeddings}
 
-\subsubsection*{Dimensionality Reduction and Clustering}
-\subsubsection*{Cluster Labeling}
-\subsubsection*{Annotation}
-We can use the cluster labels as a starting point to decide on a coding scheme. For the general comments we decided on the following labels:
+Let us focus on a binary task. We will analyze the 178 responses and label them as to whether or not they expressed if the patient and/or their family was expressing difficulty related to attaining or holding onto their job. This
+type of burden is common and, while nowhere near the only financial burden, it is a significant one. We choose this label because it is moderately difficult to annotate, and therefore would be quite tiresome and costly to annotate at scale.
+
+A positive example to this survey response might be something like:
 \begin{displayquote}
-    \texttt{"Not eligible"},
-    \texttt{"Last resort"},
-    \texttt{"Would never do it"},
-
-    \texttt{"Considering it"},
-    \texttt{"Was Unsuccessful"},
-    \texttt{"Was partially successful"},
-
-    \texttt{"Was successful"},
-    \texttt{"Side effects"},
-    \texttt{"Risk"},
-
-    \texttt{"Too expensive"},
-    \texttt{"Complications"},
-    \texttt{"Unknown outcome"},
-
-    \texttt{"Unnecessary"},
-    \texttt{"Cannot find origin"}
+    \textit{We have found that employers are far less likely to want to hire our son because of his condition.}
 \end{displayquote}
-We treat this as a so called multilabel classification problem, where a given sample can have multiple true labels simultaneously (i.e. a surgery can be successful and have side effects).
 
-The labeling scheme should cover all the aspects of the data of interest.
-It also needs to be unambiguous, meaning that two experts independently generating the annotations should largely agree on what the correct labels are for each sample.
-If human experts cannot agree, the model will most likely perform poorly as well, as it gets inconsistent signals during training.
-If this is the case, the coding scheme or annotation instructions should be revised.
-We will discuss in Section \ref{metrics_and_sanity_checking} how to go about analyzing model performance and uncover issues in data and annotations.
+A negative example to this survey response might be:
+\begin{displayquote}
+    \textit{The medication costs are through the roof and it is simply too much for us to be able to handle.}
+\end{displayquote}
+
+Note that neither of these quotes actually come from the dataset provided by Seizure Tracker.
+
+\subsection{Motivation}
+We aim to answer the question of whether or not we can learn to accurately model this type of employment burden with few training samples. If we can, this gives us confidence that these types of survey responses
+can be summarized by machine learning models at a large scale. The fewer training samples needed, the less time required by skilled professionals to to perform such an analysis. We also stand to potentially have a great impact on the cost of such work.
+This also opens the door to many other types of semantic classifiers being built that can target other tasks analyzing EHRs, surveys, and other documents that may have free-form responses.
+This dataset is small enough to manually inspect, but the techniques discussed here scale well into the order of millions (or even billions) of samples.
 
 
+\subsection{Walkthrough}
 
-%     - SHAP
-%     - Analyze mistakes
-%     - Inference
+Let's load the dataframe and see the label distribution, and get the imports that we will need.
+
+\begin{python}
+
+import evaluate
+import numpy as np
+import pandas as pd
+from datasets import Dataset
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    Trainer,
+    TrainingArguments,
+    pipeline,
+)
+df = pd.read_csv(
+    "/home/rob/Documents/financial_surgery.csv",
+    header=0)
+df = df[["financial_impact", "employment_burden"]]
+df["label"] = df["employment_burden"].astype("int32")
+print(df["label"].value_counts())
+df = df.sample(frac=1,
+    random_state=123456).reset_index(drop=True)
+
+#Value Counts are:
+# 0 (negative) - 106
+# 1 (positive) - 71
+\end{python}
+
+If we run this, we will see that there are 71 positives and 106 negatives. This means 71 people surveyed expressed a financial burden
+with respect to their ability to find or keep employment.
+
+\subsection{Few-Shot Learning with Folds}
+Instead of tuning a model from scratch, we will try to fine-tune one of the Transformer-based architectures. Our goal will be to provide some examples of positive and negative expressions of a financial burden, fine-tune a transformer-based
+architecture, and then see how it performs on the 178 samples in our dataset. Because this is such a small sample, we will split our dataset into five folds, training on four of the folds and testing on the holdout. We will do this for all
+five folds, and stitch together the results in order to get an accurate representation of our learner.
+
+Let's load our transformer model and tokenizer from HuggingFace\cite{wolf2020huggingfaces}, a state-of-the-art library for Transformer models.
+The following code will download and prepare the RoBERTa\cite{liu2019roberta} model from HuggingFace, a model that was trained by Facebook AI in 2019.
+
+\begin{python}
+tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+
+# Create vanilla fine-tuner
+model = AutoModelForSequenceClassification.from_pretrained(
+    "roberta-base", num_labels=2)
+training_args = TrainingArguments(
+    output_dir="financial_impact_trainer",
+    save_total_limit=2
+)
+\end{python}
+
+We will also need to track some basic binary machine learning metrics, so let's load all of those up as well.
+
+\begin{python}
+metric_precision = evaluate.load("precision")
+metric_recall = evaluate.load("recall")
+metric_f1 = evaluate.load("f1")
+metric_accuracy = evaluate.load("accuracy")
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+
+    precision = metric_precision.compute(
+        predictions=predictions,
+        references=labels)["precision"]
+    recall = metric_recall.compute(
+        predictions=predictions,
+        references=labels)["recall"]
+    f1 = metric_f1.compute(
+        predictions=predictions,
+        references=labels)["f1"]
+    accuracy = metric_accuracy.compute(
+        predictions=predictions,
+        references=labels)["accuracy"]
+
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "accuracy": accuracy
+    }
+\end{python}
+
+The \textit{compute\textunderscore metrics} function will be passed to our \textit{Trainer} class so that it can run the metrics whenever we're done with a training epoch. We now need to take our dataset and pass it to the tokenizer in order to prepare our inputs. We will make use of HuggingFace's Dataset and pass our dataset to the tokenizer that we created.
+
+\begin{python}
+N_FOLDS = 5
+dfs = np.array_split(df, 5)
+train_df = pd.concat([dfs[idx] for idx in range(N_FOLDS-1)])
+test_df = dfs[N_FOLDS-1]
+
+train_df = train_df.reset_index(drop=True)
+test_df = test_df.reset_index(drop=True)
+
+train_dataset = Dataset.from_pandas(train_df)
+test_dataset = Dataset.from_pandas(test_df)
+
+train_dataset = train_dataset.map(
+    tokenize_function, batched=True)
+test_dataset = test_dataset.map(
+    tokenize_function, batched=True)
+\end{python}
+
+Our dataset is now ready to train. If we create a \textit{Trainer} class, we will be able to pass our train and test
+datasets, as well as our metrics function, and get outputs as the model trains. Let's define those now, and start training.
+
+\begin{python}
+# fine-tune
+training_args = TrainingArguments(
+    output_dir=f"financial_impact_trainer",
+    evaluation_strategy="epoch",
+    num_train_epochs=2
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=test_dataset,
+    compute_metrics=compute_metrics,
+)
+trainer.train()
+trainer.save()
+\end{python}
+
+We have now successfully loaded a dataframe, loaded a pre-trained transformer model, fine-tuned it to a specific task
+of our choosing, and reported the metrics on the dataset we created. The last step is to take our final code and put
+it into a loop that runs a trainer for each separate K-Fold. If we do this, we get the following results.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Financial Impact - Employment}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Fold & Precision & Recall & F1 & Accuracy \\
+        \hline
+        Fold 1 & .824 & 1.0 & .903 & .916 \\
+        \hline
+        Fold 2 & .714 & .833 & .769 & .833 \\
+        \hline
+        Fold 3 & .938 & 1.0 & .968 & .971 \\
+        \hline
+        Fold 4 & 1.0 & 1.0 & 1.0 & 1.0 \\
+        \hline
+        Fold 5 & 1.0 & 1.0 & 1.0 & 1.0 \\
+        \hline
+        Total & .876 & .986 & .927 & .938 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The full code can be found below
+
+\begin{python}
+
+import evaluate
+import numpy as np
+import pandas as pd
+from datasets import Dataset
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    Trainer,
+    TrainingArguments,
+    pipeline,
+)
+
+df = pd.read_csv(
+    "/home/rob/Documents/financial_surgery.csv",
+    header=0)
+df = df[["financial_impact", "employment_burden"]]
+df["label"] = df["employment_burden"].astype("int32")
+df = df.sample(frac=1,
+    random_state=123456).reset_index(drop=True)
+
+print("Building Roberta Model To fine-tune Classifier")
+tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+
+# Create vanilla fine-tuner
+model = AutoModelForSequenceClassification.from_pretrained(
+    "roberta-base", num_labels=2)
+training_args = TrainingArguments(
+    output_dir="financial_impact_trainer",
+    save_total_limit=2
+)
+
+# Create some metrics we care about for classification
+metric_precision = evaluate.load("precision")
+metric_recall = evaluate.load("recall")
+metric_f1 = evaluate.load("f1")
+metric_accuracy = evaluate.load("accuracy")
+
+
+def tokenize_function(samples):
+    return tokenizer(
+        samples["financial_impact"],
+        padding="max_length",
+        truncation=True)
+
+# Create metrics function to run in trainer
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+
+    precision = metric_precision.compute(
+        predictions=predictions,
+        references=labels)["precision"]
+    recall = metric_recall.compute(
+        predictions=predictions,
+        references=labels)["recall"]
+    f1 = metric_f1.compute(
+        predictions=predictions,
+        references=labels)["f1"]
+    accuracy = metric_accuracy.compute(
+        predictions=predictions,
+        references=labels)["accuracy"]
+
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "accuracy": accuracy
+    }
+
+
+def get_indexes_except(num, target):
+    return [idx for idx in range(num) if idx != target]
+
+# Split dataset into 5 folds, and train on each holdout
+N_FOLDS = 5
+dfs = np.array_split(df, N_FOLDS)
+
+for i in range(N_FOLDS):
+    train_idxs = get_indexes_except(N_FOLDS, i)
+    train_df = pd.concat([dfs[idx] for idx in train_idxs])
+    test_df = dfs[i]
+
+    train_df = train_df.reset_index(drop=True)
+    test_df = test_df.reset_index(drop=True)
+
+    train_dataset = Dataset.from_pandas(train_df)
+    test_dataset = Dataset.from_pandas(test_df)
+
+    train_dataset = train_dataset.map(
+        tokenize_function, batched=True)
+    test_dataset = test_dataset.map(
+        tokenize_function, batched=True)
+
+    # fine-tune
+    training_args = TrainingArguments(
+        output_dir=f"financial_impact_trainer_fold_{i}",
+        evaluation_strategy="epoch",
+        num_train_epochs=2
+    )
+
+    print(f"Beginning Fine-Tuning Fold {i+1} of {N_FOLDS}")
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=test_dataset,
+        compute_metrics=compute_metrics,
+    )
+
+    trainer.train()
+
+\end{python}

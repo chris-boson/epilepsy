@@ -1,0 +1,27 @@
+\begin{tikzpicture}[scale=1]
+    % Nodes
+    \node[circle, draw] (input1) at (0, 1) {Input 1};
+    \node[circle, draw] (input2) at (0, 0) {Input 2};
+    \node[circle, draw] (input3) at (0, -1) {Input 3};
+    \node[circle, draw] (hidden) at (2.5, 0) {Hidden};
+    \node[circle, draw] (output) at (5, 0) {Output};
+    
+    % Arrows
+    \draw[->] (input1) -- (hidden) node[midway, above] {$w_{ij}$};
+    \draw[->] (input2) -- (hidden) node[midway, above] {$w_{ik}$};
+    \draw[->] (input3) -- (hidden) node[midway, above] {$w_{il}$};
+    \draw[->] (hidden) -- (output) node[midway, above] {$w_{jm}$};
+    
+    % Labels
+    \node[align=center, above] at (hidden.north) {Projection\\Layer};
+    \node[align=center, above] at (output.north) {Output\\Word};
+    
+    % Input
+    \draw[dashed] (-1.5, 1) -- (input1);
+    \draw[dashed] (-1.5, 0) -- (input2);
+    \draw[dashed] (-1.5, -1) -- (input3);
+    \node[align=center, left] at (-1.5, 1) {Context\\Words};
+    \node[align=center, left] at (-1.5, 0) {Input\\Word};
+    \node[align=center, left] at (-1.5, -1) {Context\\Words};
+    
+  \end{tikzpicture}

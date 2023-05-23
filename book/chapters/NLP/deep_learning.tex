@@ -7,19 +7,21 @@ Each node is connected to every other node in the previous and following layer, 
 The addition of a non-linear activation function allows for the capture of non-linear relationships between the input and output, without it the transformation could be rewritten as just a single matrix multiplication.
 The key advantage of DNNs is their ability to automatically learn complex representations of the input data using multiple hidden layers, allowing for the capture of high-level features that could not be easily hand-engineered.
 
+While glossing over some details, training any type of DNN can summarized in the following steps:
+\begin{enumerate}
+    \item Prepare data pairs $(x_i, y_i)$, where $x_i$ is an input sample, and $y_i$ is the desired output
+    \item Determine a function $f$, such that $f(\theta, x_i) = \hat{y}_i \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
+    \item Define a loss function $L(\theta) = \sum_i L(\hat{y}_i, y_i)$ that measures how close the model's output is to the desired output
+    \item Optimize $\theta$ to minimize $L(\theta)$
+\end{enumerate}
+
+
 \begin{figure}[h]
     \input{chapters/NLP/figures/model_architecture.tex}
     \caption{Generic architecture of a fully connected neural network. The input is mapped to the output via a series of linear transformations and non-linear activation functions. The number of hidden layers and the number of nodes in each layer are hyperparameters that can be tuned.}
     \label{fig:model_architecture}
 \end{figure}
 
-While glossing over some details, training any type of DNN can summarized in the following steps:
-\begin{itemize}
-    \item Given data pairs $(x_i, y_i)$, where $x_i$ is an input sample, and $y_i$ is the desired output
-    \item Determine a function $f$, such that $f(\theta, x_i) = \hat{y}_i \approx y_i$, where $\theta$ are model parameters and $f$ is the model architecture
-    \item Define a loss function $L(\theta) = \sum_i L(\hat{y}_i, y_i)$ that measures how close the model's output is to the desired output
-    \item Optimize $\theta$ to minimize $L(\theta)$
-\end{itemize}
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
     \caption{To minimize the loss function we need to adjust the parameters $\theta$ in the direction of the steepest descent, which can be calculated by taking the derivative of the loss function with respect to the parameter.}
@@ -136,12 +138,13 @@ For more details on the Transformer architecture, we refer the reader to other s
 \subsubsection*{Pre-training and Finetuning}
 The state of the art in NLP is currently dominated by Transformer-based models, which are trained using a two-stage process called \textit{pre-training} and \textit{fine-tuning}. Starting with a model pre-trained on a broad set of topics significantly reduces the amount of task specific training data required to achieve great performance.
 
-Pre-training refers to the process of training a model on a large corpus\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{https://doi.org/10.48550/arxiv.1810.04805} of text, sometimes in multiple languages, or on domain-specific datasets\footnote{\texttt{BioBERT\cite{DBLP:journals/corr/abs-1901-08746}}}\footnote{\texttt{Bio\textunderscore ClinicalBERT\cite{https://doi.org/10.48550/arxiv.1904.03323}}}, but without any task-specific supervision.
+Pre-training refers to the process of training a model on a large corpus\footnote{BooksCorpus (800M words, Wikipedia 2,500M words)}\cite{https://doi.org/10.48550/arxiv.1810.04805} of text, sometimes in multiple languages, or on domain-specific datasets.
+For more information on domain-specific models in medicine, refer to subsection \ref{Domain-Specific Medical Embeddings}.
 The model is trained to predict masked tokens in a sequence, or to reconstruct the input sequence itself, using only the context information provided by surrounding tokens.
 This process enables the model to learn general language patterns and relationships between words and concepts, and can be compared to a human learning a new language.
 Just as a human needs to understand the basic rules and patterns of a language before they can use it to apply it effectively, a model needs to do the same.
 Pre-trained Transformer models are freely available for download\footnote{Huggingface} and can be used as a starting point for many NLP tasks.
-They are able to produce robust sentence embeddings with a fine grained understanding of syntactic structure, semantics, and general knowledge of the world.
+They are able to produce robust sentence embeddings with a fine-grained understanding of syntactic structure, semantics, and general knowledge of the world.
 You can also pre-train your own model from scratch, but this requires a lot of data, time and money, and is rarely worth the investment.
 
 Fine-tuning on the other hand refers to the process of adapting the pre-trained model on a much smaller dataset to a specific task, such as classification, sentiment analysis, question answering, or machine translation.
@@ -246,5 +249,5 @@ generalization error, and not training error. Often they come in the flavor of t
 objective function, as exemplified in Equation 2.3, or as model restrictions, such as dropout. Another common technique
 is on the dataset level, wherein practitioners will directly augment datasets. You will see this happen often in image classification
 tasks where a dataset will create random copies of samples that are rotated and stretched in different directions to make
-the model robust to such invariance. Direct injection of noise, randomly-generated numbers, also occurs on both the input
-as well as label side.
+the model robust to such invariance. Direct injection of noise, randomly-generated numbers, also occurs on both the inputs
+as well as labels.

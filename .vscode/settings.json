@@ -1,27 +1,19 @@
 {
-  "python.sortImports.args": [
-    "-sp .isort.cfg"
-  ],
+  "python.sortImports.args": ["-sp .isort.cfg"],
   "editor.codeActionsOnSave": {
     "source.organizeImports": true,
     "sorce.format": true
   },
   "editor.formatOnSave": true,
-  "editor.rulers": [
-    120
-  ],
+  "editor.rulers": [120],
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
-  "python.formatting.provider": "black",
-  "python.formatting.blackArgs": [
-    "--line-length=100"
-  ],
+  "python.formatting.provider": "autopep8",
+  "python.formatting.blackArgs": ["--line-length=100"],
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": false,
   "python.linting.flake8Enabled": true,
-  "python.linting.flake8Args": [
-    "--max-line-length=120"
-  ],
+  "python.linting.flake8Args": ["--max-line-length=120"],
   "[latex]": {
     "editor.formatOnSave": false
   }

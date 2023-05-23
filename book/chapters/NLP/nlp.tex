@@ -7,27 +7,23 @@ In this chapter we introduce modern NLP libraries, techniques and their applicat
 This chapter will focus on deep learning methods and less on computational linguistics that require nuanced knowledge of linguistics.
 We explore what it means to represent words and sequences of words with rich numeric representations that are better-suited toward modern computational tasks.
 We aim to capture some of these modern fine-tuned representations that are specially catered toward a semantic lexicon for medical language.
-\\
-
+After finishing this chapter, one should have a general knowledge of the building blocks of state-of-the-art NLP models, and an understanding of how these
+pieces fit together into a model such as GPT4\cite{openai2023gpt4}. Most importantly, we will present examples and patterns that help clinicians and researchers
+use them in the field of epilepsy.
+\\ 
 \noindent This includes:
 \begin{itemize}
-\item An introduction into fundamental NLP concepts
-\item Bootstrapping techniques to iterate on a dataset in the low-resource setting
-\item Storing of a reference dataset in a publicly-accessible location
-\item Downloading, caching, loading, splitting, and preprocessing of the data
-\item Monitoring the training run:
-  \subitem Logging and experiment tracking
-  \subitem Learning curves
-  \subitem Metrics
-\item Hyperparameter tuning, some tricks of the trade
-\item Offline evaluation and sanity checking
+\item An introduction to fundamental NLP concepts
+\item A review of Deep Learning (DL) for NLP
+\item A Discussion of embeddings and medical text representations
+\item General use case patterns for NLP techniques in epilepsy
+\item An example walkthrough using financial impact analysis data
+\item A discussion of modern generative NLP models and their use in epilepsy
 \end{itemize}
-We will keep the discussion focused on tasks in epilepsy, using a running example of SUDEP prediction from electronic medical record (EMR) notes.
-Many of the concepts introduced here are very general and are straightforward translations to domains outside of SUDEP prediction, epilepsy, and even NLP.
 
 \input{chapters/NLP/introduction.tex}
 \input{chapters/NLP/deep_learning.tex}
 \input{chapters/NLP/embeddings.tex}
 \input{chapters/NLP/epilepsy.tex}
-\input{chapters/NLP/sudep.tex}
 \input{chapters/NLP/financial_impact.tex}
+\input{chapters/NLP/generative_models.tex}
