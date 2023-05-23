@@ -23,7 +23,7 @@ file_path = os.path.join(data_path, single_patient_folder, filename)
 # Read in the csv file for a single patient
 metadata_patient1 = pd.read_csv(file_path)
 
-# Initialize a list with all patient's folders
+# Initialize a list with all patient's folders x
 patients_list = ["Patient_{}".format(i) for i in range(1, 21)]
 
 # Initialize the DataFrame where the patient's metadata and seizure data will be stored
