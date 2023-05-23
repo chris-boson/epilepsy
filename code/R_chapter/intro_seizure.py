@@ -1,11 +1,13 @@
 # Import necessary libraries
-import pandas as pd
 import json
 import os
-import scipy.io
-import matplotlib.pyplot as plt
-from pandas.plotting import register_matplotlib_converters
 from pathlib import Path
+
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import pandas as pd
+import scipy.io
+from pandas.plotting import register_matplotlib_converters
 
 register_matplotlib_converters()
 
@@ -114,7 +116,10 @@ display_na(seizure_data, 0.01)
 seizure_data["iea_lead_agg"] = seizure_data["iea_lead1"] + seizure_data["iea_lead2"]
 seizure_data.drop(["iea_lead1", "iea_lead2"], axis=1, inplace=True)
 
-# Built a histogram to explore the data - it looks like the majority of the seizure counts are near 0. We have a very left skewed histogram with very few observations having >10 seizures. Contributing to this may be the fact that each observation represents the number of seizures within a 1 hour window
+# Built a histogram to explore the data - it looks like the majority of the seizure counts are
+# near 0. We have a very left skewed histogram with very few observations having >10 seizures.
+# Contributing to this may be the fact that each observation represents the number of seizures
+# within a 1 hour window
 Path("./outputs").mkdir(parents=True, exist_ok=True)
 
 plt.hist(seizure_data["le"], bins=50, density=True)
@@ -129,7 +134,9 @@ plt.ylabel("Density")
 plt.savefig("./outputs/iea_lead_agg.png")
 plt.clf()
 
-# An alternative way to look at the seizure counts is to use summary - A quick look confirms what we observed via the histogram - most seizures within a 1 hour interval are 0. In fact even the 3rd quartile is 0 indicating that 75% of the observations have 0 seizures
+# An alternative way to look at the seizure counts is to use summary - A quick look confirms what
+# we observed via the histogram - most seizures within a 1 hour interval are 0. In fact even the
+# 3rd quartile is 0 indicating that 75% of the observations have 0 seizures
 print(seizure_data["iea_lead_agg"].describe())
 
 # Extract the dates from the time stamps
@@ -157,81 +164,90 @@ plt.ylabel("Density")
 plt.savefig("./outputs/daily_iea_lead_agg.png")
 plt.clf()
 
-# Summary of seizure data
+
+# An alternative way to look at the seizure counts is to use summary - A quick look confirms what
+# we observed via the histogram - most seizures within a 1 hour interval are 0. In fact even the
+# 3rd quartile is 0 indicating that 75% of the observations have 0 seizures
 print(seizure_data["iea_lead_agg"].describe())
 
 # Extract the dates from the time stamps
-seizure_data["seizure_date"] = seizure_data["hourly_markers"].dt.date
+seizure_data["seizure_date"] = pd.to_datetime(seizure_data["hourly_markers"]).dt.date
 
 # Aggregate the seizures and spikes on daily level into a new dataframe
-daily_seizures_spikes = seizure_data.groupby(["patient_id", "seizure_date"]).agg(
-    {"le": "sum", "iea_lead_agg": "sum"}
+daily_seizures_spikes = (
+    seizure_data.groupby(["patient_id", "seizure_date"])
+    .agg(
+        total_le=pd.NamedAgg(column="le", aggfunc="sum"),
+        total_iea_lead_agg=pd.NamedAgg(column="iea_lead_agg", aggfunc="sum"),
+    )
+    .reset_index()
 )
+
+plt.hist(daily_seizures_spikes["total_le"], bins=50, density=True)
+plt.xlabel("Seizures")
+plt.ylabel("Density")
+plt.savefig("./outputs/daily_le_histogram.png")
+plt.clf()
+
+plt.hist(daily_seizures_spikes["total_iea_lead_agg"], bins=50, density=True)
+plt.xlabel("Seizure Spikes")
+plt.ylabel("Density")
+plt.savefig("./outputs/daily_iea_lead_agg.png")
+plt.clf()
+
+# Look at the unique seizure focus values - there are 5
+print(seizure_data["seizure_foci"].unique())
+
+# Does each patient have each of the seizure foci - it looks like the seizure_focus is unique to
+# each patient.
+print(seizure_data.groupby("patient_id")["seizure_foci"].nunique())
+
+# Display all the patients that correspond to each seziure focus
+print(seizure_data.groupby("seizure_foci")["patient_id"].unique())
 
 # Convert the gender and seizure foci columns to category
 seizure_data[["gender", "seizure_foci"]] = seizure_data[["gender", "seizure_foci"]].astype(
     "category"
 )
 
-# Min, Max and unique count of hourly_markers
-print(min(seizure_data["hourly_markers"]))
-print(max(seizure_data["hourly_markers"]))
-print(len(seizure_data["hourly_markers"].unique()))
+# Let's explore the time series component of the data
+print(seizure_data["hourly_markers"].min())
+print(seizure_data["hourly_markers"].max())
+print(seizure_data["hourly_markers"].nunique())
 
 # Do all patients have the same number of datapoints?
-seizure_data.groupby("patient_id")["hourly_markers"].nunique()
+print(seizure_data.groupby("patient_id")["hourly_markers"].nunique())
 
 # Drop duplicate observations
-seizure_data = seizure_data.drop_duplicates()
+seizure_data.drop_duplicates(inplace=True)
 
 # Patient 6
 seizure_data_2017_patient_6 = seizure_data[seizure_data["patient_id"] == "Patient_6"]
 
-# Let's plot the time series of the spikes
-seizure_data_subset_2017_patient_6 = seizure_data_2017_patient_6[
-    (
-        seizure_data_2017_patient_6["hourly_markers"]
-        >= pd.to_datetime("2017-02-01 00:00:00").tz_localize(None)
-    )
-    & (
-        seizure_data_2017_patient_6["hourly_markers"]
-        <= pd.to_datetime("2017-03-20 00:00:00").tz_localize(None)
-    )
-]
+# Let's plot the time series of the spikes; since the data is quite large and we have a lot of zeros we will just explore data between February 1st, 2017 and March 20th, 2017. We pick these time periods as they contain seizures and this can be useful for our later analysis
+mask = (seizure_data_2017_patient_6["hourly_markers"] > pd.Timestamp("2017-02-01")) & (
+    seizure_data_2017_patient_6["hourly_markers"] <= pd.Timestamp("2017-03-20")
+)
+seizure_data_subset_2017_patient_6 = seizure_data_2017_patient_6.loc[mask]
 
+fig, ax = plt.subplots()
 
-plt.plot(
+# Create a plot for the spikes
+ax.plot(
     seizure_data_subset_2017_patient_6["hourly_markers"],
     seizure_data_subset_2017_patient_6["iea_lead_agg"],
+    label="Spikes",
 )
-plt.scatter(
-    seizure_data_subset_2017_patient_6[seizure_data_subset_2017_patient_6["le"] > 0][
-        "hourly_markers"
-    ],
-    seizure_data_subset_2017_patient_6[seizure_data_subset_2017_patient_6["le"] > 0][
-        "iea_lead_agg"
-    ],
-    color="red",
+
+# Add the seizures as dots to the plot; it looks like a lot of the seizures are occurring on the upward cycle of a spike
+seizure_subset = seizure_data_subset_2017_patient_6[seizure_data_subset_2017_patient_6["le"] > 0]
+ax.scatter(
+    seizure_subset["hourly_markers"], seizure_subset["iea_lead_agg"], color="red", label="Seizures"
 )
-plt.xlabel("Date")
-plt.ylabel("Spikes")
-plt.savefig(os.path.join(output_dir, "hourly_seizure_spikes.pdf"))
 
-
-# Look at the unique seizure focus values
-print(seizure_data["seizure_foci"].unique())
-
-# Each patient corresponds to a unique seizure focus
-focus_per_patient = seizure_data.groupby("patient_id")["seizure_foci"].nunique()
-
-# Display all the patients that correspond to each seizure focus
-seizure_foci_patients = seizure_data.groupby("seizure_foci")["patient_id"].unique()
-
-# Check to see if seizure_focus is unique to each patient
-unique_seizure_focus_per_patient = seizure_data.groupby("patient_id")["seizure_foci"].nunique()
-print(unique_seizure_focus_per_patient)
-
-# Print the patient IDs corresponding to each seizure focus
-for focus, patient_ids in seizure_data.groupby("seizure_foci")["patient_id"]:
-    print(f"Seizure Focus: {focus}")
-    print(f"Patient IDs: {', '.join(patient_ids.unique())}")
+ax.set_xlabel("Date")
+ax.set_ylabel("Spikes")
+ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+plt.legend()
+plt.savefig("./outputs/hourly_seizure_spikes.png")
+plt.clf()

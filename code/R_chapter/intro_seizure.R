@@ -256,7 +256,7 @@ dev.off()
 # Look at the unique seizure focus values - there are 5
 unique(seizure_data$seizure_foci)
 
-# Does each patient have each of the seizure foci - it looks like the seizure_focus is unique to each patient. Ask SHARON?
+# Does each patient have each of the seizure foci - it looks like the seizure_focus is unique to each patient.
 seizure_data %>%
   group_by(patient_id) %>%
   summarise(count = n_distinct(seizure_foci))
