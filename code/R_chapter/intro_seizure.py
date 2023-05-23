@@ -2,11 +2,10 @@
 import pandas as pd
 import json
 import os
-import re
 import scipy.io
-import datetime
 import matplotlib.pyplot as plt
 from pandas.plotting import register_matplotlib_converters
+from pathlib import Path
 
 register_matplotlib_converters()
 
@@ -113,19 +112,49 @@ display_na(seizure_data, 0.01)
 
 # Add the two leads and use the aggregated variable. Drop the individual ones
 seizure_data["iea_lead_agg"] = seizure_data["iea_lead1"] + seizure_data["iea_lead2"]
-seizure_data = seizure_data.drop(columns=["iea_lead1", "iea_lead2"])
+seizure_data.drop(["iea_lead1", "iea_lead2"], axis=1, inplace=True)
 
-# Histogram for the seizure data
-plt.hist(seizure_data["le"], bins=30, density=True)
+# Built a histogram to explore the data - it looks like the majority of the seizure counts are near 0. We have a very left skewed histogram with very few observations having >10 seizures. Contributing to this may be the fact that each observation represents the number of seizures within a 1 hour window
+Path("./outputs").mkdir(parents=True, exist_ok=True)
+
+plt.hist(seizure_data["le"], bins=50, density=True)
 plt.xlabel("Seizures")
 plt.ylabel("Density")
-plt.savefig(os.path.join(output_dir, "le_histogram.pdf"))
+plt.savefig("./outputs/le_histogram.png")
 plt.clf()
 
-plt.hist(seizure_data["iea_lead_agg"], bins=30, density=True)
+plt.hist(seizure_data["iea_lead_agg"], bins=50, density=True)
 plt.xlabel("Seizure Spikes")
 plt.ylabel("Density")
-plt.savefig(os.path.join(output_dir, "iea_lead_agg.pdf"))
+plt.savefig("./outputs/iea_lead_agg.png")
+plt.clf()
+
+# An alternative way to look at the seizure counts is to use summary - A quick look confirms what we observed via the histogram - most seizures within a 1 hour interval are 0. In fact even the 3rd quartile is 0 indicating that 75% of the observations have 0 seizures
+print(seizure_data["iea_lead_agg"].describe())
+
+# Extract the dates from the time stamps
+seizure_data["seizure_date"] = seizure_data["hourly_markers"].dt.date
+
+# Aggregate the seizures and spikes on daily level into a new dataframe
+daily_seizures_spikes = (
+    seizure_data.groupby(["patient_id", "seizure_date"])
+    .agg(
+        total_le=pd.NamedAgg(column="le", aggfunc="sum"),
+        total_iea_lead_agg=pd.NamedAgg(column="iea_lead_agg", aggfunc="sum"),
+    )
+    .reset_index()
+)
+
+plt.hist(daily_seizures_spikes["total_le"], bins=50, density=True)
+plt.xlabel("Seizures")
+plt.ylabel("Density")
+plt.savefig("./outputs/daily_le_histogram.png")
+plt.clf()
+
+plt.hist(daily_seizures_spikes["total_iea_lead_agg"], bins=50, density=True)
+plt.xlabel("Seizure Spikes")
+plt.ylabel("Density")
+plt.savefig("./outputs/daily_iea_lead_agg.png")
 plt.clf()
 
 # Summary of seizure data

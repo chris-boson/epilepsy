@@ -138,3 +138,4 @@ dmypy.json
 code/model
 
 **/patient_data/*
+**/outputs/*
