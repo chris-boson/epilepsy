@@ -93,34 +93,23 @@ training_args = TrainingArguments(
 We will also need to track some basic binary machine learning metrics, so let's load all of those up as well.
 
 \begin{python}
-metric_precision = evaluate.load("precision")
-metric_recall = evaluate.load("recall")
-metric_f1 = evaluate.load("f1")
-metric_accuracy = evaluate.load("accuracy")
+metric_functions = {
+    "precision": evaluate.load("precision"),
+    "recall": evaluate.load("recall"),
+    "f1": evaluate.load("f1"),
+    "accuracy": evaluate.load("accuracy")
+}
 
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
 
-    precision = metric_precision.compute(
-        predictions=predictions,
-        references=labels)["precision"]
-    recall = metric_recall.compute(
-        predictions=predictions,
-        references=labels)["recall"]
-    f1 = metric_f1.compute(
-        predictions=predictions,
-        references=labels)["f1"]
-    accuracy = metric_accuracy.compute(
-        predictions=predictions,
-        references=labels)["accuracy"]
-
-    return {
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
-        "accuracy": accuracy
-    }
+    metrics = {}
+    for metric_name, metric_fn in metric_functions.items():
+        metrics[metric_name] = metric_fn.compute(
+            predictions=predictions,
+            references=labels)[metric_name]
+    return metrics
 \end{python}
 
 The \textit{compute\textunderscore metrics} function will be passed to our \textit{Trainer} class so that it can run the metrics whenever we're done with a training epoch. We now need to take our dataset and pass it to the tokenizer in order to prepare our inputs. We will make use of HuggingFace's Dataset and pass our dataset to the tokenizer that we created.
