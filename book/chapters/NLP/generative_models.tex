@@ -14,11 +14,11 @@ computational operations across many GPUs. They are trained on massive amounts o
 What makes these newer language models such as OpenAI's \textit{ChatGPT}, Meta AI's \textit{Llama}\cite{touvron2023llama}, or Google's \textit{Bard} so special is their ability to generalize to new tasks \textit{without any fine-tuning or training}.
 What this means is that we can simply provide an instruction (also called a \textit{prompt}) to the model, and it will generate text that is consistent with it.
 Moreover, these models are exhibiting remarkable emergent abilities, meaning things they were never explicitly trained on.
-These include common sense reasoning, the ability to use tools (e.g. search, calculator, write and execute code, invoke APIs etc.), and even theory of mind (e.g. understanding that other agents have their own beliefs, desires, and intentions)\cite{bubeck2023sparks,openai2023gpt4}.
+These include common-sense reasoning, the ability to use tools (e.g. search, calculator, write and execute code, invoke APIs etc.), and even theory of mind (e.g. understanding that other agents have their own beliefs, desires, and intentions)\cite{bubeck2023sparks,openai2023gpt4}.
 
 As it turns out, the key to unlocking these abilities lies in an elaborate fine-tuning process after extensive pre-training on a large corpus of text.
-In the case of ChatGPT, this was done in a novel way using a method called Reinforcement Learning with Human Feedback \textit{RLHF} targeted iteratively improving the model by specifically
-rewarding high-quality content and penalizing toxic feedback.\cite{ouyang2022training} Because these models are trained on text across the internet, which
+In the case of ChatGPT, this was done in a novel way using a method called Reinforcement Learning with Human Feedback \textit{RLHF} to align the model on human preferences, specifically
+rewarding high-quality content and penalizing toxic content.\cite{ouyang2022training} Because these models are trained on text across the internet, which
 unsurprisingly included troves of nonsense and hate speech, these models must be pushed away from purely unchecked generation of content,
 as this can be dangerous. While the possibility of generating this text can never be fully eliminated, or can perhaps be circumvented with the right prompts, it remains true that this can be controlled as we add more human feedback.
 
