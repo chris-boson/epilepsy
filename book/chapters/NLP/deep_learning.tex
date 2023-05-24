@@ -226,8 +226,8 @@ This is called the generalization error, and is nothing to be too concerned abou
 What \textit{is} problematic is if we observe that the validation metrics start to get worse, while the training metrics continue to improve -- this is a clear sign of overfitting and we should stop the training early (Figure \ref{fig:learning_curves}).
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\textwidth]{chapters/NLP/figures/learning_curves.png}
-    \caption{Learning curves, the training and validation loss are plotted as a function of the number of training steps / epochs.}
+    \input{chapters/NLP/figures/learning_curves.tex}
+    \caption{Learning curves, the training and validation loss are plotted as a function of the number of training steps / epochs. The training loss continues to improve, while the validation loss starts to get worse after a certain point, indicating overfitting.}
     \label{fig:learning_curves}
 \end{figure}
 To address underfitting, the easiest remedy is to increase the complexity of the model (e.g. add more layers) or to increase the number of training steps.
