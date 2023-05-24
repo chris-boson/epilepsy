@@ -31,16 +31,10 @@ They can still be very useful if used with caution and in the right context to s
 “Instruction tuning” refers to fine tuning a language model of NLP tasks described with instructions, often with the aim of having the model
 be able to perform admirably on tasks on which it was never trained. Let's take a look at an example.
 
-Consider the Google FLAN\cite{chung2022scaling} model. As illustrated in figure 2.13, this model was provided not only a variety of datasets, but
+Consider the Google FLAN\cite{chung2022scaling} model. This model was provided not only a variety of datasets, but
 tuned with a variety of different tasks. Instructions were provided for the model to reason through many types of question answering, but also text
 generation tasks, common-sense reasoning tasks, or even tasks related to program execution. Researchers found that by fine-tuning a variety of instruction
 sets in this manner, models are able to generalize to not only these types of task but other tasks as well.
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{chapters/NLP/figures/flan_finetune.png}
-  \caption{This figure, taken from the original Google FLAN paper, illustrates a model that was fine-tuned using a variety of instruction prompts, and tested using a set of held out instruction.}
-  \label{fig:flan_instruction_fine_tuning}
-\end{figure}
 
 This is a powerful step in the field of Artificial Intelligence. A model receiving instructions on common-sense reasoning tasks generalizing to an ability to perform tasks like arithmetic is a step
 toward generalized intelligence in AI systems. If enough of these types of prompts are instruction sets related to medical tasks, would a model be able to generalize to other types of information in the field?
