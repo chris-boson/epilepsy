@@ -1,0 +1,39 @@
+\section{Version Control}
+A version control system (VCS) is essentially a bookkeeping device for software development.
+While humans can theoretically achieve this collaboration manually, this amounts to standardizing naming conventions, keeping multiple copies of work, logistical nightmares resulting from simultaneous editing or distributing changes, and resolving conflicts from multiple edits to the same file.
+These headaches can all be solved by using a VCS.
+One popular VCS is Git, and we recommend using it across the board. It is a free and open-source, distributed VCS. Commonly partnered with Git is GitHub, a cloud-based repository that enables developers to store and manage their code easily. A repository is just a location where code is stored and organized. Using GitHub allows your team to have a single source of truth for your entire codebase. For the remainder of this chapter, we will only discuss using GitHub to setup and manage this repository.
+
+\subsection{Git Basics}
+On Mac, as well as some Linux distributions, Git is included with the Operating System. If it is not already installed on your system, you will need to download and install it.
+
+On Mac or Linux, you can open a program called \textit{Terminal} that allows you to run commands. From your terminal, type \pythoninline{git --version} to verify installation.
+To install Git on Windows, follow the installation instructions for GitHub Desktop.
+
+To get started, create a GitHub account. After this is done, create a new repository in GitHub called \texttt{test\textunderscore repository}. You should now have a reference URL for this new repository at:\\ \pythoninline{https://github.com/<your_username>/test_repository.git}\\
+We will use this repository as a running example in this chapter.
+Generally it is advisable to create a new repository for each self-contained project.
+
+Next, you will need to create a local copy, called a \textit{clone}, of this repository. From your terminal, run the command \pythoninline{git clone <your_git_url>}.\\
+You will now have a folder named \texttt{test\textunderscore repository} on your machine.
+You can now make modifications to the files, including descriptions of what changed, that you can later sync back to the source of truth.
+
+Let us walk through a basic example of making changes to this repository and pushing them back to GitHub.
+
+\begin{enumerate}
+    \item Navigate to the local directory for \texttt{test\textunderscore repository}
+    \item Create and save a new text file called \pythoninline{test.txt}. Optionally include content in this text file.
+    \item \textit{Stage} your new changes by running \pythoninline{git add test.txt}
+    \item \textit{Commit} your new changes by running \pythoninline{git commit -m "added new file"}
+    \item \textit{Push} your new changes to GitHub (your source of truth) by running \pythoninline{git push}
+\end{enumerate}
+
+Steps 3-5 are the common sequence that authors use to create historical records of change in the repository. The \textit{commit} itself is the atomic unit of change that takes the repository from one stable state to another. Ideally, it contains a commit message, \textit{"added new file"} in the example above, that allows authors to describe what changed in this state change.
+It is advisable to package your semantically-related changes together in commits so that your development history is easy to maintain, trace, and recover across time. The commits are full snapshots of the code in your repository, stored efficiently without the need for multiple copies of your files.
+
+A full walkthrough of Git is beyond the scope of this text. Many resources are available online. It is recommended that you become familiar with branching logic in Git for any projects with multiple authors.
+
+While the setup for VCS may seem like a pain at first, it is critical to the development of quality software.
+Within medicine, it becomes even more critical. Having a single source of truth that we can rely on prevents us from making silly mistakes, or silent bugs that affect the behavior of our code. We should only be committing source code files to repositories. It is generally unadvisable to commit generated files or data to a repository. Git will not be able to track changes to binary files efficiently. Once committed, files remain part of the history in a repository, forever bloating its size for all collaborators.
+
+Using a VCS is of \textit{critical} importance -- we cannot afford to put the well-being of patients at risk because of the setup and learning curve behind one of the world's most popular and important pieces of software across all industries. It is a worthwhile investment of your time.

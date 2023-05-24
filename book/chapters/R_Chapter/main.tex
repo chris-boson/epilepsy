@@ -1,0 +1,94 @@
+\documentclass[krantz1,ChapterTOCs]{krantz} %See documentation for other class options
+\usepackage{fixltx2e,fix-cm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{makeidx}
+\usepackage{multicol}
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\usepackage{listings}
+\usepackage{minted}
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character, data_path},
+    %keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+    backgroundcolor = \color{lightgray},
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    emph={paste,read, csv, dir, lapply, read_json_files, read_json, fromJSON},
+    emphstyle={\color{blue}},
+}
+\usepackage{tabularx}
+
+\newcommand{\coloredverb}[1]{\textcolor{red}{#1}}
+
+
+% From here: https://tex.stackexchange.com/a/83883
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+
+\frenchspacing
+\tolerance=5000
+
+\makeindex
+
+\include{frontmatter/preamble} %place custom commands and macros here
+
+\begin{document}
+
+\frontmatter
+
+\title{Krantz Template} %This is a placeholder titlepage, it will not be final.
+\author{Yours Truly}
+%%%\maketitle
+
+%%%Placeholder for front matter
+
+\halftitle
+
+\booktitle
+
+\locpage
+
+\include{frontmatter/dedication}
+\cleardoublepage
+\setcounter{page}{7} %previous pages will be reserved for frontmatter to be added in later.
+\tableofcontents
+% \include{frontmatter/foreword}
+% \include{frontmatter/preface}
+%%\listoffigures
+%%\listoftables
+% \include{frontmatter/contributor}
+% \include{frontmatter/symbollist}
+
+\mainmatter
+
+\part{This is What a Part Would Look Like}
+\include{coding_basics.tex}
+\include{nlp.tex}
+
+\bibliographystyle{plain}
+\bibliography{bibtex}
+
+\printindex
+\cleardoublepage
+\end{document}
