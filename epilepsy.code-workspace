@@ -43,6 +43,7 @@
     "python.testing.pytestArgs": [
       "--verbose",
       "${workspaceFolder}"
-    ]
+    ],
+    "latex-workshop.docker.enabled": false,
   }
 }
