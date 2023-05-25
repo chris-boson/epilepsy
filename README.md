@@ -26,3 +26,15 @@ You have a generous amount of free credits to use for this purpose.
     <img src="images/Open workspace.png" width="550">
   - Otherwise you can open it manually by hitting Cmd + Shift + P -> `Open workspace from file` and select `epilepsy.code-workspace`.
 - Navigate in the terminal, for example to `code/CodingBasics` and run `poetry install`.
+
+
+## LaTeX
+To compile the LaTeX doc run `make setup-latex` from the repository root (only required once).
+
+To trigger it the first time
+- Navigate to `book/main.tex`
+- Cmd + Shift + P -> `LaTeX Workshop: Build LaTeX project`
+- It should generate `main.pdf` (along with some auxiliary files)
+- Open `main.pdf` and drag it to the right side of the screen (so you have code and output side-by-side)
+
+After that it should auto recompile on each file save.
