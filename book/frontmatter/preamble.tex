@@ -43,5 +43,20 @@ showstringspaces=false
 % Python for inline
 \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
 
+\definecolor{DarkGreen}{RGB}{1,50,32}
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character, data_path},
+    %keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+    backgroundcolor = \color{lightgray},
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    emph={paste,read, csv, dir, lapply, read_json_files, read_json, fromJSON},
+    emphstyle={\color{blue}},
+}
 
 \setcounter{tocdepth}{2}
