@@ -23,7 +23,7 @@ While glossing over some details, training any type of DNN can summarized in the
 \end{figure}
 
 \begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/loss.png}
+    \input{chapters/NLP/figures/loss.tex}
     \caption{To minimize the loss function we need to adjust the parameters $\theta$ in the direction of the steepest descent, which can be calculated by taking the derivative of the loss function with respect to the parameter.}
     \label{fig:loss}
 \end{figure}
@@ -62,12 +62,7 @@ To represent a sentence of length $n$, we need to have $n$ vectors of size $|V|$
 
 \subsection{Recurrent Neural Networks}
 To overcome this, RNNs were introduced.
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/rnn.png}
-    \caption{Recurrent Neural Networks capture the sequential nature of text data by using loops in their structure that allow information to flow both forward and backward through the network.}
-    \label{fig:rnn}
-\end{figure}
-RNNs are a type of neural network that have loops in their structure, allowing information to flow both forward and backward through the network (see Fig. \ref{fig:rnn}).
+RNNs are a type of neural network that have loops in their structure, allowing information to flow both forward and backward through the network.
 The idea is that we can use the output of the previous step as input to the current step, and the output of the current step as input to the next step and so on.
 To encode the meaning of a sentence or paragraph, the model reads the tokens one by one, updating the representation in the hidden state, which can then be used for subsequent predictions.
 This allows us to reuse a large part of the parameters, which is crucial for efficient training.
@@ -88,11 +83,6 @@ Lastly, RNNs are inherently sequential because the output of a step depends on t
 We can not parallelize this process making parameter updates, and therefore scaling to large datasets, as well as inference very slow.
 
 \subsubsection*{Attention}
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/attention.png}
-    \caption{In vanilla encoder / decoder architectures, the decoder is only able to attend to the last hidden state of the encoder. Attention allows the decoder to attend to different parts of the input sequence in parallel.}
-    \label{fig:attention}
-\end{figure}
 One way to address the vanishing gradient problem is to use a so called attention mechanisms.\cite{https://doi.org/10.48550/arxiv.1409.0473}
 The intuition behind them is to assign a weight to each part of the input sequence, indicating the importance of that part for the current task.
 These weights are computed dynamically for each step in the processing of the input sequence and allow the model to focus on the most relevant parts of the sequence.
@@ -109,26 +99,15 @@ The development of attention mechanisms in RNNs laid the foundation for the deve
 The main drawback of attention mechanisms in RNNs is that they require sequential processing of the input sequence, which can be slow and inefficient for long sequences, and doesn't scale to large datasets.
 The Transformer architecture was introduced as a solution, as it uses self-attention mechanisms to allow for parallel processing of the entire sequence.
 
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/self-attention.png}
-    \caption{Here we visualize the attention weights for the word "it". The model learns to include the representation of "The Animal" as part of its encoding.}
-    \label{fig:self-attention}
-\end{figure}
-
 Self-attention works by first embedding the input sequence into a continuous vector space. Then, for each position in the input sequence, the model calculates a set of attention scores, which indicate the degree of dependence between that position and all other positions in the sequence. These attention scores are used to compute a weighted sum of the input representations, which is then used as the input to the next layer of the model.
 It is called self-attention because the model is able to put the representations of each token into context of all surrounding tokens (see Fig. \ref{fig:self-attention}).
 
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/queries_keys_values.png}
-    \caption{Here we visualize the attention weights for the word "it". The model learns to include the representation of "The Animal" as part of its encoding.}
-    \label{fig:queries-keys-values}
-\end{figure}
 Each token is assigned an embedding which is multiplied with three trainable weight matrices to obtain three vectors, called Queries, Keys, and Values.
 The model first computes the dot product of the Query vector with each of the Key vectors, and then applies a softmax function to the resulting vector to obtain attention scores that are between 0 and 1 and sum to 1, where the softmax function is defined as:
 \begin{equation}
     \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}
 \end{equation}
-Finally, the resulting vector of attention scores (Fig. \ref{fig:self-attention}) for each token is multiplied with the Value vectors to obtain the representation for this token (Fig. \ref{fig:queries-keys-values}).
+Finally, the resulting vector of attention scores (Fig. \ref{fig:self-attention}) for each token is multiplied with the Value vectors to obtain the representation for this token.
 The outputs of the self-attention mechanism are then passed through a feedforward neural network to produce the output of a so called \textit{encoder block}.
 Many such encoder blocks are stacked on top of each other to form the encoder of the Transformer architecture.
 In some architectures one wants to generate new text, for which we need a \textit{decoder}.
@@ -179,17 +158,11 @@ This method is called \textit{stochastic gradient descent} and generally works w
 \begin{itemize}
     \item Loading single samples from the dataset is slow, due to CPU, RAM and bus overhead when copying data to VRAM
     \item There is overhead in the GPU related to scheduling of compute operations
-    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly (see Fig. \ref{fig:mini-batch})
+    \item The gradients are much more noisy than the optimal ones, and the model will learn more slowly
 \end{itemize}
 There is a happy middle ground called \textit{mini-batch gradient descent} which is a combination of stochastic gradient descent with mini-batches.
 Using mini-batches allows for a more accurate estimate of the gradient, and reduces the overhead per sample, as we can take advantage of hardware accelerated vectorized compute operations in CPUs and GPUs.
 In practice, we will choose a batch size that is much smaller than the number of samples in the dataset, and as big as possible without running out of VRAM, where the latter condition is typically the more relevant constraint.
-
-\begin{figure}[h]
-    \includegraphics[width=\linewidth]{chapters/NLP/figures/mini-batch.png}
-    \caption{Batch vs mini-batch vs stochastic gradient descent}
-    \label{fig:mini-batch}
-\end{figure}
 
 Many optimization algorithms exist that aim to minimize the objective loss function that represents a deep learning model. Stochastic
 gradient descent is often a good first choice for this optimization. It requires tuning the \textit{learning rate} parameter, which controls how much the parameters
@@ -207,15 +180,7 @@ The Adam optimizer is a good first choice that combines these techniques and wor
 
 
 \subsubsection*{Regularization}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1.2\textwidth]{chapters/NLP/figures/over_and_underfitting.png}
-    \caption{Left: Underfitting, a straight line doesn't fit  the data well.
-    Right: Overfitting, a complex curve fits the (training) data perfectly, but will likely not generalize well.
-    Center: The model and true underlying function match closely.}
-    \label{fig:over_and_underfitting}
-\end{figure}
-A common problem in ML is the balance between over- and underfitting (Figure \ref{fig:over_and_underfitting}).
+A common problem in ML is the balance between over- and underfitting.
 Underfitting can happen when the model is too simple, i.e. it is not able to capture the underlying function (rarely a problem in deep learning).
 Overfitting happens when the model is too complex or has too many degrees of freedom, such that it can fit the training data well, but does not capture the essence of the true data generating process, leading to poor generalization performance when applied to new data.
 
