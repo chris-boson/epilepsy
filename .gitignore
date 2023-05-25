@@ -133,7 +133,7 @@ dmypy.json
 **/*.toc
 **/*.blg
 **/*.bbl
-**/*.pdf
+book/main.pdf
 **/*.out
 
 code/model
