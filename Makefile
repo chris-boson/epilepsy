@@ -7,4 +7,4 @@ setup-dev:
 setup-latex:
 	$(info 🔨 Setting up dev environment)
 	sudo apt-get update
-	sudo apt-get install texlive latexmk
+	sudo apt-get -y install texlive latexmk texlive-latex-extra
