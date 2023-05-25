@@ -14,7 +14,7 @@ The dataset that we will be exploring is a simulated dataset of electrographic s
 Before loading the data, we review the most common data structures used in R along with some of their benefits. As most programming languages that deal with numerical operations, R provides the users with \textbf{vector} and \textbf{matrix} structures. Atomic vectors in R can be one of four types - integer, double, Boolean/logical and character. Each atomic vector can contain only a homogeneous type of data, i.e. at most one of the four types. In contrasts, lists are similar to atomic vectors, but they can contain more than one data type. Additionally, nesting lists within lists is also acceptable in R. Atomic vectors can be extended to 2-dimensional matrices. The atomic vectors constituting the matrices are all of the same length. The matrix inherits the data structure properties of atomic vectors. The homogeneous structure of the atomic vectors and matrices allows for a trade off between computational efficiency and flexibility of storing data. To allow users the flexibility to store data from different formats, R uses \textbf{dataframes}. A dataframe is a list of vectors with the same length. Since it is a list, it allows for mixed types of data. In fact, one can store lists within a column. Additionally, dataframes can contain factors, data types used for storing categorical data in R. More recently, a newer version of dataframes, called tibbles, was introduced to R. Some of the benefits that tibbles provide are ability to use the \verb|tidyverse| \cite{tidyverse} package in R, display the data types and not loading or performing data computations until explicitly tasked to do so. This can be especially useful when manipulating large datasets. For more extensive treatment of the different data structures within R, we refer the readers to \cite{tibble} and \cite{wickham2019advanced}.
 
 \subsubsection{Loading Datasets into R}
-In many applications the data is not only stored in different file types (or databases) but some times it is divided into multiple files. The chapter covers loading such data from three distinct data types, commonly encountered - \verb|csv|, \verb|mat| and \verb|json| files. The general structure of our directory is for each patient to have a folder with all the available data. If one is to download the data from Github and place somewhere on the local drive preserving the Github structure it will be of the form \verb|./patient_data/Patient_X|, where $X$ corresponds to the patient id. The goal is to load all the data into one dataframe, which can be used for analysis and exploration.
+In many applications the data is not only stored in different file types (or databases) but some times it is divided into multiple files. The chapter covers loading such data from three distinct data types, commonly encountered - \verb|csv|, \verb|mat| and \verb|json| files. The general structure of the directory is for each patient to have a folder with all the available data. If one is to download the data from Github and place somewhere on the local drive preserving the Github structure it will be of the form \verb|./patient_data/Patient_X|, where $X$ corresponds to the patient id. The goal is to load all the data into one dataframe, which can be used for analysis and exploration.
 The patient metadata files, \verb|metadata.csv|, are stored within each of the folders. A general way to load \verb|csv| files in R is via the built in function \verb|read.csv()|. To retrieve the documentation of a specific function within the R console one can invoke \verb|?| in front of it, for example, \verb|? read.csv()| will present the documentation on how to use the reader function for files with csv extension.
 
 To load a single csv file one can do the following:
@@ -135,7 +135,11 @@ To load in the MatLab files we use the \verb|readMat| function from the \verb|R.
 In this sub-section the focus is on the first steps that typical analysis takes - exploring, cleaning and joining the loaded datasets. This enables one to obtain better understanding of the data in preparation for deep dive analysis and/or modeling.
 
 The scenario we consider here is a simplification of what a real project looks like. Typically, when performing analysis, one needs to obtain data from multiple files / databases that may or may not be in the same format. They are usually related in some way, but each also provides unique information not available in the others. The values that the data sources share in common are referred to as keys. Typically, there are two types of keys - primary and foreign keys. Primary keys refer to the column in the data that uniquely identifies a row in its own data set. A foreign key refers to the column that identifies unique values of the current data into another table/dataframe. To make these concepts more concrete, beginning the exploration of the loaded data sets is necessary.
-
+\newline
+\newline
+\textbf{Initial Data Structure Exploration}
+\newline
+\newline
 A quick way to take a look at a dataframe in R is via \textit{str()}, which retrieves some of the characteristics of the dataframe, such as number of columns, number of rows, the type of each vector and all the columns. In particular, examining the outputs of \verb|str(metadata)| and \verb|str(df_metadata)| reveals that they have loaded the same data. The exact output from \verb|str(metadata)| is:
 \begin{lstlisting}[language=R]
 str(metadata)
@@ -159,9 +163,12 @@ str(seizure_data)
  $ patient_id    : int  1 1 1 1 1 1 1 1 1 1 ...
 \end{lstlisting}
 The dataframe has 40,000 observations of 4 variables. The variables are all integers. The column \verb|le| corresponds to the number of seizures within the one hour time window defined in \verb|timedata|. Similarly, \verb|iea_lead1| and \verb|iea_lead2| correspond to the number of spikes for each one hour window, recorded by each of the two leads. The unique key in this case consists of multiple columns. The column \verb|patient_id| no longer uniquely identifies each row and the primary key must be defined by multiple columns. To identify the rows uniquely, the dataframe needs to be combined with \verb|timedata|. The primary keys for the combined dataset are \verb|patient_id| and the timestamps.
-
+\newline
+\newline
+\textbf{Joining Data Frames}
+\newline
+\newline
 The simplest way of adding a column to a dataframe in R consists of \verb|seizure_data$hourly_markers <- timedata|. Two items are of note here, 1. adding new columns or updating existing columns to/in a dataframe can be achieved by using \verb|$| symbol following the dataframe name and 2. assigning the timestamps in such a way may be dangerous, because it assumes that the order of the values in the \verb|seizure_data| dataframe is aligned with the order of values in the \verb|timedata| variable. In this instance, this is not an issue due to the nature of the data, but in what follows more robust methods for handling data joining are presented.
-
 Often times, when performing analyses or building supervised / unsupervised learning models, it is more convenient to combine all the data into a single dataframe. To combine two dataframes in R, taking advantage of the relational nature of the data, one can use \verb|merge|. The readers are encouraged to explore the documentation \verb|?merge| for additional details beyond what is outlined here. The primary keys from each dataframe, \verb|patient_id| and \verb|ID| are stored as different structures, a character and an integer. Before joining the two dataframes it is necessary to convert both primary keys to the same data structure in order to avoid faulty joins. The \verb|ID| column in \verb|metadata| has the patient id, preceded by the string 'Patient\_'. In this case, for pedagogical purposes, the \verb|patient_id| column will be converted to match \verb|ID| rather than vice-versa. In the following section we discuss strategies for obtaining a sub-string of a string which can also be applied to convert \verb|ID| into an integer format containing the patient id only.
 \begin{lstlisting}[language=R]
 seizure_data$patient_id <- paste0("Patient_", seizure_data$patient_id)
@@ -173,7 +180,11 @@ seizure_data <- merge(seizure_data, metadata, by.x = 'patient_id', by.y = 'ID', 
 \end{lstlisting}
 The function expects as inputs the two dataframes that are to be joined, the keys from each data frame that we join on and how to join the two dataframes. In this case the key used for joining the two dataframes is the single column \verb|patient_id| contained in each of the dataframes. Note that in this case the primary keys from the dataframes have different names and hence one must explicitly state them via \verb|by.x| and \verb|by.y|. The use of \verb|by='patient_id'| is valid, provided that the column names are identically named \verb|patient_id| in both dataframes. Moreover, while in this example only one column was needed to join the dataframes, in other cases, when multiple keys need to be joined, they can be specified by passing a vector via \verb|by = c(join_column1, join_column2, ... )|.
 Finally, a left join, which joins so that if a key value in the \verb|seizure_data| does not have a matching record in the \verb|metadata| dataframe the row is still returned, with all seizure columns with their original values and \verb|NA| for the values in the metadata column(s). To accomplish this with \verb|merge|, one specifies \verb|all.x=TRUE| and \verb|all.y = FALSE|. When using a left join the resulting dataframe has the same number of rows as the first (left) dataframe passed to \verb|merge|. This can be verified by running \verb|str(seizure_data)|. The merged dataframe has 40,000 rows and 10 columns. This new dataframe contains all the data that is available. Another useful way of joining datasets is to perform an inner join. In an inner join, only the rows that have matches in both dataframes are returned. Using \verb|merge| in R, an inner join can be performed by setting \verb|all.x=TRUE| and \verb|all.y = TRUE|.
-
+\newline
+\newline
+\textbf{Data Cleaning}
+\newline
+\newline
 After joining all datasets into a single dataframe, tools for cleaning and formatting data enable one to perform exploratory data analysis and modeling. The \verb|str| command quickly reveals a few issues with the data. As previously discussed \verb|Age| was read in as a character. In this case age is entered as a decimal and hence, converting it to a numeric value is advisable:
 \begin{lstlisting}[language=R]
 # Convert age and patient_id columns from strings to floats
@@ -326,15 +337,15 @@ hist(seizure_data$le, main = "", xlab = "Seizures", ylab = "Density", freq=FALSE
 hist(seizure_data$iea_lead_agg, main = "", xlab = "Seizure Spikes", ylab = "Density", freq=FALSE)
 \end{lstlisting}
 The resulting histograms Figure \ref{fig:seizures} indicate that the majority of the seizure counts are 0. Moreover, for each hour each patient has at most one seizure. Similarly, the majority of seizure spikes for each hour are 0. However, there are more seizure spikes per hour than seizures. It looks like the density of the seizure spikes is right-skewed and is tapering off after 100 with very few seizure spikes above 200.
-\begin{figure}[H]
+\begin{figure}
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    % \includegraphics[width=\linewidth]{le_histogram.pdf}
+     \includegraphics[width=\linewidth]{chapters/CodingBasics/figures/le_histogram.pdf}
 
   \end{minipage}
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    % \includegraphics[width=\linewidth]{iea_lead_agg.pdf}
+     \includegraphics[width=\linewidth]{chapters/CodingBasics/figures/iea_lead_agg.pdf}
   \end{minipage}
   \label{fig:seizures}
   \caption{Histograms of seizures for every hour across all patients (left) and seizure spikes for every hour across all patients (right)}
@@ -360,15 +371,15 @@ hist(daily_seizures_spikes$total_le, main = "", xlab = "Seizures", ylab = "Densi
 hist(daily_seizures_spikes$total_iea_lead_agg, main = "", xlab = "Seizure Spikes", ylab = "Density", freq=FALSE)
 \end{lstlisting}
 In the first line \verb|as.Date()| extracts the date from the timestamp and assigns it to \verb|seizure_date|. The second block of code uses the \verb|dplyr| convention to group the dataframe by patient id and the date in which the seizure took place and then aggregates, by summing across all seizures and all seizure spikes, for each group. The result is a new dataframe, \verb|daily_seizures|, which has 1,686 observations and 4 columns, containing the patient id, the seizure date (extracted from the timestamp), the total seizures (\verb|total_le|) per day and the total spikes per day (\verb|total_iea_lead_agg|). The histogram of the daily seizures and spikes is presented in figure \ref{fig:daily_seizures}. The distribution of the seizure spikes seems similar to what was seen before, except that now the values per day are much larger (figure \ref{fig:daily_seizures} right). The left figure shows that even though overall most patients did not experience any seizures on a given day. The maximum seizures that a patient has had in a day is $8$.
-\begin{figure}[H]
+\begin{figure}
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    % \includegraphics[width=\linewidth]{daily_le_histogram.pdf}
+     \includegraphics[width=\linewidth]{chapters/CodingBasics/figures/daily_le_histogram.pdf}
 
   \end{minipage}
   \begin{minipage}[b]{0.5\linewidth}
     \centering
-    % \includegraphics[width=\linewidth]{daily_iea_lead_agg.pdf}
+     \includegraphics[width=\linewidth]{chapters/CodingBasics/figures/daily_iea_lead_agg.pdf}
   \end{minipage}
   \label{fig:daily_seizures}
   \caption{Histograms of seizures for every day across all patients (left) and seizure spikes for every day across all patients (right)}
@@ -440,7 +451,7 @@ In this case there are two conditions to subset on. They can be chained together
 Figure \ref{fig:time_seizure_spikes} displays the number of spikes for each one hour period for the dates specified above. The red dots represent the seizures within the same time frame.
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{hourly_seizure_spikes.pdf}
+   \includegraphics[width=\textwidth]{chapters/CodingBasics/figures/hourly_seizure_spikes.pdf}
   \caption{Hourly spikes (solid black lines) and seizures (red dots) for a sample patient.}
   \label{fig:time_seizure_spikes}
 \end{figure}
