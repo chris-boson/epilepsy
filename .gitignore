@@ -134,6 +134,7 @@ dmypy.json
 **/*.blg
 **/*.bbl
 **/*.pdf
+**/*.out
 
 code/model
 
