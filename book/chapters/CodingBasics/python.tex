@@ -21,7 +21,7 @@ It is never recommended to develop Python from the terminal, but instead use an 
 Using the right tools can speed up development time and help avoid easy mistakes as you build out code bases.
 As code become more complex, the importance of having these tools will continue to rise.
 There is an unfortunate tendency in academia, and to a considerable degree in industry, to use one-off scripts and throwaway code.
-This often leads to duplicate efforts and an unmaintainable and incomprehensible mess. 
+This often leads to duplicate efforts and an unmaintainable and incomprehensible mess.
 It slows down scientific progress and presents an unnecessary and all-too-often understated risk to patients.
 
 \textit{Visual Studio Code} (VSCode), developed and maintained by Microsoft, is an excellent choice for an Integrated Development Environment (IDE).
@@ -30,12 +30,12 @@ In addition, it houses thousands of extensions that make writing Python, or near
 Readers are recommended to download and install VSCode.
 Often developers will include a \textit{workspace} file that defines the required extensions and settings for the development environment of your project.
 As an example, you can clone the repository accompanying this book by running \pythoninline{git clone https://github.com/chris-boson/epilepsy.git}.
-You will see a file called \pythoninline{epilepsy.code-workspace}. 
+You will see a file called \pythoninline{epilepsy.code-workspace}.
 If you open this file, an \textit{Open Workspace} button will appear that applies the same settings and extensions to anybody that clones the repository.
 
 While it is important to define your exact version of Python, it is equally important to define (and pin) the exact versions of all dependencies you use for a given project.
-It is strongly recommended that you don't use your system Python, but instead create a new \textit{Virtual Environment} for each new project, as you may need different versions of the same dependency. 
-A tool that can help with all these aspects is \pythoninline{poetry}\footnote{https://python-poetry.org/}. 
+It is strongly recommended that you don't use your system Python, but instead create a new \textit{Virtual Environment} for each new project, as you may need different versions of the same dependency.
+A tool that can help with all these aspects is \pythoninline{poetry}\footnote{https://python-poetry.org/}.
 Once installed, it allows you to specify a \pythoninline{pyproject.toml} configuration file that contains some metadata about your project, as well as defines compatible Python and required dependencies and their versions.
 Dependencies have their own dependencies and may only be compatible with some versions.
 To avoid conflicts and help others recreate exactly which versions of dependencies were used when you ran your experiments you should always create a \textit{lock file} via \pythoninline{poetry lock} that you check into source control.
@@ -102,25 +102,3 @@ The \pythoninline{get_age_difference} method accesses the stored \textit{age} at
 The reusability of classes shines when they are instantiated many times. Here we instantiate two Patient classes.
 In large software systems, it is common to design the high-level classes you need before writing too much code.
 Classes tend to be nouns, and their methods tend to be verbs associated with their behavior.
-
-% Notes:
-% - python basics
-% - organizing and factoring code (mention it helps to test code)
-% - objects
-%     - python notebooks good vs bad
-% - pyenv to install version of python
-% - virtualenv
-%     - poetry
-% - walkthrough
-%     - clone repository
-%     - random data
-%     - load data
-%     - transform data (incorporate python stuff )
-%     - visualize something / compute some stats
-% - (as an exercise, you can also clone the repository accompanying this book\footnote{\pythoninline{git clone https://github.com/chris-boson/epilepsy.git}}).
-% - mention later branch and blah blah
-% a sentence or two on the depth that we cover here
-% recommendations section at the end - DEBUGGERS
-
-%python best practice list
-% no heavy computation in init
