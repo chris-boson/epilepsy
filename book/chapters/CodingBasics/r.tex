@@ -70,7 +70,7 @@ metadata_list <- lapply(files, read.csv)
 \end{lstlisting}
 The built-in function \verb|dir| allows one to specify the general folder where all patient data is stored, along with the name of the file that is to be loaded. In this case one does not need to know exactly how many patient folders there are, all will be loaded. To iteratively apply \verb|read.csv| to all the folders within the data directory, one can use the function (\verb|lapply|).
 Examining the output of \verb|lapply| reveals that the data was loaded as a list where the elementes are a single dataframe per loaded file. Combining the list of dataframes into a single dataframe can be achieved as follows:
-\begin{lstlisting}[language<-R]
+\begin{lstlisting}[language=R]
 # Convert the metadata to a dataframe
 metadata <- data.frame(matrix(unlist(metadata_list), nrow=length(metadata_list), byrow=TRUE), stringsAsFactors=FALSE)
 
