@@ -30,7 +30,7 @@ file_path <- paste(data_path, '/', single_patient_folder ,'/', filename, sep="")
 # Read in the csv file for a single patient
 metadata_patient1 <- read.csv(file_path, header = TRUE, sep = ",")
 \end{lstlisting}
-To execute the above code, one needs to change \verb|data_path = "<your_path>"| to the folder where all the individual patient folders reside. For example, if one is using Mac OS and all the patient data folders are downloaded in \verb|"Users/Documnets/patient_data"| then this directory can be used to set \verb|data_path|.
+To execute the above code, one needs to change \verb|data_path <- "<your_path>"| to the folder where all the individual patient folders reside. For example, if one is using Mac OS and all the patient data folders are downloaded in \verb|"Users/Documnets/patient_data"| then this directory can be used to set \verb|data_path|.
 The function \verb|read.csv()| uses the location and the filename as an input. Additionally, one can specify the headers of the csv file to be used as column names in the resulting dataframe via \verb|header=TRUE|. The variable \verb|metadata_patient1| contains the metadata for the patient corresponding to the folder \verb|Patient_1|. The loaded file is a dataframe with 1 observation, only 1 patient's metadata was loaded, and has 6 variables. Typically, when performing analysis, one is interested in looking at multiple patients. One way to load all patients is to repeat the same code from above for all patients. This can be achieved with a \verb|for loop|, where each patient's data is loaded as a new row. To accomplish this, one can create a list with all the patients folder names and execute the above code within the \verb|for loop| to load all patients. Given the folder structure, the patient list of directories can be initialized by:
 \begin{lstlisting}
 # Initialize a list with all patient folders
@@ -59,7 +59,7 @@ for (i in 1:length(patients_list)){
 }
 \end{lstlisting}
 In the code above, the folders containing patient metadata are initialized so that 1. each one of them can be opened; 2. the data can be read in for the individual patient; and 3. stored into a final dataframe that contains the information on all $20$ patients. Note that when using \verb|for loop| in R, one must specify the condition for start and termination of the loop in parenthesis followed by the code that needs to be executed on each iteration inside \{\}.
-While this illustrates well how to read in multiple csv files into one dataframe, it has some drawbacks. One, it is necessary to explicitly specify how many patients there are total via \verb|patients_size = 20|. In certain instances, this may lead to scalability issues if one is dealing with tens of thousands of patients or even with thousands of patients. Additionally, there are built in R functions, which take advantage of lower level language, that can lead to speed improvements when compared to a \verb|for loop| in R.
+While this illustrates well how to read in multiple csv files into one dataframe, it has some drawbacks. One, it is necessary to explicitly specify how many patients there are total via \verb|patients_size <- 20|. In certain instances, this may lead to scalability issues if one is dealing with tens of thousands of patients or even with thousands of patients. Additionally, there are built in R functions, which take advantage of lower level language, that can lead to speed improvements when compared to a \verb|for loop| in R.
 To address these two the following code can be used:
 \begin{lstlisting}[language=R]
 # Initialize the directory containing the files and provide the filenames within each folder
@@ -70,7 +70,7 @@ metadata_list <- lapply(files, read.csv)
 \end{lstlisting}
 The built-in function \verb|dir| allows one to specify the general folder where all patient data is stored, along with the name of the file that is to be loaded. In this case one does not need to know exactly how many patient folders there are, all will be loaded. To iteratively apply \verb|read.csv| to all the folders within the data directory, one can use the function (\verb|lapply|).
 Examining the output of \verb|lapply| reveals that the data was loaded as a list where the elementes are a single dataframe per loaded file. Combining the list of dataframes into a single dataframe can be achieved as follows:
-\begin{lstlisting}[language=R]
+\begin{lstlisting}[language<-R]
 # Convert the metadata to a dataframe
 metadata <- data.frame(matrix(unlist(metadata_list), nrow=length(metadata_list), byrow=TRUE), stringsAsFactors=FALSE)
 
@@ -323,7 +323,7 @@ As each of the individual lead columns represents the number of spikes within th
 \begin{lstlisting}[language=R]
 # Add the two leads and use the aggregated variable. Drop the individual ones
 seizure_data$iea_lead_agg = seizure_data$iea_lead1 + seizure_data$iea_lead2
-seizure_data = subset(seizure_data, select = -c(iea_lead1,iea_lead2) )
+seizure_data <- subset(seizure_data, select = -c(iea_lead1,iea_lead2) )
 \end{lstlisting}
 Each of the columns is a numeric value and hence addition can be performed as adding any vectors or scalar values. Once the combined number of seizures is stored into the dataframe, dropping the individual ones can be achieved by subsetting the complement of these two columns. While, previously a subset operator was used, now the subset function is used. The subset operator will be valid here as well.
 
