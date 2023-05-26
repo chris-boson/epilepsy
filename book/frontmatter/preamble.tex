@@ -43,5 +43,30 @@ showstringspaces=false
 % Python for inline
 \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
 
+\definecolor{DarkGreen}{RGB}{1,50,32}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{codered}{rgb}{0.6,0,0}
+\definecolor{codegreen}{rgb}{0,0.5,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\lstset{
+basicstyle=\ttfamily,
+morekeywords={self},              % Add keywords here
+%keywordstyle=\ttfamily\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttfamily\color{codered},    % Custom highlighting style
+stringstyle=\color{codegreen},
+commentstyle=\color{codegray},
+frame=tb,                         % Any extra options here
+showstringspaces=false
+breakatwhitespace=false,
+breaklines=true,
+captionpos=b,
+keepspaces=true,
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+tabsize=2
+}
+
 
 \setcounter{tocdepth}{2}
