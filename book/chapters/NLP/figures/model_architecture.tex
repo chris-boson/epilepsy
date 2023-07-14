@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+    % Input nodes
+    \node[draw, circle] (input1) at (0, 0) {$x_1$};
+    \node[draw, circle, below=of input1] (input2) {$x_2$};
+    \node[draw, circle, below=of input2] (input3) {$x_3$};
+
+    % Output node
+    \node[draw, circle, right=3cm of input2] (output) {$y$};
+
+    % Hidden layer nodes
+    \node[draw, circle, right=1.5cm of input1] (hidden1) {};
+    \node[draw, circle, right=1.5cm of input2] (hidden2) {};
+    \node[draw, circle, right=1.5cm of input3] (hidden3) {};
+
+    % Connect input nodes to hidden layer nodes
+    \draw[-Stealth] (input1) -- (hidden1) node[midway, above] {$\theta_{11}$};
+    \draw[-Stealth] (input1) -- (hidden2) node[midway, above] {$\theta_{12}$};
+    \draw[-Stealth] (input1) -- (hidden3) node[midway, above] {$\theta_{13}$};
+
+    \draw[-Stealth] (input2) -- (hidden1) node[midway, above] {$\theta_{21}$};
+    \draw[-Stealth] (input2) -- (hidden2) node[midway, above] {$\theta_{22}$};
+    \draw[-Stealth] (input2) -- (hidden3) node[midway, above] {$\theta_{23}$};
+
+    \draw[-Stealth] (input3) -- (hidden1) node[midway, above] {$\theta_{31}$};
+    \draw[-Stealth] (input3) -- (hidden2) node[midway, above] {$\theta_{32}$};
+    \draw[-Stealth] (input3) -- (hidden3) node[midway, above] {$\theta_{33}$};
+
+    % Connect hidden layer nodes to output node
+    \draw[-Stealth] (hidden1) -- (output) node[midway, above] {$\theta_{o1}$};
+    \draw[-Stealth] (hidden2) -- (output) node[midway, above] {$\theta_{o2}$};
+    \draw[-Stealth] (hidden3) -- (output) node[midway, above] {$\theta_{o3}$};
+
+    % Add labels for input, hidden, and output layers
+    \node[left=0.5cm of input1] {Inputs};
+    \node[above=0.5cm of hidden1] {Hidden layer};
+    \node[right=0.5cm of output] {Output};
+  \end{tikzpicture}

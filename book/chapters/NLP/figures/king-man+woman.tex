@@ -1,0 +1,21 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
+    thick,main node/.style={font=\sffamily\Large\bfseries}]
+
+\node[main node] (w_man) at (0,0) {};
+\node[above = 0mm of w_man] {$\boldsymbol{w_{\text{man}}}$};
+\node[main node] (w_king) at (4,2) {};
+\node[right = 0mm of w_king] {$\boldsymbol{w_{\text{king}}}$};
+\node[main node] (w_woman) at (2,-2) {};
+\node[below = 0mm of w_woman] {$\boldsymbol{w_{\text{woman}}}$};
+\node[main node] (w_queen) at (6,0) {};
+\node[right = 0mm of w_queen] {$\boldsymbol{w_{\text{queen}}}$};
+
+\path[every node/.style={font=\sffamily\small}]
+(w_man) edge[red] node [above = 3mm] {$\boldsymbol{w_{\text{king}}} - \boldsymbol{w_{\text{man}}}$} (w_king)
+(w_man) edge[blue] node [below left] {$\boldsymbol{w_{\text{woman}}} - \boldsymbol{w_{\text{man}}}$} (w_woman)
+(w_woman) edge[red] node [above right] {} (w_queen)
+(w_king) edge[blue] node [above right] {} (w_queen);
+
+\node[right=14mm of w_queen, font=\sffamily\small, align=center] {$\approx \textcolor{red}{\boldsymbol{w_{\text{king}}} - \boldsymbol{w_{\text{man}}}} + \boldsymbol{w_{\text{woman}}}$};
+
+\end{tikzpicture}

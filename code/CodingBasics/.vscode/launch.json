@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Hello World",
+            "type": "python",
+            "request": "launch",
+            "module": "scripts.hello_world",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Intro Seizure",
+            "type": "python",
+            "request": "launch",
+            "module": "intro_seizure",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

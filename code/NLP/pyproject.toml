@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "epilepsy"
+name = "epilepsy-nlp"
 version = "0.1.0"
 description = ""
 authors = []

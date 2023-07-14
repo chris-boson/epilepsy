@@ -1,7 +1,10 @@
 setup-dev:
 	$(info 🔨 Setting up dev environment)
-	git submodule update --init --recursive --remote
-	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | POETRY_HOME=~/.poetry python3.8 -
-	sudo ln -s ~/.poetry/bin/poetry /usr/local/bin/poetry
-	curl https://pre-commit.com/install-local.py | python3
+	curl -sSL https://install.python-poetry.org | python - --version 1.3.2
+	python3 -m pip install pre-commit
 	pre-commit install
+
+setup-latex:
+	$(info 🔨 Setting up dev environment)
+	sudo apt-get update
+	sudo apt-get -y install texlive latexmk texlive-latex-extra

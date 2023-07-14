@@ -9,12 +9,12 @@
       "path": "book"
     },
     {
-      "name": "🧑‍💻  code",
-      "path": "code"
+      "name": "🧑‍💻  Coding Basics",
+      "path": "code/CodingBasics"
     },
     {
-      "name": "🐏  sheepy",
-      "path": "sheepy"
+      "name": "🧑‍💻  NLP",
+      "path": "code/NLP"
     }
   ],
   "settings": {
@@ -43,6 +43,7 @@
     "python.testing.pytestArgs": [
       "--verbose",
       "${workspaceFolder}"
-    ]
+    ],
+    "latex-workshop.docker.enabled": false,
   }
 }

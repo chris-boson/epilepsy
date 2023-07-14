@@ -1,0 +1,28 @@
+\begin{tikzpicture}[
+    declare function={f(\x)=\x*\x*\x - 2*\x*\x + 1.5;},
+    declare function={fd(\x)=3*\x*\x - 4*\x;} % derivative of f
+  ]
+  \begin{axis}[
+    axis lines=middle,
+    xlabel={$\theta$},
+    ylabel={Loss},
+    domain=0:2,
+    ymin=0,
+    ymax=1.7,
+    samples=100,
+    ytick=\empty,
+    xtick=\empty,
+    xlabel style={below=3mm,font=\large},
+    ylabel style={left=3mm,font=\large},
+    xtick={0,0.25,0.5,0.75,1,1.25,1.5,1.75},
+    ytick={0, 0.5, 1, 1.5},
+    xticklabels={},
+    yticklabels={}
+  ]
+  \addplot [blue, thick] {f(x)};
+  \foreach \X in {0.1,0.15,...,0.5} {
+     \edef\temp{\noexpand\draw [red, -latex, line width=0.7pt] (axis cs:\X,{f(\X)}) -- (axis cs:{\X-0.1*fd(\X)},{f(\X-0.1*fd(\X))});}
+     \temp
+  }
+  \end{axis}
+  \end{tikzpicture}
